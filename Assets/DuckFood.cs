@@ -7,19 +7,26 @@ public class DuckFood : MonoBehaviour
     private Rigidbody rb;
     [SerializeField] private float buoyancy = 20;
 
+    private bool inWater = false;
+
     List<DuckAI> interestedDucks;
+
+    private AudioSource splashSource;
 
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
+        splashSource = gameObject.GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == 4) //On collision with water
+        if (other.gameObject.layer == 4 && !inWater) //On collision with water
         {
             //rb.isKinematic = true; //Freeze food's position
+            inWater = true;
             DuckAI.UpdateSurroundings();
+            splashSource.Play();
         }
     }
 

@@ -23,7 +23,10 @@ public class DuckAI : MonoBehaviour
     [SerializeField] private float eatTime = 1;
     [SerializeField] private float foodDetectionRadius = 10;
     [SerializeField] private float wanderRadius = 5;
-    
+
+    [SerializeField] private AudioClip[] quackClips;
+    private AudioSource quackSource;
+
     public enum State
     {
         Idle,
@@ -35,8 +38,10 @@ public class DuckAI : MonoBehaviour
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
+        quackSource = gameObject.GetComponent<AudioSource>();
         targetLocation = transform.position;
         waitTimer = StartCoroutine(Wait());
+        StartCoroutine(QuackCoroutine());
     }
 
     void Update()
@@ -99,6 +104,16 @@ public class DuckAI : MonoBehaviour
         yield return new WaitForSeconds(eatTime);
         SetState(State.Idle);
         CheckSurroundings();
+    }
+
+    IEnumerator QuackCoroutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(4, 30));
+            AudioClip quackClip = quackClips[Random.Range(0, quackClips.Length)];
+            quackSource.PlayOneShot(quackClip);
+        }
     }
 
     private Vector3 FindNearPosition(float maxDistance)

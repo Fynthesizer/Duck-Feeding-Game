@@ -323,8 +323,8 @@ public class @InputActions : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""028e9f2d-4d9a-4e7b-83c6-0afef539d57e"",
-                    ""path"": ""<Touchscreen>/primaryTouch"",
+                    ""id"": ""a050b007-bc89-4bd7-9cd0-cae2e1a61e45"",
+                    ""path"": ""<Touchscreen>/touch0"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
