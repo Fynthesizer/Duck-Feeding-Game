@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fc1e0f514b5d09c4ab35e1048d4d12b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  model: {fileID: 0}
+  model: {fileID: 1251798592902256592}
   foodConsumed: 0
   state: 0
   speed: 0.75
@@ -67,6 +67,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: cee78e36610ce154cb8566539cbf5dd6, type: 3}
   - {fileID: 8300000, guid: c9008b0b0902f8c44923bbe12f1e03cb, type: 3}
   - {fileID: 8300000, guid: 324d9b82d26e81046a2882e8569f46a1, type: 3}
+  material: {fileID: 0}
 --- !u!65 &6451490390681572426
 BoxCollider:
   m_ObjectHideFlags: 0

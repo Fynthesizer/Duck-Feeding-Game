@@ -83,6 +83,7 @@ Material:
     m_Floats:
     - BobAmount: 0.03
     - BobRate: 0.5
+    - Glow: 0
     - Smoothness: 0.1
     - _AlphaClip: 0
     - _Blend: 0

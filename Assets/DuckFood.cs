@@ -7,7 +7,7 @@ public class DuckFood : MonoBehaviour
     private Rigidbody rb;
     [SerializeField] private float buoyancy = 20;
 
-    private bool inWater = false;
+    public bool inWater = false;
 
     List<DuckAI> interestedDucks;
 

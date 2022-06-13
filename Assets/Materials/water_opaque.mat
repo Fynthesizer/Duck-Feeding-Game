@@ -111,12 +111,12 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _ReflectionPower: 0
-    - _RefractionScale: 0.1
-    - _RefractionSpeed: 0.02
-    - _RefractionStrength: 0.05
+    - _RefractionScale: 0.07
+    - _RefractionSpeed: 0.01
+    - _RefractionStrength: 0.04
     - _RippleScale: 2
     - _RippleStrength: 0.003
-    - _Smoothness: 0.7
+    - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
@@ -128,7 +128,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 0
     m_Colors:
-    - Colour: {r: 0.23673905, g: 0.4658241, b: 0.5283019, a: 1}
+    - Colour: {r: 0.18943574, g: 0.3595325, b: 0.4056604, a: 1}
     - _BaseColor: {r: 0.21176471, g: 0.29803923, b: 0.3584906, a: 0.7529412}
     - _Color: {r: 0.21176471, g: 0.29803923, b: 0.3584906, a: 0.7529412}
     - _DeepWater: {r: 0.122774996, g: 0.23589359, b: 0.2924528, a: 1}

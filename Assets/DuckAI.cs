@@ -27,6 +27,10 @@ public class DuckAI : MonoBehaviour
     [SerializeField] private AudioClip[] quackClips;
     private AudioSource quackSource;
 
+    [SerializeField] private float glowFadeSpeed = 0.05f;
+    private Material material;
+    private float glowAmount = 0.0f;
+
     public enum State
     {
         Idle,
@@ -38,6 +42,7 @@ public class DuckAI : MonoBehaviour
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
+        material = model.GetComponent<MeshRenderer>().material;
         quackSource = gameObject.GetComponent<AudioSource>();
         targetLocation = transform.position;
         waitTimer = StartCoroutine(Wait());
@@ -72,7 +77,7 @@ public class DuckAI : MonoBehaviour
                 SetTargetLocation(FindNearPosition(wanderRadius));
                 break;
             case State.Eating:
-                waitTimer = StartCoroutine(Eat());
+                waitTimer = StartCoroutine(Digest());
                 break;
             default:
                 break;
@@ -99,11 +104,22 @@ public class DuckAI : MonoBehaviour
         SetState(State.Wandering);
     }
 
-    IEnumerator Eat()
+    IEnumerator Digest()
     {
         yield return new WaitForSeconds(eatTime);
         SetState(State.Idle);
         CheckSurroundings();
+    }
+
+    IEnumerator FlashCoroutine()
+    {
+        glowAmount = 1f;
+        while (glowAmount > 0f)
+        {
+            glowAmount -= glowFadeSpeed;
+            material.SetFloat("Glow", glowAmount);
+            yield return null;
+        }
     }
 
     IEnumerator QuackCoroutine()
@@ -149,12 +165,18 @@ public class DuckAI : MonoBehaviour
     {
         if(other.CompareTag("DuckFood") && other.transform.parent.gameObject == targetFood) //On reaching food
         {
-            targetFood.SetActive(false);
-            Destroy(other.transform.parent.gameObject);
-            targetFood = null;
-            foodConsumed++;
-            SetState(State.Eating);
+            Eat(targetFood);
         }
+    }
+
+    private void Eat(GameObject food)
+    {
+        food.SetActive(false);
+        StartCoroutine(FlashCoroutine());
+        Destroy(food);
+        targetFood = null;
+        foodConsumed++;
+        SetState(State.Eating);
     }
 
     public void CheckSurroundings()
@@ -166,12 +188,12 @@ public class DuckAI : MonoBehaviour
         foreach (DuckFood food in allFood)
         {
             float distance = Vector3.Distance(transform.position, food.transform.position);
-            if(distance < closestDistance)
+            if(distance < closestDistance && food.inWater)
             {
                 closestFood = food;
                 closestDistance = distance;
             }
-            if (distance < foodDetectionRadius && (targetFood == null || distance < targetDistance)) SetTargetObject(food.gameObject);
+            //if (distance < foodDetectionRadius && (targetFood == null || distance < targetDistance)) SetTargetObject(food.gameObject);
         }
         if (closestFood != null && closestDistance < foodDetectionRadius) SetTargetObject(closestFood.gameObject);
 
