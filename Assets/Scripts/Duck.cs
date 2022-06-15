@@ -6,6 +6,7 @@ public class Duck : MonoBehaviour
 {
     [SerializeField] private Transform model;
     private Rigidbody rb;
+    private CapsuleCollider collider;
 
     private Vector3 targetLocation;
     private Vector3 targetDirection;
@@ -13,20 +14,22 @@ public class Duck : MonoBehaviour
     private float targetDistance;
     private Coroutine waitTimer;
 
-    public int foodConsumed = 0;
-    public State state = State.Idle;
-
-    [SerializeField] private bool debug = true;
-
-    [SerializeField] private float speed = 1;
-    [SerializeField] private float reactionTime = 0.1f;
+    [Header("Global Variables")]
     [SerializeField] private float pursuitSpeedMultiplier = 1.5f;
     [SerializeField] private float turnSpeed = 5;
     [SerializeField] private float minIdleTime = 1;
     [SerializeField] private float maxIdleTime = 8;
     [SerializeField] private float eatTime = 1;
-    [SerializeField] private float foodDetectionRadius = 10;
     [SerializeField] private float wanderRadius = 5;
+
+    [Header("Duck Traits")]
+    [SerializeField] private float speed = 1;
+    [SerializeField] private float reactionTime = 0.1f;
+    [SerializeField] private float awarenessRadius = 10;
+
+    [Header("Duck State")]
+    public int foodConsumed = 0;
+    public State state = State.Idle;
 
     [Header("Obstacle Avoidance")]
     [SerializeField] private bool avoidObstacles = true;
@@ -34,9 +37,11 @@ public class Duck : MonoBehaviour
     [SerializeField] private LayerMask wanderAvoidLayers;
     [SerializeField] private LayerMask pursuitAvoidLayers;
 
+    [Header("Quack")]
     [SerializeField] private AudioClip[] quackClips;
     private AudioSource quackSource;
 
+    [Header("Glow")]
     [SerializeField] private float glowFadeSpeed = 0.05f;
     private Material material;
     private float glowAmount = 0.0f;
@@ -52,13 +57,21 @@ public class Duck : MonoBehaviour
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
+        collider = gameObject.GetComponent<CapsuleCollider>();
         material = model.GetComponent<MeshRenderer>().material;
         quackSource = gameObject.GetComponent<AudioSource>();
         targetLocation = transform.position;
         waitTimer = StartCoroutine(Wait());
         StartCoroutine(QuackCoroutine());
+
+        InitialiseTraits();
+    }
+
+    private void InitialiseTraits()
+    {
         speed = Random.Range(0.75f, 1.25f);
         reactionTime = Random.Range(0f, 1f);
+        awarenessRadius = Random.Range(7.5f, 15f);
     }
 
     void Update()
@@ -66,14 +79,11 @@ public class Duck : MonoBehaviour
         Movement();
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
-        if (debug)
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawSphere(targetLocation, 0.1f);
-            Debug.DrawLine(transform.position, targetLocation, Color.blue);
-        }
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(targetLocation, 0.1f);
+        Debug.DrawLine(transform.position, targetLocation, Color.blue);
     }
 
     void Movement()
@@ -114,7 +124,7 @@ public class Duck : MonoBehaviour
             rb.AddForce(moveForce);
             rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * turnSpeed);
             targetDistance = Vector3.Distance(transform.position, targetLocation);
-            if (targetDistance < 0.1) SetState(State.Idle);
+            if (targetDistance < collider.radius) SetState(State.Idle);
         }
     }
 
@@ -122,7 +132,7 @@ public class Duck : MonoBehaviour
     {
         LayerMask layerMask = state == State.Pursuit ? pursuitAvoidLayers : wanderAvoidLayers;
         Ray ray = new Ray(transform.position, direction);
-        if (!Physics.SphereCast(ray,0.1f,distance, layerMask)) return true;
+        if (!Physics.SphereCast(ray, collider.radius, distance, layerMask)) return true;
         else return false;
     }
 
@@ -132,6 +142,8 @@ public class Duck : MonoBehaviour
         switch (_state){
             case State.Idle:
                 waitTimer = StartCoroutine(Wait());
+                targetLocation = transform.position;
+                targetFood = null;
                 break;
             case State.Wandering:
                 SetTargetLocation(FindNearPosition(wanderRadius));
@@ -148,13 +160,6 @@ public class Duck : MonoBehaviour
     {
         StopCoroutine(waitTimer);
         targetLocation = newTarget;
-    }
-
-    void ReleaseTarget()
-    {
-        SetState(State.Idle);
-        targetLocation = transform.position;
-        targetFood = null;
     }
 
     IEnumerator Wait()
@@ -202,6 +207,7 @@ public class Duck : MonoBehaviour
             newTarget = transform.position + new Vector3(targetOffset.x,0,targetOffset.y);
             Vector3 newTargetDirection = newTarget - transform.position;
             float newTargetDistance = Vector3.Distance(transform.position, newTarget);
+            attempts++;
             if (GameManager.Instance.PositionIsOnLake(newTarget) && PathIsClear(newTargetDirection,newTargetDistance)) break;
             else if (attempts > 50)
             {
@@ -254,14 +260,7 @@ public class Duck : MonoBehaviour
             }
             //if (distance < foodDetectionRadius && (targetFood == null || distance < targetDistance)) SetTargetObject(food.gameObject);
         }
-        if (closestFood != null && closestDistance < foodDetectionRadius) SetTargetObject(closestFood.gameObject);
-        //Check if targeted food still exists
-        /*
-        else if (targetFood != null && !targetFood.activeSelf)
-        {
-            ReleaseTarget();
-        }
-        */
+        if (closestFood != null && closestDistance < awarenessRadius) SetTargetObject(closestFood.gameObject);
 
         if (state == State.Pursuit && targetFood == null) SetState(State.Idle);
     }

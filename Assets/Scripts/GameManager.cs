@@ -53,7 +53,7 @@ public class GameManager : MonoBehaviour
         RaycastHit hit;
         Vector3 origin = new Vector3(position.x, 10, position.z);
         Ray ray = new Ray(origin, Vector3.down);
-        if (Physics.Raycast(ray, out hit, 10))
+        if (Physics.SphereCast(ray, 2f, out hit, 10))
         {
             return hit.collider.gameObject.layer == 4;
         }

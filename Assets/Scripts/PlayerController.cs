@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using UnityEngine.InputSystem;
+using Gyroscope = UnityEngine.InputSystem.Gyroscope;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 using TouchState = UnityEngine.InputSystem.LowLevel.TouchState;
 
@@ -17,6 +18,9 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private InputActions controls;
     private InputAction touch;
+    private InputAction gyro;
+    private InputAction attitude;
+    private Quaternion attitudeOffset;
 
     [SerializeField] private float swipeVelocityDamping = 1f;
     [SerializeField] private float throwVelocityThreshold = 1000f;
@@ -35,16 +39,48 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
+        if (Gyroscope.current != null) InputSystem.EnableDevice(Gyroscope.current);
+        if (AttitudeSensor.current != null) InputSystem.EnableDevice(AttitudeSensor.current);
+
         touch = controls.Player.Touch;
         touch.Enable();
         touch.performed += OnTouch;
+        gyro = controls.Player.Rotation;
+        gyro.Enable();
+        attitude = controls.Player.Attitude;
+        attitude.Enable();
     }
 
-    IEnumerator ThrowCooldown()
+    private void OnDisable()
     {
-        canThrow = false;
-        yield return new WaitForSeconds(0.5f);
-        canThrow = true;
+        touch.Disable();
+        gyro.Disable();
+    }
+
+    void Start()
+    {
+        availableFood = startingFood;
+        attitudeOffset = Quaternion.Euler(90f, 0f, 0f);
+    }
+
+    void Update()
+    {
+        Look();
+
+        if (touching)
+        {
+            swipePos = Vector2.SmoothDamp(swipePos, touch.ReadValue<TouchState>().position, ref swipeVelocity, swipeVelocityDamping);
+        }
+    }
+
+    private void Look()
+    {
+        //Vector3 gyroValue = gyro.ReadValue<Vector3>();
+        //Vector3 deviceRotation = new Vector3(-gyroValue.x, -gyroValue.y, gyroValue.z);
+        //transform.Rotate(deviceRotation, Space.Self);
+
+        Quaternion deviceOrientation = attitude.ReadValue<Quaternion>();
+        transform.rotation = attitudeOffset * Utilities.GyroToUnity(deviceOrientation);
     }
 
     private void OnTouch(InputAction.CallbackContext callback)
@@ -73,31 +109,13 @@ public class PlayerController : MonoBehaviour
 
     private void ReadSwipe(Vector2 velocity)
     {
-        if(velocity.magnitude > throwVelocityThreshold)
+        if (velocity.magnitude > throwVelocityThreshold)
         {
             Vector2 swipeDirection = velocity.normalized;
             float angle = Utilities.Map(swipeDirection.x, -1, 1, Mathf.PI / 4, -Mathf.PI / 4);
             Vector3 throwDirection = Utilities.RotateVector(transform.forward, angle);
             throwDirection.y = 0.1f;
             ThrowFood(throwDirection, velocity.magnitude / throwVelocityDivisor);
-        }
-    }
-
-    private void OnDisable()
-    {
-        touch.Disable();
-    }
-
-    void Start()
-    {
-        availableFood = startingFood;
-    }
-
-    void Update()
-    {
-        if (touching)
-        {
-            swipePos = Vector2.SmoothDamp(swipePos, touch.ReadValue<TouchState>().position, ref swipeVelocity, swipeVelocityDamping);
         }
     }
 
@@ -115,6 +133,14 @@ public class PlayerController : MonoBehaviour
         }
         if (availableFood == 0) GameEnd();
     }
+
+    IEnumerator ThrowCooldown()
+    {
+        canThrow = false;
+        yield return new WaitForSeconds(0.5f);
+        canThrow = true;
+    }
+
 
     private void GameEnd()
     {

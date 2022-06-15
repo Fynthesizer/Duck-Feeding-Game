@@ -65,6 +65,22 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Rotation"",
+                    ""type"": ""Value"",
+                    ""id"": ""39f0a395-2d9f-417f-b149-0ad886ef19c0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Attitude"",
+                    ""type"": ""Value"",
+                    ""id"": ""ac1daf49-4b6a-4e6a-89c1-a71434d9927c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -329,6 +345,28 @@ public class @InputActions : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Touch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1aa784b3-895f-4b56-83eb-3aeac58ed13f"",
+                    ""path"": ""<Gyroscope>/angularVelocity"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Rotation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6d5e859e-1b7c-4b24-8e4c-772a0b2374c8"",
+                    ""path"": ""<AttitudeSensor>/attitude"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attitude"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -912,6 +950,8 @@ public class @InputActions : IInputActionCollection, IDisposable
         m_Player_Tap = m_Player.FindAction("Tap", throwIfNotFound: true);
         m_Player_Position = m_Player.FindAction("Position", throwIfNotFound: true);
         m_Player_Touch = m_Player.FindAction("Touch", throwIfNotFound: true);
+        m_Player_Rotation = m_Player.FindAction("Rotation", throwIfNotFound: true);
+        m_Player_Attitude = m_Player.FindAction("Attitude", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -979,6 +1019,8 @@ public class @InputActions : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_Tap;
     private readonly InputAction m_Player_Position;
     private readonly InputAction m_Player_Touch;
+    private readonly InputAction m_Player_Rotation;
+    private readonly InputAction m_Player_Attitude;
     public struct PlayerActions
     {
         private @InputActions m_Wrapper;
@@ -989,6 +1031,8 @@ public class @InputActions : IInputActionCollection, IDisposable
         public InputAction @Tap => m_Wrapper.m_Player_Tap;
         public InputAction @Position => m_Wrapper.m_Player_Position;
         public InputAction @Touch => m_Wrapper.m_Player_Touch;
+        public InputAction @Rotation => m_Wrapper.m_Player_Rotation;
+        public InputAction @Attitude => m_Wrapper.m_Player_Attitude;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1016,6 +1060,12 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @Touch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTouch;
                 @Touch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTouch;
                 @Touch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnTouch;
+                @Rotation.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRotation;
+                @Rotation.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRotation;
+                @Rotation.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnRotation;
+                @Attitude.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttitude;
+                @Attitude.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttitude;
+                @Attitude.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAttitude;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -1038,6 +1088,12 @@ public class @InputActions : IInputActionCollection, IDisposable
                 @Touch.started += instance.OnTouch;
                 @Touch.performed += instance.OnTouch;
                 @Touch.canceled += instance.OnTouch;
+                @Rotation.started += instance.OnRotation;
+                @Rotation.performed += instance.OnRotation;
+                @Rotation.canceled += instance.OnRotation;
+                @Attitude.started += instance.OnAttitude;
+                @Attitude.performed += instance.OnAttitude;
+                @Attitude.canceled += instance.OnAttitude;
             }
         }
     }
@@ -1200,6 +1256,8 @@ public class @InputActions : IInputActionCollection, IDisposable
         void OnTap(InputAction.CallbackContext context);
         void OnPosition(InputAction.CallbackContext context);
         void OnTouch(InputAction.CallbackContext context);
+        void OnRotation(InputAction.CallbackContext context);
+        void OnAttitude(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

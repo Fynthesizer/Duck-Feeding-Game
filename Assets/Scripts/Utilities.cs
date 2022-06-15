@@ -18,4 +18,9 @@ public static class Utilities
             );
         return newVector;
     }
+
+    public static Quaternion GyroToUnity(Quaternion q)
+    {
+        return new Quaternion(q.x, q.y, -q.z, -q.w);
+    }
 }

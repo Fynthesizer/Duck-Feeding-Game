@@ -9,14 +9,15 @@ public class DuckFood : MonoBehaviour
 
     public bool inWater = false;
 
-    List<Duck> interestedDucks;
-
     private AudioSource splashSource;
+    [SerializeField] private ParticleSystem particleSystem;
+    private Bobbing bobbing;
 
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
         splashSource = gameObject.GetComponent<AudioSource>();
+        bobbing = gameObject.GetComponent<Bobbing>();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -24,8 +25,12 @@ public class DuckFood : MonoBehaviour
         if (other.gameObject.layer == 4 && !inWater) //On collision with water
         {
             inWater = true;
+            rb.isKinematic = true;
+            transform.position = new Vector3(transform.position.x, 5, transform.position.z);
+            bobbing.enabled = true;
             Duck.UpdateSurroundings();
             splashSource.Play();
+            particleSystem.Play();
         }
 
         else if (other.gameObject.layer == 6) //On collision with terrain
@@ -39,6 +44,7 @@ public class DuckFood : MonoBehaviour
         Duck.UpdateSurroundings();
     }
 
+    /*
     private void OnTriggerStay(Collider other)
     {
         if(other.gameObject.layer == 4)
@@ -55,4 +61,5 @@ public class DuckFood : MonoBehaviour
             rb.drag = 2;
         }
     }
+    */
 }
