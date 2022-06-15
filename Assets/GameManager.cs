@@ -52,9 +52,10 @@ public class GameManager : MonoBehaviour
     {
         RaycastHit hit;
         Vector3 origin = new Vector3(position.x, 10, position.z);
-        if (Physics.Raycast(origin, Vector3.down, out hit, 10))
+        Ray ray = new Ray(origin, Vector3.down);
+        if (Physics.Raycast(ray, out hit, 10))
         {
-            return hit.collider.gameObject.layer == 4 ? true : false;
+            return hit.collider.gameObject.layer == 4;
         }
         else return false;
     }

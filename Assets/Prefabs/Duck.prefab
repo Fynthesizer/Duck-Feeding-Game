@@ -66,14 +66,24 @@ MonoBehaviour:
   model: {fileID: 1251798592902256592}
   foodConsumed: 0
   state: 0
+  debug: 1
   speed: 0.75
-  turnSpeed: 5
+  reactionTime: 0.1
+  pursuitSpeedMultiplier: 1.5
+  turnSpeed: 2
   minIdleTime: 1
   maxIdleTime: 8
   eatTime: 1
   foodDetectionRadius: 10
   wanderRadius: 5
-  avoidDucks: 0
+  avoidObstacles: 1
+  avoidDistance: 0.5
+  wanderAvoidLayers:
+    serializedVersion: 2
+    m_Bits: 384
+  pursuitAvoidLayers:
+    serializedVersion: 2
+    m_Bits: 256
   quackClips:
   - {fileID: 8300000, guid: c39c4ea9c113b074b840bc0ecc388ef9, type: 3}
   - {fileID: 8300000, guid: 108a92ca59b105a42b61a27102ca5808, type: 3}

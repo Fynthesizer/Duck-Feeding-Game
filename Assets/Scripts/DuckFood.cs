@@ -23,7 +23,6 @@ public class DuckFood : MonoBehaviour
     {
         if (other.gameObject.layer == 4 && !inWater) //On collision with water
         {
-            //rb.isKinematic = true; //Freeze food's position
             inWater = true;
             Duck.UpdateSurroundings();
             splashSource.Play();
