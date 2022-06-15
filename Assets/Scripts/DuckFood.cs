@@ -9,7 +9,7 @@ public class DuckFood : MonoBehaviour
 
     public bool inWater = false;
 
-    List<DuckAI> interestedDucks;
+    List<Duck> interestedDucks;
 
     private AudioSource splashSource;
 
@@ -25,14 +25,19 @@ public class DuckFood : MonoBehaviour
         {
             //rb.isKinematic = true; //Freeze food's position
             inWater = true;
-            DuckAI.UpdateSurroundings();
+            Duck.UpdateSurroundings();
             splashSource.Play();
+        }
+
+        else if (other.gameObject.layer == 6) //On collision with terrain
+        {
+            Destroy(gameObject);
         }
     }
 
     private void OnDestroy()
     {
-        DuckAI.UpdateSurroundings();
+        Duck.UpdateSurroundings();
     }
 
     private void OnTriggerStay(Collider other)

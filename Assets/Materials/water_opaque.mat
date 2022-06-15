@@ -19,6 +19,14 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - NormalMap1:
+        m_Texture: {fileID: 2800000, guid: 000bb7d76b79f2145af681364df01800, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - NormalMap2:
+        m_Texture: {fileID: 2800000, guid: 4f26c90d329f1d04bbb10b7ec3f1c125, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -81,6 +89,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - NormalMapScale1: 0.1
+    - NormalMapScale2: 0.2
+    - Opacity: 0.87
     - _AlphaClip: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 0
@@ -113,10 +124,10 @@ Material:
     - _ReflectionPower: 0
     - _RefractionScale: 0.07
     - _RefractionSpeed: 0.01
-    - _RefractionStrength: 0.04
+    - _RefractionStrength: 0.15
     - _RippleScale: 2
     - _RippleStrength: 0.003
-    - _Smoothness: 0.5
+    - _Smoothness: 0.3
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
@@ -128,7 +139,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 0
     m_Colors:
-    - Colour: {r: 0.18943574, g: 0.3595325, b: 0.4056604, a: 1}
+    - Colour: {r: 0.15917587, g: 0.40283513, b: 0.46226418, a: 1}
     - _BaseColor: {r: 0.21176471, g: 0.29803923, b: 0.3584906, a: 0.7529412}
     - _Color: {r: 0.21176471, g: 0.29803923, b: 0.3584906, a: 0.7529412}
     - _DeepWater: {r: 0.122774996, g: 0.23589359, b: 0.2924528, a: 1}

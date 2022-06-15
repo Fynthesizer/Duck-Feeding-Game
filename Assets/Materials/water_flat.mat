@@ -7,26 +7,20 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: water_nice
-  m_Shader: {fileID: -6465566751694194690, guid: f033232e767a1984189079348be358c6, type: 3}
+  m_Name: water_flat
+  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
+  m_CustomRenderQueue: 2000
+  stringTagMap:
+    RenderType: Opaque
+  disabledShaderPasses:
+  - DepthOnly
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - NormalMap1:
-        m_Texture: {fileID: 2800000, guid: 000bb7d76b79f2145af681364df01800, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - NormalMap2:
-        m_Texture: {fileID: 2800000, guid: 4f26c90d329f1d04bbb10b7ec3f1c125, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _BaseMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -67,20 +61,8 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _ReflectionTexture:
-        m_Texture: {fileID: 8400000, guid: 9c6cf1220f4810f4a8045cf68e26d185, type: 2}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Texture2DAsset_2f6d08a5ee6a49f998e65c74d191549e_Out_0:
-        m_Texture: {fileID: 2800000, guid: 000bb7d76b79f2145af681364df01800, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Texture2DAsset_79ac2c6355aa48eca953d7dc6b6d7ef1_Out_0:
-        m_Texture: {fileID: 2800000, guid: 4f26c90d329f1d04bbb10b7ec3f1c125, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -99,62 +81,40 @@ Material:
     m_Floats:
     - _AlphaClip: 0
     - _Blend: 0
-    - _BlendModePreserveSpecular: 0
+    - _BlendModePreserveSpecular: 1
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
-    - _Depth: 1.04
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
-    - _DistortionPower: 0.2
-    - _DstBlend: 10
+    - _DstBlend: 0
     - _DstBlendAlpha: 10
     - _EnvironmentReflections: 1
-    - _FoamAmount: 0.2
-    - _FoamCutoff: 1
-    - _FoamScale: 0.1
-    - _FoamSpeed: 0.2
-    - _FogFade: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
-    - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _ReflectionPower: 0
-    - _RefractionScale: 0.1
-    - _RefractionSpeed: 0.01
-    - _RefractionStrength: 0.1
-    - _RippleScale: 2
-    - _RippleStrength: 0.003
-    - _Smoothness: 0.15
+    - _Smoothness: 0.536
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 5
+    - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _Strength: 0.963
-    - _Surface: 1
-    - _UseReflection: 1
-    - _WaterDepth: 1.39
+    - _Surface: 0
     - _WorkflowMode: 1
-    - _ZWrite: 0
+    - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.21176471, g: 0.29803923, b: 0.3584906, a: 0.7529412}
-    - _Color: {r: 0.21176471, g: 0.29803923, b: 0.3584906, a: 0.7529412}
-    - _DeepWater: {r: 0.11084905, g: 0.33254728, b: 0.4433962, a: 1}
-    - _Deep_Colour: {r: 0.20784311, g: 0.972549, b: 0.95097107, a: 0.2784314}
+    - _BaseColor: {r: 0.1613563, g: 0.53596795, b: 0.6981132, a: 1}
+    - _Color: {r: 0.1613563, g: 0.53596795, b: 0.6981132, a: 0.8666667}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _FoamColour: {r: 1, g: 1, b: 1, a: 0.72156864}
-    - _ShallowWater: {r: 0.18280512, g: 0.40953442, b: 0.49056596, a: 0.6431373}
-    - _Shallow_Colour: {r: 0.040939845, g: 0.32496545, b: 0.3773585, a: 0.21960784}
-    - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
---- !u!114 &8363368137185804900
+--- !u!114 &2330349330570897759
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

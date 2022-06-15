@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DuckAI : MonoBehaviour
+public class Duck : MonoBehaviour
 {
     [SerializeField] private Transform model;
     private Rigidbody rb;
@@ -23,6 +23,7 @@ public class DuckAI : MonoBehaviour
     [SerializeField] private float eatTime = 1;
     [SerializeField] private float foodDetectionRadius = 10;
     [SerializeField] private float wanderRadius = 5;
+    [SerializeField] private bool avoidDucks = true;
 
     [SerializeField] private AudioClip[] quackClips;
     private AudioSource quackSource;
@@ -47,6 +48,7 @@ public class DuckAI : MonoBehaviour
         targetLocation = transform.position;
         waitTimer = StartCoroutine(Wait());
         StartCoroutine(QuackCoroutine());
+        speed = Random.Range(0.75f, 1.25f);
     }
 
     void Update()
@@ -57,10 +59,26 @@ public class DuckAI : MonoBehaviour
     void Movement()
     {
         if(state == State.Wandering || state == State.Pursuit) {
+            float moveSpeed = state == State.Pursuit ? speed * 2 : speed;
+            Vector3 moveForce = new Vector3();
             targetDirection = (targetLocation - transform.position).normalized;
             targetDirection = new Vector3(targetDirection.x, 0, targetDirection.z); //Flatten the direction so that it is only on one plane
-            rb.AddForce(targetDirection * speed);
-            rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(targetDirection,Vector3.up), Time.deltaTime * turnSpeed);
+            moveForce += targetDirection;
+
+            if (avoidDucks) { 
+                var nearDucks = Duck.DucksInVicinity(transform.position, 2);
+                foreach(Duck duck in nearDucks)
+                {
+                    float distanceToDuck = Vector3.Distance(duck.transform.position, transform.position);
+                    Vector3 directionToDuck = (duck.transform.position - transform.position).normalized;
+                    moveForce -= directionToDuck * (2 - distanceToDuck);
+                }
+            }
+
+            moveForce = moveForce.normalized * moveSpeed;
+
+            rb.AddForce(moveForce);
+            rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(targetDirection, Vector3.up), Time.deltaTime * turnSpeed);
             targetDistance = Vector3.Distance(transform.position, targetLocation);
             if (targetDistance < 0.1) SetState(State.Idle);
         }
@@ -117,7 +135,8 @@ public class DuckAI : MonoBehaviour
         while (glowAmount > 0f)
         {
             glowAmount -= glowFadeSpeed;
-            material.SetFloat("Glow", glowAmount);
+            //material.SetFloat("Glow", glowAmount);
+            material.SetColor("Emissive_Color", new Color(glowAmount,glowAmount,glowAmount,1));
             yield return null;
         }
     }
@@ -126,7 +145,7 @@ public class DuckAI : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(Random.Range(4, 30));
+            yield return new WaitForSeconds(Random.Range(2f, 40f));
             AudioClip quackClip = quackClips[Random.Range(0, quackClips.Length)];
             quackSource.PlayOneShot(quackClip);
         }
@@ -138,20 +157,9 @@ public class DuckAI : MonoBehaviour
         while (true) { 
             Vector2 targetOffset = Random.insideUnitCircle * maxDistance;
             newTarget = transform.position + new Vector3(targetOffset.x,0,targetOffset.y);
-            if (TargetIsOnLake(newTarget)) break;
+            if (GameManager.Instance.PositionIsOnLake(newTarget)) break;
         }
         return newTarget;
-    }
-
-    private bool TargetIsOnLake(Vector3 target)
-    {
-        RaycastHit hit;
-        Vector3 origin = new Vector3(target.x, 10, target.z);
-        if (Physics.Raycast(origin, Vector3.down, out hit, 10))
-        {
-            return hit.collider.gameObject.layer == 4 ? true : false;
-        }
-        else return false;
     }
 
     public void SetTargetObject(GameObject target)
@@ -206,10 +214,21 @@ public class DuckAI : MonoBehaviour
 
     public static void UpdateSurroundings()
     {
-        DuckAI[] ducks = FindObjectsOfType<DuckAI>();
-        foreach(DuckAI duck in ducks)
+        Duck[] ducks = FindObjectsOfType<Duck>();
+        foreach(Duck duck in ducks)
         {
             if(duck.state != State.Eating) duck.CheckSurroundings();
         }
+    }
+
+    public static List<Duck> DucksInVicinity(Vector3 origin, float radius)
+    {
+        Duck[] allDucks = FindObjectsOfType<Duck>();
+        var nearDucks = new List<Duck>();
+        foreach(Duck duck in allDucks)
+        {
+            if (Vector3.Distance(duck.transform.position, origin) < radius) nearDucks.Add(duck);
+        }
+        return nearDucks;
     }
 }
