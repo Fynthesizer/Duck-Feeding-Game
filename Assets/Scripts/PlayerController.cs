@@ -16,11 +16,18 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private Camera cam;
 
+    [Header("Controls")]
+    [SerializeField] private bool gyroControlEnabled = false;
     [SerializeField] private InputActions controls;
+    [SerializeField] private float cameraSmoothing = 0.1f;
     private InputAction touch;
     private InputAction gyro;
     private InputAction attitude;
-    private Quaternion attitudeOffset;
+    private float _initialYAngle = 0f;
+    private float _appliedGyroYAngle = 0f;
+    private float _calibrationYAngle = 0f;
+    private Transform _rawGyroRotation;
+    private float calibrationYAngle;
 
     [SerializeField] private float swipeVelocityDamping = 1f;
     [SerializeField] private float throwVelocityThreshold = 1000f;
@@ -55,13 +62,28 @@ public class PlayerController : MonoBehaviour
     {
         touch.Disable();
         gyro.Disable();
+        InputSystem.DisableDevice(Gyroscope.current);
+        InputSystem.DisableDevice(AttitudeSensor.current);
     }
 
     void Start()
     {
+        //StartCoroutine(InitialiseGyroscope());
         availableFood = startingFood;
-        attitudeOffset = Quaternion.Euler(90f, 0f, 0f);
+        _initialYAngle = transform.eulerAngles.y;
+        _rawGyroRotation = new GameObject("GyroRaw").transform;
+        _rawGyroRotation.position = transform.position;
+        _rawGyroRotation.rotation = transform.rotation;
+        StartCoroutine(InitialiseGyroscope());
     }
+
+    private IEnumerator InitialiseGyroscope()
+    {
+        yield return new WaitForSeconds(0.5f);
+        _calibrationYAngle = _appliedGyroYAngle - _initialYAngle; 
+        gyroControlEnabled = true;
+    }
+
 
     void Update()
     {
@@ -73,14 +95,24 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void ApplyGyroRotation()
+    {
+        _rawGyroRotation.rotation = attitude.ReadValue<Quaternion>();
+        _rawGyroRotation.Rotate(0f, 0f, 180f, Space.Self); // Swap "handedness" of quaternion from gyro.
+        _rawGyroRotation.Rotate(90f, 180f, 0f, Space.World); // Rotate to make sense as a camera pointing out the back of your device.
+        _appliedGyroYAngle = _rawGyroRotation.eulerAngles.y; // Save the angle around y axis for use in calibration.
+    }
+
+    private void ApplyCalibration()
+    {
+        _rawGyroRotation.Rotate(0f, -_calibrationYAngle, 0f, Space.World); // Rotates y angle back however much it deviated when calibrationYAngle was saved.
+    }
+
     private void Look()
     {
-        //Vector3 gyroValue = gyro.ReadValue<Vector3>();
-        //Vector3 deviceRotation = new Vector3(-gyroValue.x, -gyroValue.y, gyroValue.z);
-        //transform.Rotate(deviceRotation, Space.Self);
-
-        Quaternion deviceOrientation = attitude.ReadValue<Quaternion>();
-        transform.rotation = attitudeOffset * Utilities.GyroToUnity(deviceOrientation);
+        ApplyGyroRotation();
+        ApplyCalibration();
+        if (gyroControlEnabled) transform.rotation = Quaternion.Slerp(transform.rotation, _rawGyroRotation.rotation, cameraSmoothing);
     }
 
     private void OnTouch(InputAction.CallbackContext callback)
@@ -109,7 +141,7 @@ public class PlayerController : MonoBehaviour
 
     private void ReadSwipe(Vector2 velocity)
     {
-        if (velocity.magnitude > throwVelocityThreshold)
+        if (velocity.magnitude > throwVelocityThreshold && velocity.y > 0)
         {
             Vector2 swipeDirection = velocity.normalized;
             float angle = Utilities.Map(swipeDirection.x, -1, 1, Mathf.PI / 4, -Mathf.PI / 4);

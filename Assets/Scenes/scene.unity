@@ -1408,6 +1408,8 @@ MonoBehaviour:
   throwForce: 100
   duckFood: {fileID: 8608952351193160687, guid: fe5dff007299ba24194581c01c193cce, type: 3}
   cam: {fileID: 1734399143}
+  gyroControlEnabled: 0
+  cameraSmoothing: 0.5
   swipeVelocityDamping: 0.1
   throwVelocityThreshold: 1000
   throwVelocityDivisor: 25

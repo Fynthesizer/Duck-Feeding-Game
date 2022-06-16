@@ -984,7 +984,7 @@
         }
     },
     "m_Path": "Shader Graphs",
-    "m_ConcretePrecision": 1,
+    "m_ConcretePrecision": 0,
     "m_PreviewMode": 2,
     "m_OutputNode": {
         "m_Id": ""
@@ -3142,8 +3142,8 @@
         "m_Position": {
             "serializedVersion": "2",
             "x": -87.99998474121094,
-            "y": -631.0,
-            "width": 151.0,
+            "y": -448.0,
+            "width": 161.0,
             "height": 34.0
         }
     },
