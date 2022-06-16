@@ -58,6 +58,12 @@ public class PlayerController : MonoBehaviour
         attitude.Enable();
     }
 
+    private void OnApplicationFocus(bool focus)
+    {
+        if(!focus) InputSystem.DisableDevice(AttitudeSensor.current);
+        else InputSystem.EnableDevice(AttitudeSensor.current);
+    }
+
     private void OnDisable()
     {
         touch.Disable();
@@ -87,6 +93,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        print(attitude.ReadValue<Quaternion>());
         Look();
 
         if (touching)
