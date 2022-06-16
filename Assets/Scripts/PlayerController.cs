@@ -15,19 +15,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject duckFood;
 
     [SerializeField] private Camera cam;
+    private GyroscopeControls gyroControls;
 
     [Header("Controls")]
-    [SerializeField] private bool gyroControlEnabled = false;
-    [SerializeField] private InputActions controls;
+    [SerializeField] public InputActions controls;
     [SerializeField] private float cameraSmoothing = 0.1f;
     private InputAction touch;
-    private InputAction gyro;
-    private InputAction attitude;
-    private float _initialYAngle = 0f;
-    private float _appliedGyroYAngle = 0f;
-    private float _calibrationYAngle = 0f;
-    private Transform _rawGyroRotation;
-    private float calibrationYAngle;
+    
 
     [SerializeField] private float swipeVelocityDamping = 1f;
     [SerializeField] private float throwVelocityThreshold = 1000f;
@@ -44,82 +38,35 @@ public class PlayerController : MonoBehaviour
         controls = new InputActions();
     }
 
+
     private void OnEnable()
     {
-        if (Gyroscope.current != null) InputSystem.EnableDevice(Gyroscope.current);
-        if (AttitudeSensor.current != null) InputSystem.EnableDevice(AttitudeSensor.current);
-
         touch = controls.Player.Touch;
         touch.Enable();
         touch.performed += OnTouch;
-        gyro = controls.Player.Rotation;
-        gyro.Enable();
-        attitude = controls.Player.Attitude;
-        attitude.Enable();
-    }
-
-    private void OnApplicationFocus(bool focus)
-    {
-        if(!focus) InputSystem.DisableDevice(AttitudeSensor.current);
-        else InputSystem.EnableDevice(AttitudeSensor.current);
     }
 
     private void OnDisable()
     {
         touch.Disable();
-        gyro.Disable();
-        InputSystem.DisableDevice(Gyroscope.current);
-        InputSystem.DisableDevice(AttitudeSensor.current);
     }
 
     void Start()
     {
-        //StartCoroutine(InitialiseGyroscope());
         availableFood = startingFood;
-        _initialYAngle = transform.eulerAngles.y;
-        _rawGyroRotation = new GameObject("GyroRaw").transform;
-        _rawGyroRotation.position = transform.position;
-        _rawGyroRotation.rotation = transform.rotation;
-        StartCoroutine(InitialiseGyroscope());
-    }
+        gyroControls = gameObject.GetComponent<GyroscopeControls>();
 
-    private IEnumerator InitialiseGyroscope()
-    {
-        yield return new WaitForSeconds(0.5f);
-        _calibrationYAngle = _appliedGyroYAngle - _initialYAngle; 
-        gyroControlEnabled = true;
+#if UNITY_ANDROID && !UNITY_EDITOR
+        gyroControls.enabled = true;
+#endif
     }
-
 
     void Update()
     {
-        print(attitude.ReadValue<Quaternion>());
-        Look();
-
         if (touching)
         {
             swipePos = Vector2.SmoothDamp(swipePos, touch.ReadValue<TouchState>().position, ref swipeVelocity, swipeVelocityDamping);
         }
-    }
-
-    private void ApplyGyroRotation()
-    {
-        _rawGyroRotation.rotation = attitude.ReadValue<Quaternion>();
-        _rawGyroRotation.Rotate(0f, 0f, 180f, Space.Self); // Swap "handedness" of quaternion from gyro.
-        _rawGyroRotation.Rotate(90f, 180f, 0f, Space.World); // Rotate to make sense as a camera pointing out the back of your device.
-        _appliedGyroYAngle = _rawGyroRotation.eulerAngles.y; // Save the angle around y axis for use in calibration.
-    }
-
-    private void ApplyCalibration()
-    {
-        _rawGyroRotation.Rotate(0f, -_calibrationYAngle, 0f, Space.World); // Rotates y angle back however much it deviated when calibrationYAngle was saved.
-    }
-
-    private void Look()
-    {
-        ApplyGyroRotation();
-        ApplyCalibration();
-        if (gyroControlEnabled) transform.rotation = Quaternion.Slerp(transform.rotation, _rawGyroRotation.rotation, cameraSmoothing);
     }
 
     private void OnTouch(InputAction.CallbackContext callback)

@@ -10,6 +10,7 @@ public class Duck : MonoBehaviour
 
     private Vector3 targetLocation;
     private Vector3 targetDirection;
+    private Vector3 moveDirection;
     private GameObject targetFood;
     private float targetDistance;
     private Coroutine waitTimer;
@@ -63,20 +64,22 @@ public class Duck : MonoBehaviour
         targetLocation = transform.position;
         waitTimer = StartCoroutine(Wait());
         StartCoroutine(QuackCoroutine());
+        StartCoroutine(SwimCoroutine());
 
         InitialiseTraits();
     }
 
     private void InitialiseTraits()
     {
-        speed = Random.Range(0.75f, 1.25f);
+        speed = Random.Range(4f, 6f);
         reactionTime = Random.Range(0f, 1f);
         awarenessRadius = Random.Range(7.5f, 15f);
     }
 
     void Update()
     {
-        Movement();
+        //Movement();
+        rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * turnSpeed);
     }
 
     private void OnDrawGizmosSelected()
@@ -86,14 +89,67 @@ public class Duck : MonoBehaviour
         Debug.DrawLine(transform.position, targetLocation, Color.blue);
     }
 
+    IEnumerator SwimCoroutine()
+    {
+        while (true)
+        {
+            if (state == State.Wandering || state == State.Pursuit)
+            {
+                float moveSpeed = speed;
+                if (state == State.Pursuit) moveSpeed *= pursuitSpeedMultiplier;
+
+                targetDirection = (targetLocation - transform.position).normalized;
+                targetDirection = new Vector3(targetDirection.x, 0, targetDirection.z); //Flatten the direction so that it is only on one plane
+                targetDistance = Vector3.Distance(transform.position, targetLocation);
+                moveDirection = targetDirection;
+
+                if (avoidObstacles)
+                {
+                    float directionRotation = 0;
+                    //Rotate move direction until a clear path is found
+                    int direction = 1;
+                    int attempt = 1;
+                    while (true)
+                    {
+                        if (PathIsClear(moveDirection, avoidDistance)) break; //If the path ahead is clear, continue
+                        else if (directionRotation < Mathf.PI * 2) //Otherwise try a different path
+                        {
+                            directionRotation = Mathf.PI / 16f * attempt;
+                            directionRotation *= direction;
+                            attempt++;
+                            //direction *= -1;
+                            moveDirection = Utilities.RotateVector(targetDirection, directionRotation);
+                            continue;
+                        }
+                        else //If there are no clear paths, set state to idle
+                        {
+                            SetState(State.Idle);
+                            break;
+                        }
+                    }
+                }
+
+                Vector3 moveForce = moveDirection * moveSpeed;
+                rb.AddForce(moveForce);
+                
+                if (targetDistance < collider.radius) SetState(State.Idle);
+
+            }
+
+            //rb.AddTorque(Vector3.up * turnSpeed * 5f);
+            //
+            
+
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
     void Movement()
     {
         if(state == State.Wandering || state == State.Pursuit) {
-            float moveSpeed = speed;
-            if (state == State.Pursuit) moveSpeed *= pursuitSpeedMultiplier;
             targetDirection = (targetLocation - transform.position).normalized;
             targetDirection = new Vector3(targetDirection.x, 0, targetDirection.z); //Flatten the direction so that it is only on one plane
-            Vector3 moveDirection = targetDirection;
+            moveDirection = targetDirection;
 
             if (avoidObstacles) {
                 float directionRotation = 0;
@@ -119,9 +175,7 @@ public class Duck : MonoBehaviour
                     }
                 }
             }
-            Vector3 moveForce = moveDirection * moveSpeed;
 
-            rb.AddForce(moveForce);
             rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * turnSpeed);
             targetDistance = Vector3.Distance(transform.position, targetLocation);
             if (targetDistance < collider.radius) SetState(State.Idle);
@@ -183,7 +237,7 @@ public class Duck : MonoBehaviour
         {
             glowAmount -= glowFadeSpeed;
             //material.SetFloat("Glow", glowAmount);
-            material.SetColor("Emissive_Color", new Color(glowAmount,glowAmount,glowAmount,1));
+            material.SetColor("_Emissive_Color", new Color(glowAmount,glowAmount,glowAmount,1));
             yield return null;
         }
     }

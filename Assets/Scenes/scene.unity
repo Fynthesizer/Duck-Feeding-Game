@@ -1306,6 +1306,7 @@ GameObject:
   - component: {fileID: 2116794503}
   - component: {fileID: 2116794502}
   - component: {fileID: 2116794506}
+  - component: {fileID: 2116794507}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1408,11 +1409,24 @@ MonoBehaviour:
   throwForce: 100
   duckFood: {fileID: 8608952351193160687, guid: fe5dff007299ba24194581c01c193cce, type: 3}
   cam: {fileID: 1734399143}
-  gyroControlEnabled: 0
   cameraSmoothing: 0.5
   swipeVelocityDamping: 0.1
   throwVelocityThreshold: 1000
   throwVelocityDivisor: 25
+--- !u!114 &2116794507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2116794501}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 536c97daac855c042954185311c3c4c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  smoothing: 0.5
+  active: 0
 --- !u!1001 &628440667230778554
 PrefabInstance:
   m_ObjectHideFlags: 0
