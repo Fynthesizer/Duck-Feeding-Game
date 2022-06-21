@@ -10,7 +10,7 @@ using TouchState = UnityEngine.InputSystem.LowLevel.TouchState;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private int startingFood = 10;
-    public int availableFood;
+    public static int availableFood;
     [SerializeField] private float throwForce = 100;
     [SerializeField] private GameObject duckFood;
 
@@ -116,6 +116,7 @@ public class PlayerController : MonoBehaviour
             GameObject food = Instantiate(duckFood, spawnPos, Quaternion.identity);
             Rigidbody foodRb = food.GetComponent<Rigidbody>();
             foodRb.AddForce(direction * force);
+            GameManager.UIManager.UpdateFoodCount();
         }
         if (availableFood == 0) GameEnd();
     }

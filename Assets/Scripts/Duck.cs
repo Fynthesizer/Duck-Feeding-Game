@@ -5,6 +5,7 @@ using UnityEngine;
 public class Duck : MonoBehaviour
 {
     [SerializeField] private Transform model;
+    [SerializeField] private Animator animator;
     private Rigidbody rb;
     private CapsuleCollider collider;
 
@@ -20,6 +21,8 @@ public class Duck : MonoBehaviour
     [SerializeField] private float turnSpeed = 5;
     [SerializeField] private float minIdleTime = 1;
     [SerializeField] private float maxIdleTime = 8;
+    [SerializeField] private float minQuackInterval = 2;
+    [SerializeField] private float maxQuackInterval = 3;
     [SerializeField] private float eatTime = 1;
     [SerializeField] private float wanderRadius = 5;
 
@@ -59,7 +62,7 @@ public class Duck : MonoBehaviour
     {
         rb = gameObject.GetComponent<Rigidbody>();
         collider = gameObject.GetComponent<CapsuleCollider>();
-        material = model.GetComponent<MeshRenderer>().material;
+        material = model.GetComponent<SkinnedMeshRenderer>().material;
         quackSource = gameObject.GetComponent<AudioSource>();
         targetLocation = transform.position;
         waitTimer = StartCoroutine(Wait());
@@ -246,10 +249,16 @@ public class Duck : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(Random.Range(2f, 40f));
-            AudioClip quackClip = quackClips[Random.Range(0, quackClips.Length)];
-            quackSource.PlayOneShot(quackClip);
+            yield return new WaitForSeconds(Random.Range(minQuackInterval, maxQuackInterval));
+            Quack();
         }
+    }
+
+    private void Quack()
+    {
+        AudioClip quackClip = quackClips[Random.Range(0, quackClips.Length)];
+        quackSource.PlayOneShot(quackClip);
+        animator.SetTrigger("Quack");
     }
 
     private Vector3 FindNearPosition(float maxDistance)
@@ -291,6 +300,7 @@ public class Duck : MonoBehaviour
     {
         food.SetActive(false);
         StartCoroutine(FlashCoroutine());
+        animator.SetTrigger("Quack");
         Destroy(food);
         targetFood = null;
         foodConsumed++;

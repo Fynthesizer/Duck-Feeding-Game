@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
+    public static UIManager UIManager;
 
     public int duckCount = 10;
     [SerializeField] private GameObject[] duckPrefabs;
@@ -19,6 +20,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        UIManager = gameObject.GetComponent<UIManager>();
         lakeBounds = GameObject.FindGameObjectWithTag("Lake").GetComponent<Collider>().bounds;
         SpawnDucks(duckCount);
     }
