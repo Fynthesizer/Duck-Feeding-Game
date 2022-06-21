@@ -10,6 +10,10 @@ public class GameManager : MonoBehaviour
     public int duckCount = 10;
     [SerializeField] private GameObject[] duckPrefabs;
 
+    [SerializeField] private Material daySkybox;
+    [SerializeField] private Material sunsetSkybox;
+    [SerializeField] private Material nightSkybox;
+
     private Bounds lakeBounds;
 
     private void Awake()
@@ -23,6 +27,16 @@ public class GameManager : MonoBehaviour
         UIManager = gameObject.GetComponent<UIManager>();
         lakeBounds = GameObject.FindGameObjectWithTag("Lake").GetComponent<Collider>().bounds;
         SpawnDucks(duckCount);
+        SetSkybox();
+        
+    }
+
+    private void SetSkybox()
+    {
+        int time = System.DateTime.Now.Hour;
+        if (time < 6 || time > 20) RenderSettings.skybox = nightSkybox;
+        else if (time < 8 || time > 18) RenderSettings.skybox = sunsetSkybox;
+        else RenderSettings.skybox = daySkybox;
     }
 
     void Update()

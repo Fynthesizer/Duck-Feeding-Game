@@ -842,6 +842,9 @@ MonoBehaviour:
   duckPrefabs:
   - {fileID: 1291910713991478317, guid: b048039c26868f443934b75547fbc1e0, type: 3}
   - {fileID: 5051214543485764125, guid: 6933596169cb896449d699c814e4cf7d, type: 3}
+  daySkybox: {fileID: 2100000, guid: 9aee6022f6d6e5b43b577bbfcd06e7e4, type: 2}
+  sunsetSkybox: {fileID: 2100000, guid: d7fd09613e425aa498aaa83e9d3d83e7, type: 2}
+  nightSkybox: {fileID: 2100000, guid: c45d630ddb60b0740a386e04a832c595, type: 2}
 --- !u!4 &717882309
 Transform:
   m_ObjectHideFlags: 0

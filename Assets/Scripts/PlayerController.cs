@@ -53,7 +53,8 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        availableFood = startingFood;
+        availableFood = GameManager.Instance.duckCount;
+        GameManager.UIManager.UpdateFoodCount();
         gyroControls = gameObject.GetComponent<GyroscopeControls>();
 
 #if UNITY_ANDROID && !UNITY_EDITOR
