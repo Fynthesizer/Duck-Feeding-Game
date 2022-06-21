@@ -300,7 +300,7 @@ public class Duck : MonoBehaviour
     {
         food.SetActive(false);
         StartCoroutine(FlashCoroutine());
-        animator.SetTrigger("Quack");
+        animator.SetTrigger("Eat");
         Destroy(food);
         targetFood = null;
         foodConsumed++;

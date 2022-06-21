@@ -11,6 +11,7 @@ public class DuckFood : MonoBehaviour
 
     private AudioSource splashSource;
     [SerializeField] private ParticleSystem particleSystem;
+    [SerializeField] private GameObject ripple;
     private Bobbing bobbing;
 
     void Start()
@@ -31,6 +32,7 @@ public class DuckFood : MonoBehaviour
             Duck.UpdateSurroundings();
             splashSource.Play();
             particleSystem.Play();
+            CreateRipple();
         }
 
         else if (other.gameObject.layer == 6) //On collision with terrain
@@ -42,6 +44,12 @@ public class DuckFood : MonoBehaviour
     private void OnDestroy()
     {
         Duck.UpdateSurroundings();
+    }
+
+    private void CreateRipple()
+    {
+        Vector3 ripplePosition = new Vector3(transform.position.x, 5.01f, transform.position.z);
+        GameObject newRipple = Instantiate(ripple, ripplePosition, Quaternion.identity);
     }
 
     /*
