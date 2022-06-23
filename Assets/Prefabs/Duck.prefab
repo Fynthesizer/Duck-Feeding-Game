@@ -52,7 +52,7 @@ GameObject:
   m_Layer: 7
   m_Name: Duck
   m_TagString: Duck
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2800000, guid: bb0f6b2ebef7afd43ab0f4465fc88ff7, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -95,9 +95,12 @@ MonoBehaviour:
   maxQuackInterval: 30
   eatTime: 1
   wanderRadius: 5
-  speed: 0.75
-  reactionTime: 0.1
-  awarenessRadius: 10
+  duckData:
+    duckName: 
+    gender: 0
+    speed: 0
+    reactionTime: 0
+    awarenessRadius: 0
   foodConsumed: 0
   state: 0
   avoidObstacles: 1

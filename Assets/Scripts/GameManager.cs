@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     public int duckCount = 10;
     [SerializeField] private GameObject[] duckPrefabs;
 
+    [SerializeField] private Transform duckGroup;
+
     [SerializeField] private Material daySkybox;
     [SerializeField] private Material sunsetSkybox;
     [SerializeField] private Material nightSkybox;
@@ -76,7 +78,7 @@ public class GameManager : MonoBehaviour
             }
 
             GameObject duckPrefab = duckPrefabs[Random.Range(0, duckPrefabs.Length)];
-            GameObject newDuck = Instantiate(duckPrefab, spawnPosition, Quaternion.identity);
+            GameObject newDuck = Instantiate(duckPrefab, spawnPosition, Quaternion.identity, duckGroup);
             newDuck.GetComponent<Duck>().SetData(raftData.raft[i]);
         }
     }

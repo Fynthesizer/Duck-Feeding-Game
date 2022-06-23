@@ -9,9 +9,8 @@ using TouchState = UnityEngine.InputSystem.LowLevel.TouchState;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private int startingFood = 10;
+    [SerializeField] private bool infiniteFood;
     public static int availableFood;
-    [SerializeField] private float throwForce = 100;
     [SerializeField] private GameObject duckFood;
 
     [SerializeField] private Camera cam;
@@ -26,6 +25,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float swipeVelocityDamping = 1f;
     [SerializeField] private float throwVelocityThreshold = 1000f;
     [SerializeField] private float throwVelocityDivisor = 100f;
+    [SerializeField] private float throwAngleMultiplier = 20f;
+    [SerializeField] private float throwArchMultiplier = 5f;
     private bool touching = false;
     private Vector2 swipeStartPos;
     private Vector2 swipeVelocity;
@@ -103,9 +104,10 @@ public class PlayerController : MonoBehaviour
         if (velocity.magnitude > throwVelocityThreshold && velocity.y > 0)
         {
             Vector2 swipeDirection = velocity.normalized;
-            float angle = Utilities.Map(swipeDirection.x, -1, 1, Mathf.PI / 4, -Mathf.PI / 4);
-            Vector3 throwDirection = Utilities.RotateVector(transform.forward, angle);
-            throwDirection.y = 0.1f;
+            float angle = Utilities.Map(swipeDirection.x, -1, 1, -Mathf.PI, Mathf.PI) * throwAngleMultiplier;
+            Vector3 throwDirection = Quaternion.AngleAxis(angle, transform.up) * transform.forward;
+            throwDirection = Quaternion.AngleAxis(-Mathf.PI * throwArchMultiplier, transform.right) * throwDirection;
+            //throwDirection.y = 0.1f;
             ThrowFood(throwDirection, velocity.magnitude / throwVelocityDivisor);
         }
     }
@@ -114,7 +116,7 @@ public class PlayerController : MonoBehaviour
     {
         if (canThrow && availableFood > 0) {
             StartCoroutine(ThrowCooldown());
-            availableFood--;
+            if (!infiniteFood) availableFood--;
             Vector3 spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
             spawnPos += transform.forward;
             //spawnPos.x += Utilities.Map(swipeStartPos.x, 0, Screen.width, -1f, 1f);

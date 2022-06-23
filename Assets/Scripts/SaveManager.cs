@@ -10,13 +10,7 @@ public class SaveManager : MonoBehaviour
 
     void Start()
     {
-        CreateRaftData();
         SetPaths();
-    }
-
-    private void CreateRaftData()
-    {
-        //raftData
     }
 
     private void SetPaths()
@@ -25,17 +19,11 @@ public class SaveManager : MonoBehaviour
         persistentPath = Application.persistentDataPath + Path.AltDirectorySeparatorChar + "SaveData.json";
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void SaveData(RaftData data)
     {
         string savePath = path;
         string json = JsonUtility.ToJson(data, true);
-        //Debug.Log(json);
 
         using StreamWriter writer = new StreamWriter(savePath);
         writer.Write(json);
