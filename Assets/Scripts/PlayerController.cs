@@ -32,6 +32,9 @@ public class PlayerController : MonoBehaviour
     private Vector2 swipePos;
     private bool canThrow = true;
 
+    private AudioSource audioSource;
+    [SerializeField] private AudioClip throwSound;
+
     private void Awake()
     {
         Application.targetFrameRate = 60;
@@ -56,6 +59,7 @@ public class PlayerController : MonoBehaviour
         availableFood = GameManager.Instance.duckCount;
         GameManager.UIManager.UpdateFoodCount();
         gyroControls = gameObject.GetComponent<GyroscopeControls>();
+        audioSource = GetComponent<AudioSource>();
 
 #if UNITY_ANDROID && !UNITY_EDITOR
         gyroControls.enabled = true;
@@ -114,12 +118,12 @@ public class PlayerController : MonoBehaviour
             Vector3 spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
             spawnPos += transform.forward;
             //spawnPos.x += Utilities.Map(swipeStartPos.x, 0, Screen.width, -1f, 1f);
+            audioSource.PlayOneShot(throwSound);
             GameObject food = Instantiate(duckFood, spawnPos, Quaternion.identity);
             Rigidbody foodRb = food.GetComponent<Rigidbody>();
             foodRb.AddForce(direction * force);
             GameManager.UIManager.UpdateFoodCount();
         }
-        if (availableFood == 0) GameEnd();
     }
 
     IEnumerator ThrowCooldown()
@@ -127,21 +131,5 @@ public class PlayerController : MonoBehaviour
         canThrow = false;
         yield return new WaitForSeconds(0.5f);
         canThrow = true;
-    }
-
-
-    private void GameEnd()
-    {
-        GameObject[] ducks = GameObject.FindGameObjectsWithTag("Duck");
-        int fedCount = 0;
-        foreach(GameObject duckObject in ducks)
-        {
-            Duck duck = duckObject.GetComponent<Duck>();
-            if (duck.foodConsumed > 0) fedCount += 1;
-        }
-        float fedPercent = (float)fedCount / (float)ducks.Length;
-        print($"Fed {fedCount} of {ducks.Length} ducks");
-        float score = fedPercent * 5f;
-        print($"Score: {score.ToString("0.0")} / 5");
     }
 }

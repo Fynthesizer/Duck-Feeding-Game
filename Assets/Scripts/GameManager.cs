@@ -6,6 +6,11 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public static UIManager UIManager;
+    public static PlayerController player;
+    public static SaveManager saveManager;
+
+    public DuckDatabase duckInfoDatabase;
+    public RaftData raftData;
 
     public int duckCount = 10;
     [SerializeField] private GameObject[] duckPrefabs;
@@ -25,10 +30,16 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         UIManager = gameObject.GetComponent<UIManager>();
+        saveManager = gameObject.GetComponent<SaveManager>();
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         lakeBounds = GameObject.FindGameObjectWithTag("Lake").GetComponent<Collider>().bounds;
-        SpawnDucks(duckCount);
+
         SetSkybox();
-        
+
+        if (saveManager.CheckForSaveData()) raftData = saveManager.LoadData(); //If a save file exists, load it
+        else raftData = new RaftData(duckInfoDatabase, duckCount); //Otherwise, generate a new raft
+
+        SpawnDucks();
     }
 
     private void SetSkybox()
@@ -39,14 +50,19 @@ public class GameManager : MonoBehaviour
         else RenderSettings.skybox = daySkybox;
     }
 
-    void Update()
+    private void GenerateRaft(int count)
     {
-        
+        raftData = new RaftData(duckInfoDatabase, count);
     }
 
-    void SpawnDucks(int count)
+    private void OnApplicationQuit()
     {
-        for(int i = 0; i < count; i++)
+        saveManager.SaveData(raftData);
+    }
+
+    void SpawnDucks()
+    {
+        for(int i = 0; i < raftData.raft.Count; i++)
         {
             Vector3 spawnPosition;
             //Find an appropriate position on lake
@@ -60,7 +76,8 @@ public class GameManager : MonoBehaviour
             }
 
             GameObject duckPrefab = duckPrefabs[Random.Range(0, duckPrefabs.Length)];
-            Instantiate(duckPrefab, spawnPosition, Quaternion.identity);
+            GameObject newDuck = Instantiate(duckPrefab, spawnPosition, Quaternion.identity);
+            newDuck.GetComponent<Duck>().SetData(raftData.raft[i]);
         }
     }
 
@@ -74,5 +91,29 @@ public class GameManager : MonoBehaviour
             return hit.collider.gameObject.layer == 4;
         }
         else return false;
+    }
+
+    public void CheckGameEnded()
+    {
+        if (PlayerController.availableFood > 0) return;
+        else if (GameObject.FindGameObjectsWithTag("DuckFood").Length > 0) return;
+        else GameEnd();
+    }
+
+    public void GameEnd()
+    {
+        GameObject[] ducks = GameObject.FindGameObjectsWithTag("Duck");
+        int fedCount = 0;
+        foreach (GameObject duckObject in ducks)
+        {
+            Duck duck = duckObject.GetComponent<Duck>();
+            if (duck.foodConsumed > 0) fedCount += 1;
+        }
+        float fedPercent = (float)fedCount / (float)ducks.Length;
+        print($"Fed {fedCount} of {ducks.Length} ducks");
+        float score = fedPercent * 5f;
+        print($"Score: {score.ToString("0.0")} / 5");
+
+        UIManager.GameEnd(score);
     }
 }

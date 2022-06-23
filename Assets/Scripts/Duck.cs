@@ -26,10 +26,8 @@ public class Duck : MonoBehaviour
     [SerializeField] private float eatTime = 1;
     [SerializeField] private float wanderRadius = 5;
 
-    [Header("Duck Traits")]
-    [SerializeField] private float speed = 1;
-    [SerializeField] private float reactionTime = 0.1f;
-    [SerializeField] private float awarenessRadius = 10;
+    [Header("Duck Attributes")]
+    [SerializeField] public DuckData duckData;
 
     [Header("Duck State")]
     public int foodConsumed = 0;
@@ -65,18 +63,31 @@ public class Duck : MonoBehaviour
         material = model.GetComponent<SkinnedMeshRenderer>().material;
         quackSource = gameObject.GetComponent<AudioSource>();
         targetLocation = transform.position;
+        Vector2 initialLookDirection = Random.insideUnitCircle.normalized;
+        moveDirection = new Vector3(initialLookDirection.x, 0f, initialLookDirection.y);
+        rb.rotation = Quaternion.LookRotation(moveDirection, Vector3.up);
         waitTimer = StartCoroutine(Wait());
         StartCoroutine(QuackCoroutine());
         StartCoroutine(SwimCoroutine());
 
-        InitialiseTraits();
+        //InitialiseTraits();
+    }
+
+    public void SetData(DuckData data)
+    {
+        duckData = data;
+        gameObject.name = duckData.duckName;
     }
 
     private void InitialiseTraits()
     {
-        speed = Random.Range(4f, 6f);
-        reactionTime = Random.Range(0f, 1f);
-        awarenessRadius = Random.Range(7.5f, 15f);
+        //speed = Random.Range(4f, 6f);
+        //reactionTime = Random.Range(0f, 1f);
+        //awarenessRadius = Random.Range(7.5f, 15f);
+        //duckName = GameManager.Instance.duckInfoDatabase.defaultNames[Random.Range(0, GameManager.Instance.duckInfoDatabase.defaultNames.Count)];
+        //gender = Random.value > 0.5f ? Gender.Male : Gender.Female;
+
+        duckData = new DuckData(GameManager.Instance.duckInfoDatabase);
     }
 
     void Update()
@@ -98,7 +109,7 @@ public class Duck : MonoBehaviour
         {
             if (state == State.Wandering || state == State.Pursuit)
             {
-                float moveSpeed = speed;
+                float moveSpeed = duckData.speed;
                 if (state == State.Pursuit) moveSpeed *= pursuitSpeedMultiplier;
 
                 targetDirection = (targetLocation - transform.position).normalized;
@@ -309,7 +320,7 @@ public class Duck : MonoBehaviour
 
     IEnumerator CheckSurroundings()
     {
-        yield return new WaitForSeconds(reactionTime);
+        yield return new WaitForSeconds(duckData.reactionTime);
         //Look for nearby food
         DuckFood[] allFood = FindObjectsOfType<DuckFood>();
         DuckFood closestFood = null;
@@ -324,7 +335,7 @@ public class Duck : MonoBehaviour
             }
             //if (distance < foodDetectionRadius && (targetFood == null || distance < targetDistance)) SetTargetObject(food.gameObject);
         }
-        if (closestFood != null && closestDistance < awarenessRadius) SetTargetObject(closestFood.gameObject);
+        if (closestFood != null && closestDistance < duckData.awarenessRadius) SetTargetObject(closestFood.gameObject);
 
         if (state == State.Pursuit && targetFood == null) SetState(State.Idle);
     }

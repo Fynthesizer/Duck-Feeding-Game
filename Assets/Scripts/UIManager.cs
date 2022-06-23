@@ -8,6 +8,7 @@ using TMPro;
 public class UIManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI foodCount;
+    [SerializeField] private GameObject gameEndScreen;
     void Start()
     {
         UpdateFoodCount();
@@ -22,5 +23,12 @@ public class UIManager : MonoBehaviour
     public void UpdateFoodCount()
     {
         foodCount.text = $"Food: {PlayerController.availableFood}";
+    }
+
+    public void GameEnd(float score)
+    {
+        string scoreText = $"Score: {score.ToString("0.0")} / 5";
+        gameEndScreen.SetActive(true);
+        gameEndScreen.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = scoreText;
     }
 }
