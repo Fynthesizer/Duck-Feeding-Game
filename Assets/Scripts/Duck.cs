@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using Random = UnityEngine.Random;
 
 public class Duck : MonoBehaviour
 {
@@ -25,12 +27,14 @@ public class Duck : MonoBehaviour
     [SerializeField] private float maxQuackInterval = 3;
     [SerializeField] private float eatTime = 1;
     [SerializeField] private float wanderRadius = 5;
+    [SerializeField] private float satiationPeriod = 1;
 
-    [Header("Duck Attributes")]
+    [Header("Duck Data")]
     [SerializeField] public DuckData duckData;
 
     [Header("Duck State")]
     public int foodConsumed = 0;
+    public bool hungry;
     public State state = State.Idle;
 
     [Header("Obstacle Avoidance")]
@@ -69,25 +73,21 @@ public class Duck : MonoBehaviour
         waitTimer = StartCoroutine(Wait());
         StartCoroutine(QuackCoroutine());
         StartCoroutine(SwimCoroutine());
+        hungry = CheckIfHungry();
+    }
 
-        //InitialiseTraits();
+    private bool CheckIfHungry()
+    {
+        DateTime lastFed;
+        if(!DateTime.TryParse(duckData.lastFedTime, out lastFed)) return true; //If last fed time can't be parsed, return true
+        TimeSpan elapsedTime = DateTime.Now.Subtract(lastFed);
+        return elapsedTime.Hours >= satiationPeriod;
     }
 
     public void SetData(DuckData data)
     {
         duckData = data;
         gameObject.name = duckData.duckName;
-    }
-
-    private void InitialiseTraits()
-    {
-        //speed = Random.Range(4f, 6f);
-        //reactionTime = Random.Range(0f, 1f);
-        //awarenessRadius = Random.Range(7.5f, 15f);
-        //duckName = GameManager.Instance.duckInfoDatabase.defaultNames[Random.Range(0, GameManager.Instance.duckInfoDatabase.defaultNames.Count)];
-        //gender = Random.value > 0.5f ? Gender.Male : Gender.Female;
-
-        duckData = new DuckData(GameManager.Instance.duckInfoDatabase);
     }
 
     void Update()
@@ -313,6 +313,8 @@ public class Duck : MonoBehaviour
         StartCoroutine(FlashCoroutine());
         animator.SetTrigger("Eat");
         Destroy(food);
+        duckData.lastFedTime = DateTime.Now.ToString();
+        hungry = false;
         targetFood = null;
         foodConsumed++;
         SetState(State.Eating);

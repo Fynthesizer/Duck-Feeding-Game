@@ -6,6 +6,7 @@ public class DuckFood : MonoBehaviour
 {
     private Rigidbody rb;
     [SerializeField] private float buoyancy = 20;
+    [SerializeField] private float despawnTime = 60f;
 
     public bool inWater = false;
 
@@ -19,6 +20,7 @@ public class DuckFood : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody>();
         splashSource = gameObject.GetComponent<AudioSource>();
         bobbing = gameObject.GetComponent<Bobbing>();
+        StartCoroutine(DespawnTimer());
     }
 
     private void OnTriggerEnter(Collider other)
@@ -34,11 +36,6 @@ public class DuckFood : MonoBehaviour
             particleSystem.Play();
             CreateRipple();
         }
-
-        else if (other.gameObject.layer == 6) //On collision with terrain
-        {
-            Destroy(gameObject);
-        }
     }
 
     private void OnDestroy()
@@ -51,6 +48,12 @@ public class DuckFood : MonoBehaviour
     {
         Vector3 ripplePosition = new Vector3(transform.position.x, 5.01f, transform.position.z);
         GameObject newRipple = Instantiate(ripple, ripplePosition, Quaternion.identity);
+    }
+
+    IEnumerator DespawnTimer()
+    {
+        yield return new WaitForSeconds(despawnTime);
+        Destroy(gameObject);
     }
 
     /*

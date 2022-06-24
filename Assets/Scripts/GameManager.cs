@@ -47,14 +47,9 @@ public class GameManager : MonoBehaviour
     private void SetSkybox()
     {
         int time = System.DateTime.Now.Hour;
-        if (time < 6 || time > 20) RenderSettings.skybox = nightSkybox;
-        else if (time < 8 || time > 18) RenderSettings.skybox = sunsetSkybox;
+        if (time < 6 || time >= 20) RenderSettings.skybox = nightSkybox;
+        else if (time < 8 || time >= 18) RenderSettings.skybox = sunsetSkybox;
         else RenderSettings.skybox = daySkybox;
-    }
-
-    private void GenerateRaft(int count)
-    {
-        raftData = new RaftData(duckInfoDatabase, count);
     }
 
     private void OnApplicationQuit()
