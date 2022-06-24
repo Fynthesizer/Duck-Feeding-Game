@@ -6,4 +6,5 @@ using UnityEngine;
 public class DuckDatabase : ScriptableObject
 {
     public List<DuckName> possibleNames;
+    public List<DuckBreed> breeds;
 }

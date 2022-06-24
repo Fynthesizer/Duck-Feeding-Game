@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public static SaveManager saveManager;
 
     public DuckDatabase duckInfoDatabase;
-    public RaftData raftData;
+    public GameData gameData;
 
     public int duckCount = 10;
     [SerializeField] private GameObject[] duckPrefabs;
@@ -38,10 +38,15 @@ public class GameManager : MonoBehaviour
 
         SetSkybox();
 
-        if (saveManager.CheckForSaveData()) raftData = saveManager.LoadData(); //If a save file exists, load it
-        else raftData = new RaftData(duckInfoDatabase, duckCount); //Otherwise, generate a new raft
+        if (saveManager.CheckForSaveData()) gameData = saveManager.LoadData(); //If a save file exists, load it
+        else gameData = new GameData(duckInfoDatabase, duckCount); //Otherwise, generate a new raft
 
         SpawnDucks();
+    }
+
+    public void AddCurrency(int amount)
+    {
+        gameData.currency += amount;
     }
 
     private void SetSkybox()
@@ -54,12 +59,12 @@ public class GameManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        saveManager.SaveData(raftData);
+        saveManager.SaveData(gameData);
     }
 
     void SpawnDucks()
     {
-        for(int i = 0; i < raftData.raft.Count; i++)
+        for(int i = 0; i < gameData.raft.Count; i++)
         {
             Vector3 spawnPosition;
             //Find an appropriate position on lake
@@ -74,7 +79,7 @@ public class GameManager : MonoBehaviour
 
             GameObject duckPrefab = duckPrefabs[Random.Range(0, duckPrefabs.Length)];
             GameObject newDuck = Instantiate(duckPrefab, spawnPosition, Quaternion.identity, duckGroup);
-            newDuck.GetComponent<Duck>().SetData(raftData.raft[i]);
+            newDuck.GetComponent<Duck>().SetData(gameData.raft[i]);
         }
     }
 

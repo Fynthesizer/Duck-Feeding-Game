@@ -1086,6 +1086,7 @@ MonoBehaviour:
   duckInfoDatabase: {fileID: 11400000, guid: 57f046bde0d5a5c4fb77aec41cc95945, type: 2}
   raftData:
     raft: []
+  points: 0
   duckCount: 20
   duckPrefabs:
   - {fileID: 1291910713991478317, guid: b048039c26868f443934b75547fbc1e0, type: 3}
@@ -2660,7 +2661,7 @@ MonoBehaviour:
   swipeVelocityDamping: 0.1
   throwVelocityThreshold: 1000
   throwVelocityDivisor: 25
-  throwAngleMultiplier: 20
+  throwAngleMultiplier: 15
   throwArchMultiplier: 4
   throwSound: {fileID: 8300000, guid: 95aee183f96dedb408868f41320e702b, type: 3}
 --- !u!114 &2116794507

@@ -20,8 +20,10 @@ public class SaveManager : MonoBehaviour
     }
 
 
-    public void SaveData(RaftData data)
+    public void SaveData(GameData data)
     {
+        print("Game Saved");
+
         string savePath = path;
         string json = JsonUtility.ToJson(data, true);
 
@@ -34,12 +36,14 @@ public class SaveManager : MonoBehaviour
         return File.Exists(path);
     }
 
-    public RaftData LoadData()
+    public GameData LoadData()
     {
+        print("Game Loaded");
+
         using StreamReader reader = new StreamReader(path);
         string json = reader.ReadToEnd();
 
-        RaftData data = JsonUtility.FromJson<RaftData>(json);
+        GameData data = JsonUtility.FromJson<GameData>(json);
         //Debug.Log(data.ToString());
         return data;
     }

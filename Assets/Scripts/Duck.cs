@@ -64,7 +64,9 @@ public class Duck : MonoBehaviour
     {
         rb = gameObject.GetComponent<Rigidbody>();
         collider = gameObject.GetComponent<CapsuleCollider>();
-        material = model.GetComponent<SkinnedMeshRenderer>().material;
+        //material = model.GetComponent<SkinnedMeshRenderer>().material;
+        material = new Material(duckData.breed.material);
+        model.GetComponent<SkinnedMeshRenderer>().material = material;
         quackSource = gameObject.GetComponent<AudioSource>();
         targetLocation = transform.position;
         Vector2 initialLookDirection = Random.insideUnitCircle.normalized;
@@ -310,7 +312,11 @@ public class Duck : MonoBehaviour
     private void Eat(GameObject food)
     {
         food.SetActive(false);
-        if(hungry) StartCoroutine(FlashCoroutine());
+        if (hungry)
+        {
+            StartCoroutine(FlashCoroutine());
+            GameManager.Instance.AddCurrency(1);
+        }
         animator.SetTrigger("Eat");
         Destroy(food);
         duckData.lastFedTime = DateTime.Now.ToString();

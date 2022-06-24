@@ -12,14 +12,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7368fb08d96f5a44a8ccf97e54c7d80, type: 3}
   m_Name: Duck Info Database
   m_EditorClassIdentifier: 
-  defaultNames:
-  - Ronaldo
-  - Gwen
-  - Colby
-  - Myrtle
-  - Jeremiah
-  - Nicholas
-  - Nichola
-  - Sebastian
-  - Borris
-  - Louise
+  possibleNames:
+  - name: Ronaldo
+    gender: 0
+  - name: Gwen
+    gender: 1
+  - name: Colby
+    gender: 2
+  - name: Myrtle
+    gender: 1
+  - name: Jeremiah
+    gender: 0
+  - name: Nicholas
+    gender: 0
+  - name: Nichola
+    gender: 1
+  - name: Sebastian
+    gender: 0
+  - name: Borris
+    gender: 0
+  - name: Louise
+    gender: 1
+  - name: Eva
+    gender: 1
+  - name: Penelope
+    gender: 1
+  - name: Winston
+    gender: 0
+  - name: Eren
+    gender: 2
+  - name: Coraline
+    gender: 1
+  - name: Benjamin
+    gender: 0
+  - name: Sylvia
+    gender: 1
+  - name: Gwendolyn
+    gender: 1
+  - name: Carmine
+    gender: 2
+  - name: Alexis
+    gender: 2
+  - name: Toby
+    gender: 0
+  - name: Julia
+    gender: 1
+  - name: Julius
+    gender: 0
+  breeds:
+  - {fileID: 11400000, guid: 3a35b5f7738c8394da18349334099ff6, type: 2}
