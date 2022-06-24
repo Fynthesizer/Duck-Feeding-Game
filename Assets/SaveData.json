@@ -1,164 +1,164 @@
 {
     "raft": [
         {
-            "duckName": "Sebastian",
-            "gender": 1,
-            "speed": 4.796717643737793,
-            "reactionTime": 0.6419458389282227,
-            "awarenessRadius": 13.61206340789795,
-            "lastFedTime": "24/06/2022 12:08:53 p.m."
+            "duckName": "Carmine",
+            "gender": 0,
+            "speed": 5.547229290008545,
+            "reactionTime": 0.9443552494049072,
+            "awarenessRadius": 13.634239196777344,
+            "lastFedTime": ""
         },
         {
-            "duckName": "Sebastian",
+            "duckName": "Nichola",
+            "gender": 1,
+            "speed": 5.980976104736328,
+            "reactionTime": 0.0175095796585083,
+            "awarenessRadius": 7.672238349914551,
+            "lastFedTime": ""
+        },
+        {
+            "duckName": "Gwen",
+            "gender": 1,
+            "speed": 5.576554775238037,
+            "reactionTime": 0.44704657793045046,
+            "awarenessRadius": 10.402115821838379,
+            "lastFedTime": "24/06/2022 12:36:35 p.m."
+        },
+        {
+            "duckName": "Colby",
+            "gender": 1,
+            "speed": 5.503898620605469,
+            "reactionTime": 0.6201518177986145,
+            "awarenessRadius": 13.409187316894532,
+            "lastFedTime": "24/06/2022 12:37:29 p.m."
+        },
+        {
+            "duckName": "Winston",
             "gender": 0,
-            "speed": 5.082512855529785,
-            "reactionTime": 0.1714932918548584,
-            "awarenessRadius": 10.756438255310059,
-            "lastFedTime": "24/06/2022 12:08:33 p.m."
+            "speed": 5.768359184265137,
+            "reactionTime": 0.11172127723693848,
+            "awarenessRadius": 9.371578216552735,
+            "lastFedTime": ""
+        },
+        {
+            "duckName": "Nicholas",
+            "gender": 0,
+            "speed": 5.11297607421875,
+            "reactionTime": 0.33730822801589968,
+            "awarenessRadius": 12.724442481994629,
+            "lastFedTime": ""
+        },
+        {
+            "duckName": "Winston",
+            "gender": 0,
+            "speed": 5.631741046905518,
+            "reactionTime": 0.5210328698158264,
+            "awarenessRadius": 12.734577178955079,
+            "lastFedTime": ""
         },
         {
             "duckName": "Louise",
-            "gender": 0,
-            "speed": 4.464962005615234,
-            "reactionTime": 0.5638237595558167,
-            "awarenessRadius": 8.752375602722168,
+            "gender": 1,
+            "speed": 4.808252334594727,
+            "reactionTime": 0.41936975717544558,
+            "awarenessRadius": 14.919295310974121,
+            "lastFedTime": ""
+        },
+        {
+            "duckName": "Louise",
+            "gender": 1,
+            "speed": 4.967599868774414,
+            "reactionTime": 0.002663850784301758,
+            "awarenessRadius": 9.040302276611329,
+            "lastFedTime": ""
+        },
+        {
+            "duckName": "Penelope",
+            "gender": 1,
+            "speed": 5.629744052886963,
+            "reactionTime": 0.5096221566200256,
+            "awarenessRadius": 11.102350234985352,
+            "lastFedTime": ""
+        },
+        {
+            "duckName": "Sylvia",
+            "gender": 1,
+            "speed": 5.373411655426025,
+            "reactionTime": 0.7948939800262451,
+            "awarenessRadius": 10.502983093261719,
+            "lastFedTime": ""
+        },
+        {
+            "duckName": "Carmine",
+            "gender": 1,
+            "speed": 5.230009078979492,
+            "reactionTime": 0.8285547494888306,
+            "awarenessRadius": 11.23361587524414,
+            "lastFedTime": ""
+        },
+        {
+            "duckName": "Penelope",
+            "gender": 1,
+            "speed": 5.04184627532959,
+            "reactionTime": 0.15779006481170655,
+            "awarenessRadius": 9.098265647888184,
+            "lastFedTime": "24/06/2022 12:38:06 p.m."
+        },
+        {
+            "duckName": "Myrtle",
+            "gender": 1,
+            "speed": 5.395548343658447,
+            "reactionTime": 0.04110884666442871,
+            "awarenessRadius": 14.179389953613282,
             "lastFedTime": ""
         },
         {
             "duckName": "Colby",
             "gender": 1,
-            "speed": 5.335608005523682,
-            "reactionTime": 0.9330252408981323,
-            "awarenessRadius": 10.810543060302735,
-            "lastFedTime": "24/06/2022 12:02:18 p.m."
+            "speed": 4.796777725219727,
+            "reactionTime": 0.2778403162956238,
+            "awarenessRadius": 8.274462699890137,
+            "lastFedTime": ""
+        },
+        {
+            "duckName": "Gwendolyn",
+            "gender": 1,
+            "speed": 4.905796051025391,
+            "reactionTime": 0.9496927261352539,
+            "awarenessRadius": 13.025039672851563,
+            "lastFedTime": ""
+        },
+        {
+            "duckName": "Jeremiah",
+            "gender": 0,
+            "speed": 5.433061122894287,
+            "reactionTime": 0.9982612133026123,
+            "awarenessRadius": 14.034579277038575,
+            "lastFedTime": "24/06/2022 12:38:08 p.m."
         },
         {
             "duckName": "Gwen",
             "gender": 1,
-            "speed": 5.394791126251221,
-            "reactionTime": 0.825674295425415,
-            "awarenessRadius": 12.930277824401856,
-            "lastFedTime": ""
-        },
-        {
-            "duckName": "Myrtle",
-            "gender": 0,
-            "speed": 5.447083950042725,
-            "reactionTime": 0.7421085834503174,
-            "awarenessRadius": 13.764208793640137,
-            "lastFedTime": ""
-        },
-        {
-            "duckName": "Ronaldo",
-            "gender": 1,
-            "speed": 5.6553120613098148,
-            "reactionTime": 0.5804364085197449,
-            "awarenessRadius": 12.10827350616455,
-            "lastFedTime": ""
-        },
-        {
-            "duckName": "Ronaldo",
-            "gender": 1,
-            "speed": 4.375962734222412,
-            "reactionTime": 0.5510842204093933,
-            "awarenessRadius": 14.93128776550293,
-            "lastFedTime": "24/06/2022 12:08:58 p.m."
-        },
-        {
-            "duckName": "Nicholas",
-            "gender": 0,
-            "speed": 4.322079658508301,
-            "reactionTime": 0.47611647844314577,
-            "awarenessRadius": 12.01125717163086,
-            "lastFedTime": ""
-        },
-        {
-            "duckName": "Ronaldo",
-            "gender": 1,
-            "speed": 5.8146491050720219,
-            "reactionTime": 0.46638530492782595,
-            "awarenessRadius": 13.852496147155762,
-            "lastFedTime": ""
-        },
-        {
-            "duckName": "Ronaldo",
-            "gender": 1,
-            "speed": 4.416101455688477,
-            "reactionTime": 0.9706982374191284,
-            "awarenessRadius": 10.556922912597657,
-            "lastFedTime": "24/06/2022 12:02:11 p.m."
-        },
-        {
-            "duckName": "Ronaldo",
-            "gender": 0,
-            "speed": 4.72196102142334,
-            "reactionTime": 0.8382917642593384,
-            "awarenessRadius": 13.02565860748291,
-            "lastFedTime": "24/06/2022 12:02:14 p.m."
-        },
-        {
-            "duckName": "Nicholas",
-            "gender": 1,
-            "speed": 5.6757307052612309,
-            "reactionTime": 0.8586773872375488,
-            "awarenessRadius": 9.386404037475586,
-            "lastFedTime": "24/06/2022 12:06:14 p.m."
-        },
-        {
-            "duckName": "Nichola",
-            "gender": 1,
-            "speed": 5.953571319580078,
-            "reactionTime": 0.6687924861907959,
-            "awarenessRadius": 13.757547378540039,
-            "lastFedTime": ""
-        },
-        {
-            "duckName": "Louise",
-            "gender": 0,
-            "speed": 5.536869049072266,
-            "reactionTime": 0.6369872093200684,
-            "awarenessRadius": 7.82890510559082,
-            "lastFedTime": ""
-        },
-        {
-            "duckName": "Ronaldo",
-            "gender": 0,
-            "speed": 4.366758346557617,
-            "reactionTime": 0.4728320240974426,
-            "awarenessRadius": 8.414485931396485,
+            "speed": 4.693678855895996,
+            "reactionTime": 0.7432820796966553,
+            "awarenessRadius": 9.241739273071289,
             "lastFedTime": ""
         },
         {
             "duckName": "Gwen",
             "gender": 1,
-            "speed": 4.100888252258301,
-            "reactionTime": 0.42735713720321658,
-            "awarenessRadius": 8.608467102050782,
+            "speed": 4.891386032104492,
+            "reactionTime": 0.7954626083374023,
+            "awarenessRadius": 8.587190628051758,
             "lastFedTime": ""
         },
         {
-            "duckName": "Myrtle",
+            "duckName": "Nicholas",
             "gender": 0,
-            "speed": 5.560154438018799,
-            "reactionTime": 0.28621238470077517,
-            "awarenessRadius": 13.42365837097168,
-            "lastFedTime": "24/06/2022 12:07:59 p.m."
-        },
-        {
-            "duckName": "Louise",
-            "gender": 0,
-            "speed": 5.3345627784729,
-            "reactionTime": 0.8050813674926758,
-            "awarenessRadius": 12.285260200500489,
+            "speed": 4.440956115722656,
+            "reactionTime": 0.08085525035858154,
+            "awarenessRadius": 14.838653564453125,
             "lastFedTime": ""
-        },
-        {
-            "duckName": "Sebastian",
-            "gender": 0,
-            "speed": 4.326045513153076,
-            "reactionTime": 0.2659681439399719,
-            "awarenessRadius": 13.287503242492676,
-            "lastFedTime": "24/06/2022 12:06:25 p.m."
         }
     ]
 }

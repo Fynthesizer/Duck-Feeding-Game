@@ -310,7 +310,7 @@ public class Duck : MonoBehaviour
     private void Eat(GameObject food)
     {
         food.SetActive(false);
-        StartCoroutine(FlashCoroutine());
+        if(hungry) StartCoroutine(FlashCoroutine());
         animator.SetTrigger("Eat");
         Destroy(food);
         duckData.lastFedTime = DateTime.Now.ToString();
