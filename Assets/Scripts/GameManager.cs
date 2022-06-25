@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
         RenderSettings.skybox = timeSettings.skyboxMaterial;
         RenderSettings.sun.color = timeSettings.lightColour;
         RenderSettings.sun.intensity = timeSettings.lightIntensity;
-        RenderSettings.ambientIntensity = timeSettings.lightIntensity;
+        //RenderSettings.ambientIntensity = timeSettings.lightIntensity;
         DynamicGI.UpdateEnvironment();
     }
     void SpawnDucks()
