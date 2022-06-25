@@ -18,4 +18,9 @@ public class GameData
             raft.Add(new DuckData(database));
         }
     }
+
+    public GameData()
+    {
+
+    }
 }

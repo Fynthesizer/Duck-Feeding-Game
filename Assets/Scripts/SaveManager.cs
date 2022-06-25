@@ -20,15 +20,34 @@ public class SaveManager : MonoBehaviour
     }
 
 
-    public void SaveData(GameData data)
+    public void SaveData()
     {
         print("Game Saved");
+
+        GameData data = new GameData();
+        data.currency = GameManager.Instance.gameData.currency;
+        data.raft = GetRaftData();
 
         string savePath = path;
         string json = JsonUtility.ToJson(data, true);
 
         using StreamWriter writer = new StreamWriter(savePath);
         writer.Write(json);
+    }
+
+    public List<DuckData> GetRaftData()
+    {
+        List<DuckData> duckData = new List<DuckData>();
+        foreach(Duck duck in FindObjectsOfType<Duck>())
+        {
+            duckData.Add(duck.PackageData());
+        }
+        return duckData;
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveData();
     }
 
     public bool CheckForSaveData()

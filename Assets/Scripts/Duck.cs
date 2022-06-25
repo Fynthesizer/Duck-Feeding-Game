@@ -30,10 +30,18 @@ public class Duck : MonoBehaviour
     [SerializeField] private float satiationPeriod = 1;
 
     [Header("Duck Data")]
-    [SerializeField] public DuckData duckData;
+    //[SerializeField] public DuckData duckData;
+    public string duckName;
+    public DuckBreed breed;
+    public Gender gender;
+    public float speed;
+    public float weight;
+    public float reactionTime;
+    public float awarenessRadius;
 
     [Header("Duck State")]
     public int foodConsumed = 0;
+    public DateTime lastFedTime;
     public bool hungry;
     public State state = State.Idle;
 
@@ -60,12 +68,20 @@ public class Duck : MonoBehaviour
         Eating
     }
 
+    public enum Gender
+    {
+        Male,
+        Female,
+        Unisex
+    }
+
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody>();
         collider = gameObject.GetComponent<CapsuleCollider>();
         //material = model.GetComponent<SkinnedMeshRenderer>().material;
-        material = new Material(duckData.breed.material);
+        //breed = GameManager.Instance.duckInfoDatabase.breeds.Find(x => x.breedName.Equals(duckData.breed));
+        //material = new Material(breed.material);
         model.GetComponent<SkinnedMeshRenderer>().material = material;
         quackSource = gameObject.GetComponent<AudioSource>();
         targetLocation = transform.position;
@@ -75,21 +91,42 @@ public class Duck : MonoBehaviour
         waitTimer = StartCoroutine(Wait());
         StartCoroutine(QuackCoroutine());
         StartCoroutine(SwimCoroutine());
-        hungry = CheckIfHungry();
+        
     }
 
     private bool CheckIfHungry()
     {
-        DateTime lastFed;
-        if(!DateTime.TryParse(duckData.lastFedTime, out lastFed)) return true; //If last fed time can't be parsed, return true
-        TimeSpan elapsedTime = DateTime.Now.Subtract(lastFed);
+        TimeSpan elapsedTime = DateTime.Now.Subtract(lastFedTime);
         return elapsedTime.Hours >= satiationPeriod;
     }
 
-    public void SetData(DuckData data)
+    public void LoadData(DuckData data)
     {
-        duckData = data;
-        gameObject.name = duckData.duckName;
+        duckName = data.duckName;
+        gameObject.name = duckName;
+        breed = GameManager.Instance.duckInfoDatabase.breeds.Find(x => x.breedName.Equals(data.breed));
+        material = new Material(breed.material);
+        gender = data.gender;
+        speed = data.speed;
+        weight = data.weight;
+        reactionTime = data.reactionTime;
+        awarenessRadius = data.awarenessRadius;
+        DateTime.TryParse(data.lastFedTime, out lastFedTime);
+        hungry = CheckIfHungry();
+    }
+
+    public DuckData PackageData()
+    {
+        DuckData data = new DuckData();
+        data.duckName = duckName;
+        data.breed = breed.breedName;
+        data.gender = gender;
+        data.speed = speed;
+        data.weight = weight;
+        data.reactionTime = reactionTime;
+        data.awarenessRadius = awarenessRadius;
+        data.lastFedTime = lastFedTime.ToString();
+        return data;
     }
 
     void Update()
@@ -111,7 +148,7 @@ public class Duck : MonoBehaviour
         {
             if (state == State.Wandering || state == State.Pursuit)
             {
-                float moveSpeed = duckData.speed;
+                float moveSpeed = speed;
                 if (state == State.Pursuit) moveSpeed *= pursuitSpeedMultiplier;
 
                 targetDirection = (targetLocation - transform.position).normalized;
@@ -201,7 +238,7 @@ public class Duck : MonoBehaviour
     private bool PathIsClear(Vector3 direction, float distance)
     {
         LayerMask layerMask = state == State.Pursuit ? pursuitAvoidLayers : wanderAvoidLayers;
-        Ray ray = new Ray(transform.position, direction);
+        Ray ray = new Ray(transform.position + collider.center, direction);
         if (!Physics.SphereCast(ray, collider.radius, distance, layerMask)) return true;
         else return false;
     }
@@ -319,7 +356,7 @@ public class Duck : MonoBehaviour
         }
         animator.SetTrigger("Eat");
         Destroy(food);
-        duckData.lastFedTime = DateTime.Now.ToString();
+        lastFedTime = DateTime.Now;
         hungry = false;
         targetFood = null;
         foodConsumed++;
@@ -328,7 +365,7 @@ public class Duck : MonoBehaviour
 
     IEnumerator CheckSurroundings()
     {
-        yield return new WaitForSeconds(duckData.reactionTime);
+        yield return new WaitForSeconds(reactionTime);
         //Look for nearby food
         DuckFood[] allFood = FindObjectsOfType<DuckFood>();
         DuckFood closestFood = null;
@@ -343,7 +380,7 @@ public class Duck : MonoBehaviour
             }
             //if (distance < foodDetectionRadius && (targetFood == null || distance < targetDistance)) SetTargetObject(food.gameObject);
         }
-        if (closestFood != null && closestDistance < duckData.awarenessRadius) SetTargetObject(closestFood.gameObject);
+        if (closestFood != null && closestDistance < awarenessRadius) SetTargetObject(closestFood.gameObject);
 
         if (state == State.Pursuit && targetFood == null) SetState(State.Idle);
     }

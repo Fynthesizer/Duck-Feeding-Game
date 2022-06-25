@@ -6,5 +6,5 @@ using UnityEngine;
 public class DuckName
 {
     public string name;
-    public DuckData.Gender gender;
+    public Duck.Gender gender;
 }

@@ -13,13 +13,13 @@ public class GameManager : MonoBehaviour
     public GameData gameData;
 
     public int duckCount = 10;
-    [SerializeField] private GameObject[] duckPrefabs;
+    [SerializeField] private GameObject duckPrefab;
 
     [SerializeField] private Transform duckGroup;
 
-    [SerializeField] private Material daySkybox;
-    [SerializeField] private Material sunsetSkybox;
-    [SerializeField] private Material nightSkybox;
+    [SerializeField] private TimePeriodSettings daySettings;
+    [SerializeField] private TimePeriodSettings sunsetSettings;
+    [SerializeField] private TimePeriodSettings nightSettings;
 
     private Bounds lakeBounds;
 
@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         lakeBounds = GameObject.FindGameObjectWithTag("Lake").GetComponent<Collider>().bounds;
 
-        SetSkybox();
+        SetupLighting();
 
         if (saveManager.CheckForSaveData()) gameData = saveManager.LoadData(); //If a save file exists, load it
         else gameData = new GameData(duckInfoDatabase, duckCount); //Otherwise, generate a new raft
@@ -49,19 +49,20 @@ public class GameManager : MonoBehaviour
         gameData.currency += amount;
     }
 
-    private void SetSkybox()
+    private void SetupLighting()
     {
         int time = System.DateTime.Now.Hour;
-        if (time < 6 || time >= 20) RenderSettings.skybox = nightSkybox;
-        else if (time < 8 || time >= 18) RenderSettings.skybox = sunsetSkybox;
-        else RenderSettings.skybox = daySkybox;
-    }
+        TimePeriodSettings timeSettings;
+        if (time < 6 || time >= 20) timeSettings = nightSettings;
+        else if (time < 8 || time >= 18) timeSettings = sunsetSettings;
+        else timeSettings = daySettings;
 
-    private void OnApplicationQuit()
-    {
-        saveManager.SaveData(gameData);
+        RenderSettings.skybox = timeSettings.skyboxMaterial;
+        RenderSettings.sun.color = timeSettings.lightColour;
+        RenderSettings.sun.intensity = timeSettings.lightIntensity;
+        RenderSettings.ambientIntensity = timeSettings.lightIntensity;
+        DynamicGI.UpdateEnvironment();
     }
-
     void SpawnDucks()
     {
         for(int i = 0; i < gameData.raft.Count; i++)
@@ -77,9 +78,8 @@ public class GameManager : MonoBehaviour
                 else break;
             }
 
-            GameObject duckPrefab = duckPrefabs[Random.Range(0, duckPrefabs.Length)];
             GameObject newDuck = Instantiate(duckPrefab, spawnPosition, Quaternion.identity, duckGroup);
-            newDuck.GetComponent<Duck>().SetData(gameData.raft[i]);
+            newDuck.GetComponent<Duck>().LoadData(gameData.raft[i]);
         }
     }
 
