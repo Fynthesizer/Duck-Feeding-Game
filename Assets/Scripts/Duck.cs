@@ -20,14 +20,20 @@ public class Duck : MonoBehaviour
 
     [Header("Global Variables")]
     [SerializeField] private float pursuitSpeedMultiplier = 1.5f;
-    [SerializeField] private float turnSpeed = 5;
-    [SerializeField] private float minIdleTime = 1;
-    [SerializeField] private float maxIdleTime = 8;
+    [SerializeField] private float turnSpeed = 2;
+    [SerializeField] private float minIdleTime = 0;
+    [SerializeField] private float maxIdleTime = 10;
     [SerializeField] private float minQuackInterval = 2;
-    [SerializeField] private float maxQuackInterval = 3;
+    [SerializeField] private float maxQuackInterval = 30;
     [SerializeField] private float eatTime = 1;
     [SerializeField] private float wanderRadius = 5;
     [SerializeField] private float satiationPeriod = 1;
+
+    public float MinIdleTime => minIdleTime;
+    public float MaxIdleTime => maxIdleTime;
+    public float EatTime => eatTime;
+    public float WanderRadius => wanderRadius;
+    public float PursuitSpeedMultiplier => pursuitSpeedMultiplier;
 
     [Header("Duck Data")]
     //[SerializeField] public DuckData duckData;
@@ -43,13 +49,17 @@ public class Duck : MonoBehaviour
     public int foodConsumed = 0;
     public DateTime lastFedTime;
     public bool hungry;
-    public State state = State.Idle;
+    //public State state = State.Idle;
+    public DuckState state;
 
     [Header("Obstacle Avoidance")]
     [SerializeField] private bool avoidObstacles = true;
     [SerializeField] private float avoidDistance = 1f;
     [SerializeField] private LayerMask wanderAvoidLayers;
     [SerializeField] private LayerMask pursuitAvoidLayers;
+
+    public LayerMask WanderAvoidLayers => wanderAvoidLayers;
+    public LayerMask PursuitAvoidLayers => pursuitAvoidLayers;
 
     [Header("Quack")]
     [SerializeField] private AudioClip[] quackClips;
@@ -75,22 +85,28 @@ public class Duck : MonoBehaviour
         Unisex
     }
 
-    void Start()
+    private void Awake()
     {
         rb = gameObject.GetComponent<Rigidbody>();
         collider = gameObject.GetComponent<CapsuleCollider>();
+        quackSource = gameObject.GetComponent<AudioSource>();
+    }
+
+    void Start()
+    {
+        SetState(new IdleState(this));
         //material = model.GetComponent<SkinnedMeshRenderer>().material;
         //breed = GameManager.Instance.duckInfoDatabase.breeds.Find(x => x.breedName.Equals(duckData.breed));
         //material = new Material(breed.material);
-        model.GetComponent<SkinnedMeshRenderer>().material = material;
-        quackSource = gameObject.GetComponent<AudioSource>();
+        
         targetLocation = transform.position;
         Vector2 initialLookDirection = Random.insideUnitCircle.normalized;
         moveDirection = new Vector3(initialLookDirection.x, 0f, initialLookDirection.y);
         rb.rotation = Quaternion.LookRotation(moveDirection, Vector3.up);
-        waitTimer = StartCoroutine(Wait());
+        //waitTimer = StartCoroutine(Wait());
         StartCoroutine(QuackCoroutine());
         StartCoroutine(SwimCoroutine());
+        StartCoroutine(CheckSurroundings());
         
     }
 
@@ -106,6 +122,7 @@ public class Duck : MonoBehaviour
         gameObject.name = duckName;
         breed = GameManager.Instance.duckInfoDatabase.breeds.Find(x => x.breedName.Equals(data.breed));
         material = new Material(breed.material);
+        model.GetComponent<SkinnedMeshRenderer>().material = material;
         gender = data.gender;
         speed = data.speed;
         weight = data.weight;
@@ -131,7 +148,7 @@ public class Duck : MonoBehaviour
 
     void Update()
     {
-        //Movement();
+        state.Update();
         rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * turnSpeed);
     }
 
@@ -142,145 +159,94 @@ public class Duck : MonoBehaviour
         Debug.DrawLine(transform.position, targetLocation, Color.blue);
     }
 
-    IEnumerator SwimCoroutine()
+    public void Swim(Vector3 targetPosition, float moveSpeed, LayerMask avoidLayers)
+    {
+        targetDirection = (targetPosition - transform.position).normalized;
+        targetDirection = new Vector3(targetDirection.x, 0, targetDirection.z); //Flatten the direction so that it is only on one plane
+        targetDistance = Vector3.Distance(transform.position, targetPosition);
+        moveDirection = targetDirection;
+
+        if (avoidObstacles)
+        {
+            float directionRotation = 0;
+            //Rotate move direction until a clear path is found
+            int direction = 1;
+            int attempt = 1;
+            while (true)
+            {
+                if (PathIsClear(moveDirection, avoidDistance, avoidLayers)) break; //If the path ahead is clear, continue
+                else if (directionRotation < Mathf.PI * 2) //Otherwise try a different path
+                {
+                    directionRotation = Mathf.PI / 16f * attempt;
+                    directionRotation *= direction;
+                    attempt++;
+                    //direction *= -1;
+                    moveDirection = Utilities.RotateVector(targetDirection, directionRotation);
+                    continue;
+                }
+                else //If there are no clear paths, set state to idle
+                {
+                    SetState(new IdleState(this));
+                    break;
+                }
+            }
+        }
+
+        Vector3 moveForce = moveDirection * moveSpeed;
+        rb.AddForce(moveForce);
+
+        if (targetDistance < collider.radius) SetState(new IdleState(this));
+    }
+
+    private IEnumerator SwimCoroutine()
     {
         while (true)
         {
-            if (state == State.Wandering || state == State.Pursuit)
-            {
-                float moveSpeed = speed;
-                if (state == State.Pursuit) moveSpeed *= pursuitSpeedMultiplier;
-
-                targetDirection = (targetLocation - transform.position).normalized;
-                targetDirection = new Vector3(targetDirection.x, 0, targetDirection.z); //Flatten the direction so that it is only on one plane
-                targetDistance = Vector3.Distance(transform.position, targetLocation);
-                moveDirection = targetDirection;
-
-                if (avoidObstacles)
-                {
-                    float directionRotation = 0;
-                    //Rotate move direction until a clear path is found
-                    int direction = 1;
-                    int attempt = 1;
-                    while (true)
-                    {
-                        if (PathIsClear(moveDirection, avoidDistance)) break; //If the path ahead is clear, continue
-                        else if (directionRotation < Mathf.PI * 2) //Otherwise try a different path
-                        {
-                            directionRotation = Mathf.PI / 16f * attempt;
-                            directionRotation *= direction;
-                            attempt++;
-                            //direction *= -1;
-                            moveDirection = Utilities.RotateVector(targetDirection, directionRotation);
-                            continue;
-                        }
-                        else //If there are no clear paths, set state to idle
-                        {
-                            SetState(State.Idle);
-                            break;
-                        }
-                    }
-                }
-
-                Vector3 moveForce = moveDirection * moveSpeed;
-                rb.AddForce(moveForce);
-                
-                if (targetDistance < collider.radius) SetState(State.Idle);
-
-            }
-
-            //rb.AddTorque(Vector3.up * turnSpeed * 5f);
-            //
-            
-
+            state.Swim();
             yield return new WaitForSeconds(0.1f);
         }
     }
 
-    void Movement()
+    public bool PathIsClear(Vector3 direction, float distance, LayerMask avoidLayers)
     {
-        if(state == State.Wandering || state == State.Pursuit) {
-            targetDirection = (targetLocation - transform.position).normalized;
-            targetDirection = new Vector3(targetDirection.x, 0, targetDirection.z); //Flatten the direction so that it is only on one plane
-            moveDirection = targetDirection;
-
-            if (avoidObstacles) {
-                float directionRotation = 0;
-                //Rotate move direction until a clear path is found
-                int direction = 1;
-                int attempt = 1;
-                while (true)
-                {
-                    if (PathIsClear(moveDirection, avoidDistance)) break; //If the path ahead is clear, continue
-                    else if (directionRotation < Mathf.PI * 2) //Otherwise try a different path
-                    {
-                        directionRotation = Mathf.PI / 16f * attempt;
-                        directionRotation *= direction;
-                        attempt++;
-                        //direction *= -1;
-                        moveDirection = Utilities.RotateVector(targetDirection, directionRotation);
-                        continue;
-                    }
-                    else //If there are no clear paths, set state to idle
-                    {
-                        SetState(State.Idle);
-                        break;
-                    }
-                }
-            }
-
-            rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * turnSpeed);
-            targetDistance = Vector3.Distance(transform.position, targetLocation);
-            if (targetDistance < collider.radius) SetState(State.Idle);
-        }
-    }
-
-    private bool PathIsClear(Vector3 direction, float distance)
-    {
-        LayerMask layerMask = state == State.Pursuit ? pursuitAvoidLayers : wanderAvoidLayers;
+        //LayerMask layerMask = state == State.Pursuit ? pursuitAvoidLayers : wanderAvoidLayers;
         Ray ray = new Ray(transform.position + collider.center, direction);
-        if (!Physics.SphereCast(ray, collider.radius, distance, layerMask)) return true;
+        if (!Physics.SphereCast(ray, collider.radius, distance, avoidLayers)) return true;
         else return false;
     }
 
-    void SetState(State _state)
+    public void SetState(DuckState _state)
     {
+        if(state != null) StartCoroutine(state.Exit());
         state = _state;
-        switch (_state){
-            case State.Idle:
-                waitTimer = StartCoroutine(Wait());
-                targetLocation = transform.position;
-                targetFood = null;
+        StartCoroutine(state.Enter());
+    }
+
+    public void PickWanderTarget()
+    {
+        Vector3 newTarget;
+        int attempts = 0;
+        while (true)
+        {
+            Vector2 targetOffset = Random.insideUnitCircle * wanderRadius;
+            newTarget = transform.position + new Vector3(targetOffset.x, 0, targetOffset.y);
+            Vector3 newTargetDirection = newTarget - transform.position;
+            float newTargetDistance = Vector3.Distance(transform.position, newTarget);
+            attempts++;
+            if (GameManager.Instance.PositionIsOnLake(newTarget) && PathIsClear(newTargetDirection, newTargetDistance, wanderAvoidLayers)) break;
+            else if (attempts > 50)
+            {
+                newTarget = transform.position;
                 break;
-            case State.Wandering:
-                SetTargetLocation(FindNearPosition(wanderRadius));
-                break;
-            case State.Eating:
-                waitTimer = StartCoroutine(Digest());
-                break;
-            default:
-                break;
+            }
         }
+
+        SetTargetLocation(newTarget);
     }
 
     void SetTargetLocation(Vector3 newTarget)
     {
-        StopCoroutine(waitTimer);
         targetLocation = newTarget;
-    }
-
-    IEnumerator Wait()
-    {
-        float waitTime = Random.Range(minIdleTime, maxIdleTime);
-        yield return new WaitForSeconds(waitTime);
-        SetState(State.Wandering);
-    }
-
-    IEnumerator Digest()
-    {
-        yield return new WaitForSeconds(eatTime);
-        SetState(State.Idle);
-        StartCoroutine(CheckSurroundings());
     }
 
     IEnumerator FlashCoroutine()
@@ -311,42 +277,14 @@ public class Duck : MonoBehaviour
         animator.SetTrigger("Quack");
     }
 
-    private Vector3 FindNearPosition(float maxDistance)
-    {
-        Vector3 newTarget;
-        int attempts = 0;
-        while (true) { 
-            Vector2 targetOffset = Random.insideUnitCircle * maxDistance;
-            newTarget = transform.position + new Vector3(targetOffset.x,0,targetOffset.y);
-            Vector3 newTargetDirection = newTarget - transform.position;
-            float newTargetDistance = Vector3.Distance(transform.position, newTarget);
-            attempts++;
-            if (GameManager.Instance.PositionIsOnLake(newTarget) && PathIsClear(newTargetDirection,newTargetDistance)) break;
-            else if (attempts > 50)
-            {
-                newTarget = transform.position;
-                break;
-            }
-        }
-        return newTarget;
-    }
-
     public void SetTargetObject(GameObject target)
     {
         targetFood = target;
         SetTargetLocation(target.transform.position);
-        SetState(State.Pursuit);
+        SetState(new PursuitState(this, target));
     }
 
-    private void OnTriggerStay(Collider other)
-    {
-        if(other.CompareTag("DuckFood") && other.transform.parent.gameObject == targetFood) //On reaching food
-        {
-            Eat(targetFood);
-        }
-    }
-
-    private void Eat(GameObject food)
+    public void Eat(GameObject food)
     {
         food.SetActive(false);
         if (hungry)
@@ -360,39 +298,32 @@ public class Duck : MonoBehaviour
         hungry = false;
         targetFood = null;
         foodConsumed++;
-        SetState(State.Eating);
+        SetState(new EatState(this));
     }
 
     IEnumerator CheckSurroundings()
     {
-        yield return new WaitForSeconds(reactionTime);
-        //Look for nearby food
-        DuckFood[] allFood = FindObjectsOfType<DuckFood>();
-        DuckFood closestFood = null;
-        float closestDistance = Mathf.Infinity;
-        foreach (DuckFood food in allFood)
-        {
-            float distance = Vector3.Distance(transform.position, food.transform.position);
-            if(distance < closestDistance && food.inWater)
+        while (true) { 
+            yield return new WaitForSeconds(reactionTime);
+            //Look for nearby food
+            GameObject[] allFood = GameObject.FindGameObjectsWithTag("DuckFood");
+            GameObject closestFood = null;
+            float closestDistance = Mathf.Infinity;
+            foreach (GameObject food in allFood)
             {
-                closestFood = food;
-                closestDistance = distance;
+                float distance = Vector3.Distance(transform.position, food.transform.position);
+                if(distance < closestDistance && food.GetComponent<DuckFood>().inWater)
+                {
+                    closestFood = food;
+                    closestDistance = distance;
+                }
+                //if (distance < foodDetectionRadius && (targetFood == null || distance < targetDistance)) SetTargetObject(food.gameObject);
             }
-            //if (distance < foodDetectionRadius && (targetFood == null || distance < targetDistance)) SetTargetObject(food.gameObject);
-        }
-        if (closestFood != null && closestDistance < awarenessRadius) SetTargetObject(closestFood.gameObject);
-
-        if (state == State.Pursuit && targetFood == null) SetState(State.Idle);
-    }
-
-    public static void UpdateSurroundings()
-    {
-        Duck[] ducks = FindObjectsOfType<Duck>();
-        foreach(Duck duck in ducks)
-        {
-            if(duck.state != State.Eating) duck.StartCoroutine(duck.CheckSurroundings());
+            if (closestFood == null) state.UpdateNearestFood(null);
+            else if (closestDistance < awarenessRadius) state.UpdateNearestFood(closestFood);
         }
     }
+
 
     public static List<Duck> DucksInVicinity(Vector3 origin, float radius)
     {

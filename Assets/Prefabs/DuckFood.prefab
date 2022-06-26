@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3756754791301574634}
   m_Layer: 7
   m_Name: Trigger
-  m_TagString: DuckFood
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5039,6 +5039,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buoyancy: 1
+  despawnTime: 60
   inWater: 0
   particleSystem: {fileID: 8263510029809504559}
   ripple: {fileID: 7059551143757195618, guid: 6dbdd408ac7e84c46b283607e8d6d328, type: 3}

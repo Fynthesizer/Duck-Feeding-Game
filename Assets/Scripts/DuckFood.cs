@@ -31,7 +31,7 @@ public class DuckFood : MonoBehaviour
             rb.isKinematic = true;
             transform.position = new Vector3(transform.position.x, 5, transform.position.z);
             bobbing.enabled = true;
-            Duck.UpdateSurroundings();
+            //Duck.UpdateSurroundings();
             splashSource.Play();
             particleSystem.Play();
             CreateRipple();
@@ -40,7 +40,7 @@ public class DuckFood : MonoBehaviour
 
     private void OnDestroy()
     {
-        Duck.UpdateSurroundings();
+        //Duck.UpdateSurroundings();
         GameManager.Instance.CheckGameEnded();
     }
 
