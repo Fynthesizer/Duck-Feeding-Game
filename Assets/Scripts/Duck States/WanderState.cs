@@ -18,12 +18,12 @@ public class WanderState : DuckState
         int attempts = 0;
         while (true)
         {
-            Vector2 targetOffset = Random.insideUnitCircle * duck.WanderRadius;
+            Vector2 targetOffset = Random.insideUnitCircle * duck.globalVars.wanderRadius;
             newTarget = duck.transform.position + new Vector3(targetOffset.x, 0, targetOffset.y);
             Vector3 newTargetDirection = newTarget - duck.transform.position;
             float newTargetDistance = Vector3.Distance(duck.transform.position, newTarget);
             attempts++;
-            if (GameManager.Instance.PositionIsOnLake(newTarget) && duck.PathIsClear(newTargetDirection, newTargetDistance, duck.WanderAvoidLayers)) break;
+            if (GameManager.Instance.PositionIsOnLake(newTarget) && duck.PathIsClear(newTargetDirection, newTargetDistance, duck.globalVars.wanderAvoidLayers)) break;
             else if (attempts > 50)
             {
                 newTarget = duck.transform.position;
@@ -41,7 +41,7 @@ public class WanderState : DuckState
 
     public override void Swim()
     {
-        duck.Swim(targetPosition, duck.speed, duck.WanderAvoidLayers);
+        duck.Swim(targetPosition, duck.speed, duck.globalVars.wanderAvoidLayers);
     }
 
     public override void UpdateNearestFood(GameObject nearest)

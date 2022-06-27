@@ -19,6 +19,8 @@ public class Duck : MonoBehaviour
     private Coroutine waitTimer;
 
     [Header("Global Variables")]
+    public DuckGlobals globalVars;
+    /*
     [SerializeField] private float pursuitSpeedMultiplier = 1.5f;
     [SerializeField] private float turnSpeed = 2;
     [SerializeField] private float minIdleTime = 0;
@@ -28,12 +30,15 @@ public class Duck : MonoBehaviour
     [SerializeField] private float eatTime = 1;
     [SerializeField] private float wanderRadius = 5;
     [SerializeField] private float satiationPeriod = 1;
+    
+
 
     public float MinIdleTime => minIdleTime;
     public float MaxIdleTime => maxIdleTime;
     public float EatTime => eatTime;
     public float WanderRadius => wanderRadius;
     public float PursuitSpeedMultiplier => pursuitSpeedMultiplier;
+    */
 
     [Header("Duck Data")]
     //[SerializeField] public DuckData duckData;
@@ -52,6 +57,7 @@ public class Duck : MonoBehaviour
     //public State state = State.Idle;
     public DuckState state;
 
+    /*
     [Header("Obstacle Avoidance")]
     [SerializeField] private bool avoidObstacles = true;
     [SerializeField] private float avoidDistance = 1f;
@@ -60,6 +66,7 @@ public class Duck : MonoBehaviour
 
     public LayerMask WanderAvoidLayers => wanderAvoidLayers;
     public LayerMask PursuitAvoidLayers => pursuitAvoidLayers;
+    */
 
     [Header("Quack")]
     [SerializeField] private AudioClip[] quackClips;
@@ -113,7 +120,7 @@ public class Duck : MonoBehaviour
     private bool CheckIfHungry()
     {
         TimeSpan elapsedTime = DateTime.Now.Subtract(lastFedTime);
-        return elapsedTime.Hours >= satiationPeriod;
+        return elapsedTime.Hours >= globalVars.satiationPeriod;
     }
 
     public void LoadData(DuckData data)
@@ -149,7 +156,7 @@ public class Duck : MonoBehaviour
     void Update()
     {
         state.Update();
-        rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * turnSpeed);
+        rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * globalVars.turnSpeed);
     }
 
     private void OnDrawGizmosSelected()
@@ -166,29 +173,26 @@ public class Duck : MonoBehaviour
         targetDistance = Vector3.Distance(transform.position, targetPosition);
         moveDirection = targetDirection;
 
-        if (avoidObstacles)
+        float directionRotation = 0;
+        //Rotate move direction until a clear path is found
+        int direction = 1;
+        int attempt = 1;
+        while (true)
         {
-            float directionRotation = 0;
-            //Rotate move direction until a clear path is found
-            int direction = 1;
-            int attempt = 1;
-            while (true)
+            if (PathIsClear(moveDirection, globalVars.avoidDistance, avoidLayers)) break; //If the path ahead is clear, continue
+            else if (directionRotation < Mathf.PI * 2) //Otherwise try a different path
             {
-                if (PathIsClear(moveDirection, avoidDistance, avoidLayers)) break; //If the path ahead is clear, continue
-                else if (directionRotation < Mathf.PI * 2) //Otherwise try a different path
-                {
-                    directionRotation = Mathf.PI / 16f * attempt;
-                    directionRotation *= direction;
-                    attempt++;
-                    //direction *= -1;
-                    moveDirection = Utilities.RotateVector(targetDirection, directionRotation);
-                    continue;
-                }
-                else //If there are no clear paths, set state to idle
-                {
-                    SetState(new IdleState(this));
-                    break;
-                }
+                directionRotation = Mathf.PI / 16f * attempt;
+                directionRotation *= direction;
+                attempt++;
+                //direction *= -1;
+                moveDirection = Utilities.RotateVector(targetDirection, directionRotation);
+                continue;
+            }
+            else //If there are no clear paths, set state to idle
+            {
+                SetState(new IdleState(this));
+                break;
             }
         }
 
@@ -228,12 +232,12 @@ public class Duck : MonoBehaviour
         int attempts = 0;
         while (true)
         {
-            Vector2 targetOffset = Random.insideUnitCircle * wanderRadius;
+            Vector2 targetOffset = Random.insideUnitCircle * globalVars.wanderRadius;
             newTarget = transform.position + new Vector3(targetOffset.x, 0, targetOffset.y);
             Vector3 newTargetDirection = newTarget - transform.position;
             float newTargetDistance = Vector3.Distance(transform.position, newTarget);
             attempts++;
-            if (GameManager.Instance.PositionIsOnLake(newTarget) && PathIsClear(newTargetDirection, newTargetDistance, wanderAvoidLayers)) break;
+            if (GameManager.Instance.PositionIsOnLake(newTarget) && PathIsClear(newTargetDirection, newTargetDistance, globalVars.wanderAvoidLayers)) break;
             else if (attempts > 50)
             {
                 newTarget = transform.position;
@@ -265,7 +269,7 @@ public class Duck : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(Random.Range(minQuackInterval, maxQuackInterval));
+            yield return new WaitForSeconds(Random.Range(globalVars.minQuackInterval, globalVars.maxQuackInterval));
             Quack();
         }
     }

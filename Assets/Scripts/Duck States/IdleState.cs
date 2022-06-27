@@ -11,7 +11,7 @@ public class IdleState : DuckState
 
     public override IEnumerator Enter()
     {
-        yield return new WaitForSeconds(Random.Range(duck.MinIdleTime, duck.MaxIdleTime));
+        yield return new WaitForSeconds(Random.Range(duck.globalVars.minIdleTime, duck.globalVars.maxIdleTime));
         if(duck.state == this) duck.SetState(new WanderState(duck));
     }
 

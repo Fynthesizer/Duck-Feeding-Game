@@ -11,7 +11,7 @@ public class EatState : DuckState
 
     public override IEnumerator Enter()
     {
-        yield return new WaitForSeconds(duck.EatTime);
+        yield return new WaitForSeconds(duck.globalVars.eatTime);
         if (duck.state == this) duck.SetState(new WanderState(duck));
     }
     

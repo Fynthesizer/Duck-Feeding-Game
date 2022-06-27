@@ -86,35 +86,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   model: {fileID: 3608198735795248714}
   animator: {fileID: 1187779372747838917}
-  pursuitSpeedMultiplier: 1.5
-  turnSpeed: 2
-  minIdleTime: 0
-  maxIdleTime: 10
-  minQuackInterval: 2
-  maxQuackInterval: 30
-  eatTime: 1
-  wanderRadius: 5
-  satiationPeriod: 1
-  duckData:
-    duckName: 
-    gender: 0
-    breed: {fileID: 0}
-    speed: 0
-    weight: 0
-    reactionTime: 0
-    awarenessRadius: 0
-    lastFedTime: 
+  globalVars: {fileID: 11400000, guid: 723ea22b34051f54f87c248719ef7293, type: 2}
+  duckName: 
+  breed: {fileID: 0}
+  gender: 0
+  speed: 0
+  weight: 0
+  reactionTime: 0
+  awarenessRadius: 0
   foodConsumed: 0
   hungry: 0
-  state: 0
-  avoidObstacles: 1
-  avoidDistance: 0.5
-  wanderAvoidLayers:
-    serializedVersion: 2
-    m_Bits: 448
-  pursuitAvoidLayers:
-    serializedVersion: 2
-    m_Bits: 320
   quackClips:
   - {fileID: 8300000, guid: c39c4ea9c113b074b840bc0ecc388ef9, type: 3}
   - {fileID: 8300000, guid: 108a92ca59b105a42b61a27102ca5808, type: 3}

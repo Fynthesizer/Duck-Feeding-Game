@@ -21,7 +21,7 @@ public class PursuitState : DuckState
 
     public override void Swim()
     {
-        duck.Swim(targetPosition, duck.speed * duck.PursuitSpeedMultiplier, duck.PursuitAvoidLayers);
+        duck.Swim(targetPosition, duck.speed * duck.globalVars.pursuitSpeedMultiplier, duck.globalVars.pursuitAvoidLayers);
     }
 
     public override void Update()
