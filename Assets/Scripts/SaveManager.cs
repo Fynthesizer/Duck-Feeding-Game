@@ -8,30 +8,49 @@ public class SaveManager : MonoBehaviour
     private string path = "";
     private string persistentPath = "";
 
+    [SerializeField] private bool usePersistentPath = true;
+
+    private string activePath;
+
+    [SerializeField] float autoSaveInterval;
+    [SerializeField] bool autoSaveEnabled;
+
     void Start()
     {
         SetPaths();
+        if (autoSaveEnabled) StartCoroutine(AutoSave());
     }
 
     private void SetPaths()
     {
         path = Application.dataPath + Path.AltDirectorySeparatorChar + "SaveData.json";
         persistentPath = Application.persistentDataPath + Path.AltDirectorySeparatorChar + "SaveData.json";
+
+        activePath = usePersistentPath ? persistentPath : path;
     }
 
+    private IEnumerator AutoSave()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(autoSaveInterval);
+            SaveData();
+        }
+    }
 
     public void SaveData()
     {
-        print("Game Saved");
+        print($"Game saved to {activePath}");
 
         GameData data = new GameData();
-        data.currency = GameManager.Instance.gameData.currency;
+        data.currency = GameManager.Instance.currency;
+        data.foodCount = GameManager.player.availableFood;
         data.raft = GetRaftData();
+        data.lastReplenishedFoodTime = GameManager.Instance.gameData.lastReplenishedFoodTime;
 
-        string savePath = path;
         string json = JsonUtility.ToJson(data, true);
 
-        using StreamWriter writer = new StreamWriter(savePath);
+        using StreamWriter writer = new StreamWriter(activePath);
         writer.Write(json);
     }
 
@@ -52,14 +71,14 @@ public class SaveManager : MonoBehaviour
 
     public bool CheckForSaveData()
     {
-        return File.Exists(path);
+        return File.Exists(activePath);
     }
 
     public GameData LoadData()
     {
-        print("Game Loaded");
+        print($"Game loaded from {activePath}");
 
-        using StreamReader reader = new StreamReader(path);
+        using StreamReader reader = new StreamReader(activePath);
         string json = reader.ReadToEnd();
 
         GameData data = JsonUtility.FromJson<GameData>(json);

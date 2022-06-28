@@ -21,3 +21,10 @@ MonoBehaviour:
   eatTime: 1
   wanderRadius: 5
   satiationPeriod: 1
+  avoidDistance: 1
+  wanderAvoidLayers:
+    serializedVersion: 2
+    m_Bits: 384
+  pursuitAvoidLayers:
+    serializedVersion: 2
+    m_Bits: 256

@@ -41,7 +41,7 @@ public class DuckFood : MonoBehaviour
     private void OnDestroy()
     {
         //Duck.UpdateSurroundings();
-        GameManager.Instance.CheckGameEnded();
+        //GameManager.Instance.CheckGameEnded();
     }
 
     private void CreateRipple()

@@ -11,15 +11,12 @@ public class GameManager : MonoBehaviour
 
     public DuckDatabase duckInfoDatabase;
     public GameData gameData;
+    public int currency;
 
     public int duckCount = 10;
     [SerializeField] private GameObject duckPrefab;
 
     [SerializeField] private Transform duckGroup;
-
-    [SerializeField] private TimePeriodSettings daySettings;
-    [SerializeField] private TimePeriodSettings sunsetSettings;
-    [SerializeField] private TimePeriodSettings nightSettings;
 
     private Bounds lakeBounds;
 
@@ -27,42 +24,47 @@ public class GameManager : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else if (Instance != this) Destroy(this);
-    }
 
-    void Start()
-    {
         UIManager = gameObject.GetComponent<UIManager>();
         saveManager = gameObject.GetComponent<SaveManager>();
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
         lakeBounds = GameObject.FindGameObjectWithTag("Lake").GetComponent<Collider>().bounds;
+    }
 
-        SetupLighting();
-
+    void Start()
+    {
         if (saveManager.CheckForSaveData()) gameData = saveManager.LoadData(); //If a save file exists, load it
         else gameData = new GameData(duckInfoDatabase, duckCount); //Otherwise, generate a new raft
 
+        OnLoad();
+    }
+
+    public void OnLoad()
+    {
         SpawnDucks();
+        currency = gameData.currency;
+        UIManager.UpdateCurrencyCount();
+        player.availableFood = gameData.foodCount;
+        ReplenishFood();
+        UIManager.UpdateFoodCount();
     }
 
     public void AddCurrency(int amount)
     {
-        gameData.currency += amount;
+        currency += amount;
+        UIManager.UpdateCurrencyCount();
     }
 
-    private void SetupLighting()
+    private void ReplenishFood()
     {
-        int time = System.DateTime.Now.Hour;
-        TimePeriodSettings timeSettings;
-        if (time < 6 || time >= 20) timeSettings = nightSettings;
-        else if (time < 8 || time >= 18) timeSettings = sunsetSettings;
-        else timeSettings = daySettings;
-
-        RenderSettings.skybox = timeSettings.skyboxMaterial;
-        RenderSettings.sun.color = timeSettings.lightColour;
-        RenderSettings.sun.intensity = timeSettings.lightIntensity;
-        //RenderSettings.ambientIntensity = timeSettings.lightIntensity;
-        DynamicGI.UpdateEnvironment();
+        System.DateTime lastReplenishTime = System.DateTime.Parse(gameData.lastReplenishedFoodTime);
+        System.DateTime currentTime = System.DateTime.Now;
+        System.TimeSpan timespan = currentTime.Subtract(lastReplenishTime);
+        int amount = Mathf.FloorToInt((timespan.Minutes * gameData.raft.Count) / 60f);
+        player.AddFood(amount);
+        gameData.lastReplenishedFoodTime = System.DateTime.Now.ToString();
     }
+
     void SpawnDucks()
     {
         for(int i = 0; i < gameData.raft.Count; i++)
@@ -95,12 +97,14 @@ public class GameManager : MonoBehaviour
         else return false;
     }
 
+    /*
     public void CheckGameEnded()
     {
         if (PlayerController.availableFood > 0) return;
         else if (GameObject.FindGameObjectsWithTag("DuckFood").Length > 0) return;
         else GameEnd();
     }
+    */
 
     public void GameEnd()
     {

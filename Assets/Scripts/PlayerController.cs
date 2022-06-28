@@ -10,7 +10,7 @@ using TouchState = UnityEngine.InputSystem.LowLevel.TouchState;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private bool infiniteFood;
-    public static int availableFood;
+    public int availableFood;
     [SerializeField] private GameObject duckFood;
 
     [SerializeField] private Camera cam;
@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        availableFood = GameManager.Instance.duckCount;
+        //availableFood = GameManager.Instance.duckCount;
         GameManager.UIManager.UpdateFoodCount();
         gyroControls = gameObject.GetComponent<GyroscopeControls>();
         audioSource = GetComponent<AudioSource>();
@@ -97,6 +97,12 @@ public class PlayerController : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    public void AddFood(int amount)
+    {
+        availableFood += amount;
+        availableFood = Mathf.Clamp(availableFood, 0, GameManager.Instance.gameData.raft.Count);
     }
 
     private void ReadSwipe(Vector2 velocity)

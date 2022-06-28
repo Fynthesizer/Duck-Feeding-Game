@@ -8,6 +8,7 @@ using TMPro;
 public class UIManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI foodCount;
+    [SerializeField] private TextMeshProUGUI currencyCount;
     [SerializeField] private GameObject gameEndScreen;
     void Start()
     {
@@ -22,7 +23,12 @@ public class UIManager : MonoBehaviour
 
     public void UpdateFoodCount()
     {
-        foodCount.text = $"Food: {PlayerController.availableFood}";
+        foodCount.text = $"Food: {GameManager.player.availableFood}";
+    }
+
+    public void UpdateCurrencyCount()
+    {
+        currencyCount.text = $"DuckBux: ${GameManager.Instance.currency}";
     }
 
     public void GameEnd(float score)
