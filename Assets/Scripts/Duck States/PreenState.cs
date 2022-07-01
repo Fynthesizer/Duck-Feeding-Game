@@ -2,26 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class IdleState : DuckState
+public class PreenState : DuckState
 {
-    public IdleState(Duck duck) : base(duck)
+    public PreenState(Duck duck) : base(duck)
     {
 
     }
 
     public override IEnumerator Enter()
     {
+        duck.animator.SetBool("Preening", true);
         yield return new WaitForSeconds(Random.Range(duck.globalVars.minIdleTime, duck.globalVars.maxIdleTime));
-        if (duck.state == this)
-        {
-            if (Random.value < 0.5f) duck.SetState(new WanderState(duck));
-            else duck.SetState(new PreenState(duck));
-        }
+        if(duck.state == this) duck.SetState(new WanderState(duck));
     }
 
 
     public override IEnumerator Exit()
     {
+        duck.animator.SetBool("Preening", false);
         return base.Exit();
     }
 

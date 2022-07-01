@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 public class Duck : MonoBehaviour
 {
     [SerializeField] private Transform model;
-    [SerializeField] private Animator animator;
+    public Animator animator;
     private Rigidbody rb;
     private CapsuleCollider collider;
 

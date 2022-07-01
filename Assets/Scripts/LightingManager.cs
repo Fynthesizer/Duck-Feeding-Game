@@ -31,17 +31,28 @@ public class LightingManager : MonoBehaviour
     private void SetupLighting()
     {
         TimePeriodSettings timeSettings;
-        if (lightingMode == LightingMode.TimeBased)
+
+        switch (lightingMode)
         {
-            int time = System.DateTime.Now.Hour;
-            if (time < 6 || time >= 20) timeSettings = nightSettings;
-            else if (time < 8 || time >= 18) timeSettings = sunsetSettings;
-            else timeSettings = daySettings;
+            case LightingMode.TimeBased:
+                int time = System.DateTime.Now.Hour;
+                if (time < 6 || time >= 20) timeSettings = nightSettings;
+                else if (time < 8 || time >= 18) timeSettings = sunsetSettings;
+                else timeSettings = daySettings;
+                break;
+            case LightingMode.Day:
+                timeSettings = daySettings;
+                break;
+            case LightingMode.Sunset:
+                timeSettings = sunsetSettings;
+                break;
+            case LightingMode.Night:
+                timeSettings = nightSettings;
+                break;
+            default:
+                timeSettings = daySettings;
+                break;
         }
-        else if (lightingMode == LightingMode.Day) timeSettings = daySettings;
-        else if (lightingMode == LightingMode.Sunset) timeSettings = sunsetSettings;
-        else if (lightingMode == LightingMode.Night) timeSettings = nightSettings;
-        else timeSettings = daySettings;
 
         RenderSettings.skybox = timeSettings.skyboxMaterial;
         RenderSettings.sun.color = timeSettings.lightColour;

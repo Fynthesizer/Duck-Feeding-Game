@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour
     [Tooltip("How long it takes for food to be fully replenished, measured in seconds")]
     public float foodReplenishInterval = 60f;
 
+    private DateTime pauseTime;
+
     public List<Duck> ducks;
 
     [SerializeField] private GameObject duckPrefab;
@@ -48,6 +50,21 @@ public class GameManager : MonoBehaviour
         //StartCoroutine(GameTickCoroutine());
         //if (saveManager.CheckForSaveData()) gameData = saveManager.LoadData(); //If a save file exists, load it
         //else gameData = new GameData(duckInfoDatabase, duckCount); //Otherwise, generate a new raft
+    }
+
+    private void OnApplicationFocus(bool focus)
+    {
+        
+    }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        if (pauseStatus) pauseTime = DateTime.Now;
+        else
+        {
+            int elapsedTime = (int)DateTime.Now.Subtract(pauseTime).TotalSeconds;
+            if (elapsedTime > 0) SimulateTime(elapsedTime);
+        }
     }
 
     private void Update()

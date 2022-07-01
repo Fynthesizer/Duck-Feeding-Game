@@ -39,6 +39,11 @@ public class SaveManager : MonoBehaviour
         activePath = usePersistentPath ? persistentPath : path;
     }
 
+    private void OnApplicationFocus(bool focus)
+    {
+        if (!focus) SaveData();
+    }
+
     private IEnumerator AutoSave()
     {
         while (true)
@@ -100,7 +105,7 @@ public class SaveManager : MonoBehaviour
     private void ClearData()
     {
         print("Cleared save data");
-        System.IO.File.Delete(activePath);
+        File.Delete(activePath);
     }
 
     private GameData LoadData()
