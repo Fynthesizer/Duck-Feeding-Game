@@ -10,7 +10,7 @@ using TouchState = UnityEngine.InputSystem.LowLevel.TouchState;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private bool infiniteFood;
-    public int availableFood;
+    //public int availableFood;
     [SerializeField] private GameObject duckFood;
 
     [SerializeField] private Camera cam;
@@ -99,11 +99,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    /*
     public void AddFood(int amount)
     {
         availableFood += amount;
         availableFood = Mathf.Clamp(availableFood, 0, GameManager.Instance.gameData.raft.Count);
+        GameManager.UIManager.UpdateFoodCount();
     }
+    */
 
     private void ReadSwipe(Vector2 velocity)
     {
@@ -120,9 +123,9 @@ public class PlayerController : MonoBehaviour
 
     private void ThrowFood(Vector3 direction, float force)
     {
-        if (canThrow && availableFood > 0) {
+        if (canThrow && GameManager.Instance.food > 0) {
             StartCoroutine(ThrowCooldown());
-            if (!infiniteFood) availableFood--;
+            if (!infiniteFood) GameManager.Instance.AddFood(-1);
             Vector3 spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
             spawnPos += transform.forward;
             //spawnPos.x += Utilities.Map(swipeStartPos.x, 0, Screen.width, -1f, 1f);
@@ -130,7 +133,6 @@ public class PlayerController : MonoBehaviour
             GameObject food = Instantiate(duckFood, spawnPos, Quaternion.identity);
             Rigidbody foodRb = food.GetComponent<Rigidbody>();
             foodRb.AddForce(direction * force);
-            GameManager.UIManager.UpdateFoodCount();
         }
     }
 

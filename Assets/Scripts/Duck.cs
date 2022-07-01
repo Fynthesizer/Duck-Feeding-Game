@@ -14,31 +14,10 @@ public class Duck : MonoBehaviour
     private Vector3 targetLocation;
     private Vector3 targetDirection;
     private Vector3 moveDirection;
-    private GameObject targetFood;
     private float targetDistance;
-    private Coroutine waitTimer;
 
     [Header("Global Variables")]
     public DuckGlobals globalVars;
-    /*
-    [SerializeField] private float pursuitSpeedMultiplier = 1.5f;
-    [SerializeField] private float turnSpeed = 2;
-    [SerializeField] private float minIdleTime = 0;
-    [SerializeField] private float maxIdleTime = 10;
-    [SerializeField] private float minQuackInterval = 2;
-    [SerializeField] private float maxQuackInterval = 30;
-    [SerializeField] private float eatTime = 1;
-    [SerializeField] private float wanderRadius = 5;
-    [SerializeField] private float satiationPeriod = 1;
-    
-
-
-    public float MinIdleTime => minIdleTime;
-    public float MaxIdleTime => maxIdleTime;
-    public float EatTime => eatTime;
-    public float WanderRadius => wanderRadius;
-    public float PursuitSpeedMultiplier => pursuitSpeedMultiplier;
-    */
 
     [Header("Duck Data")]
     //[SerializeField] public DuckData duckData;
@@ -51,11 +30,15 @@ public class Duck : MonoBehaviour
     public float awarenessRadius;
 
     [Header("Duck State")]
-    public int foodConsumed = 0;
     public DateTime lastFedTime;
-    public bool hungry;
+    public float satiety = 0f;
     //public State state = State.Idle;
     public DuckState state;
+
+    public bool Hungry { get => satiety <= 0f; }
+
+    public float tickInterval = 60f;
+    public float tickTimer = 0f;
 
     /*
     [Header("Obstacle Avoidance")]
@@ -117,6 +100,22 @@ public class Duck : MonoBehaviour
         
     }
 
+    private void OnEnable()
+    {
+        //GameManager.OnGameTick += OnGameTick;
+    }
+
+    private void OnDisable()
+    {
+        //GameManager.OnGameTick -= OnGameTick;
+    }
+
+    private void OnGameTick()
+    {
+        satiety -= 1f / (globalVars.satiationPeriod * 3600);
+        satiety = Mathf.Clamp(satiety, 0f, 1f);
+    }
+
     private bool CheckIfHungry()
     {
         TimeSpan elapsedTime = DateTime.Now.Subtract(lastFedTime);
@@ -135,8 +134,10 @@ public class Duck : MonoBehaviour
         weight = data.weight;
         reactionTime = data.reactionTime;
         awarenessRadius = data.awarenessRadius;
+        tickTimer = data.tickTimer;
         DateTime.TryParse(data.lastFedTime, out lastFedTime);
-        hungry = CheckIfHungry();
+        //hungry = CheckIfHungry();
+        satiety = data.satiety;
     }
 
     public DuckData PackageData()
@@ -150,6 +151,8 @@ public class Duck : MonoBehaviour
         data.reactionTime = reactionTime;
         data.awarenessRadius = awarenessRadius;
         data.lastFedTime = lastFedTime.ToString();
+        data.satiety = satiety;
+        data.tickTimer = tickTimer;
         return data;
     }
 
@@ -157,6 +160,38 @@ public class Duck : MonoBehaviour
     {
         state.Update();
         rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * globalVars.turnSpeed);
+
+        //UpdateSatiety(Time.deltaTime);
+        UpdateTicks(Time.deltaTime);
+    }
+
+    public void UpdateTicks(float deltaTime)
+    {
+        if (Hungry) return;
+            
+        tickTimer += deltaTime;
+
+        if (tickTimer > tickInterval) { 
+            int tickCount = Mathf.FloorToInt(tickTimer / tickInterval);
+            tickTimer -= tickInterval * tickCount;
+
+            for (int i = 0; i < tickCount; i++)
+            {
+                Tick();
+                if (Hungry)
+                {
+                    tickTimer = 0f;
+                    break;
+                }
+            }
+        }
+    }
+
+    void Tick()
+    {
+        satiety -= 1 / globalVars.satiationPeriod;
+        satiety = Mathf.Clamp(satiety, 0f, 1f);
+        GameManager.Instance.AddCurrency(1);
     }
 
     private void OnDrawGizmosSelected()
@@ -283,7 +318,6 @@ public class Duck : MonoBehaviour
 
     public void SetTargetObject(GameObject target)
     {
-        targetFood = target;
         SetTargetLocation(target.transform.position);
         SetState(new PursuitState(this, target));
     }
@@ -291,7 +325,7 @@ public class Duck : MonoBehaviour
     public void Eat(GameObject food)
     {
         food.SetActive(false);
-        if (hungry)
+        if (Hungry)
         {
             StartCoroutine(FlashCoroutine());
             GameManager.Instance.AddCurrency(1);
@@ -299,9 +333,8 @@ public class Duck : MonoBehaviour
         animator.SetTrigger("Eat");
         Destroy(food);
         lastFedTime = DateTime.Now;
-        hungry = false;
-        targetFood = null;
-        foodConsumed++;
+        //hungry = false;
+        satiety = 1f;
         SetState(new EatState(this));
     }
 
@@ -326,17 +359,5 @@ public class Duck : MonoBehaviour
             if (closestFood == null) state.UpdateNearestFood(null);
             else if (closestDistance < awarenessRadius) state.UpdateNearestFood(closestFood);
         }
-    }
-
-
-    public static List<Duck> DucksInVicinity(Vector3 origin, float radius)
-    {
-        Duck[] allDucks = FindObjectsOfType<Duck>();
-        var nearDucks = new List<Duck>();
-        foreach(Duck duck in allDucks)
-        {
-            if (Vector3.Distance(duck.transform.position, origin) < radius) nearDucks.Add(duck);
-        }
-        return nearDucks;
     }
 }

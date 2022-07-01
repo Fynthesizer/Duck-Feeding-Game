@@ -20,6 +20,8 @@ public class DuckData
 
     [Header("Status")]
     public string lastFedTime;
+    public float satiety;
+    public float tickTimer;
 
     public DuckData(DuckDatabase database)
     {
@@ -33,6 +35,9 @@ public class DuckData
         List<DuckName> possibleNames = database.possibleNames.Where(name => name.gender == gender || name.gender == Duck.Gender.Unisex).ToList();
         duckName = possibleNames[Random.Range(0, possibleNames.Count)].name;
         breed = database.breeds[Random.Range(0, database.breeds.Count)].breedName;
+
+        satiety = 0f;
+        tickTimer = 0f;
     }
 
     public DuckData()

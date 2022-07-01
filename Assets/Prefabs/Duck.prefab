@@ -94,8 +94,10 @@ MonoBehaviour:
   weight: 0
   reactionTime: 0
   awarenessRadius: 0
-  foodConsumed: 0
+  satiety: 0
   hungry: 0
+  tickInterval: 5
+  tickTimer: 0
   quackClips:
   - {fileID: 8300000, guid: c39c4ea9c113b074b840bc0ecc388ef9, type: 3}
   - {fileID: 8300000, guid: 108a92ca59b105a42b61a27102ca5808, type: 3}

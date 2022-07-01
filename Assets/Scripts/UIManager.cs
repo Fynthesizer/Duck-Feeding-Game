@@ -23,7 +23,7 @@ public class UIManager : MonoBehaviour
 
     public void UpdateFoodCount()
     {
-        foodCount.text = $"Food: {GameManager.player.availableFood}";
+        foodCount.text = $"Food: {GameManager.Instance.food}";
     }
 
     public void UpdateCurrencyCount()

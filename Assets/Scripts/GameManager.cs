@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using DateTime = System.DateTime;
+using TimeSpan = System.TimeSpan;
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -9,11 +12,20 @@ public class GameManager : MonoBehaviour
     public static PlayerController player;
     public static SaveManager saveManager;
 
+    public delegate void GameTick();
+    public static event GameTick OnGameTick;
+
     public DuckDatabase duckInfoDatabase;
     public GameData gameData;
     public int currency;
+    public int food;
 
-    public int duckCount = 10;
+    public float foodReplenishTimer = 0f;
+    [Tooltip("How long it takes for food to be fully replenished, measured in seconds")]
+    public float foodReplenishInterval = 60f;
+
+    public List<Duck> ducks;
+
     [SerializeField] private GameObject duckPrefab;
 
     [SerializeField] private Transform duckGroup;
@@ -33,20 +45,63 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        if (saveManager.CheckForSaveData()) gameData = saveManager.LoadData(); //If a save file exists, load it
-        else gameData = new GameData(duckInfoDatabase, duckCount); //Otherwise, generate a new raft
-
-        OnLoad();
+        //StartCoroutine(GameTickCoroutine());
+        //if (saveManager.CheckForSaveData()) gameData = saveManager.LoadData(); //If a save file exists, load it
+        //else gameData = new GameData(duckInfoDatabase, duckCount); //Otherwise, generate a new raft
     }
 
-    public void OnLoad()
+    private void Update()
     {
-        SpawnDucks();
-        currency = gameData.currency;
+        UpdateFoodReplenishTimer(Time.deltaTime);
+    }
+
+    private void UpdateFoodReplenishTimer(float deltaTime)
+    {
+        if (food == ducks.Count) return;
+
+        foodReplenishTimer += deltaTime * ducks.Count;
+
+        if (foodReplenishTimer > foodReplenishInterval)
+        {
+            int replenishCount = Mathf.FloorToInt(foodReplenishTimer / foodReplenishInterval);
+            foodReplenishTimer -= replenishCount * foodReplenishInterval;
+            AddFood(replenishCount);
+        }
+    }
+
+    private IEnumerator GameTickCoroutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(1f);
+            OnGameTick();
+        }
+    }
+
+    public void InitialiseGame(GameData data)
+    {
+        gameData = data;
+        ducks = SpawnDucks();
+        currency = data.currency;
         UIManager.UpdateCurrencyCount();
-        player.availableFood = gameData.foodCount;
-        ReplenishFood();
+        food = data.foodCount;
+        foodReplenishTimer = data.foodReplenishTimer;
+        //ReplenishFood(DateTime.Parse(data.lastReplenishedFoodTime));
         UIManager.UpdateFoodCount();
+
+        if (DateTime.TryParse(data.lastSaveTime, out DateTime lastSaveTime))
+        {
+            TimeSpan elapsedTime = DateTime.Now.Subtract(lastSaveTime);
+            int elapsedSeconds = (int)elapsedTime.TotalSeconds;
+            SimulateTime(elapsedSeconds);
+        }
+    }
+
+    private void SimulateTime(int time)
+    {
+        print($"Simulating {time} seconds");
+        foreach (Duck d in ducks) d.UpdateTicks(time);
+        UpdateFoodReplenishTimer(time);
     }
 
     public void AddCurrency(int amount)
@@ -55,18 +110,28 @@ public class GameManager : MonoBehaviour
         UIManager.UpdateCurrencyCount();
     }
 
-    private void ReplenishFood()
+    public void AddFood(int amount)
     {
-        System.DateTime lastReplenishTime = System.DateTime.Parse(gameData.lastReplenishedFoodTime);
-        System.DateTime currentTime = System.DateTime.Now;
-        System.TimeSpan timespan = currentTime.Subtract(lastReplenishTime);
-        int amount = Mathf.FloorToInt((timespan.Minutes * gameData.raft.Count) / 60f);
-        player.AddFood(amount);
-        gameData.lastReplenishedFoodTime = System.DateTime.Now.ToString();
+        food += amount;
+        food = Mathf.Clamp(food, 0, ducks.Count);
+        UIManager.UpdateFoodCount();
     }
 
-    void SpawnDucks()
+    /*
+    private void ReplenishFood(DateTime lastReplenishTime)
     {
+        DateTime currentTime = DateTime.Now;
+        TimeSpan timespan = currentTime.Subtract(lastReplenishTime);
+        int amount = Mathf.FloorToInt((timespan.Minutes * gameData.raft.Count) / 60f);
+        player.AddFood(amount);
+        gameData.lastReplenishedFoodTime = DateTime.Now.ToString();
+    }
+    */
+
+    private List<Duck> SpawnDucks()
+    {
+        List<Duck> duckList = new List<Duck>();
+
         for(int i = 0; i < gameData.raft.Count; i++)
         {
             Vector3 spawnPosition;
@@ -76,21 +141,22 @@ public class GameManager : MonoBehaviour
                     Random.Range(lakeBounds.min.x, lakeBounds.max.x), 
                     lakeBounds.max.y, 
                     Random.Range(lakeBounds.min.z, lakeBounds.max.z));
-                if (!PositionIsOnLake(spawnPosition)) continue;
-                else break;
+                if (PositionIsOnLake(spawnPosition)) break;
             }
 
             GameObject newDuck = Instantiate(duckPrefab, spawnPosition, Quaternion.identity, duckGroup);
             newDuck.GetComponent<Duck>().LoadData(gameData.raft[i]);
+            duckList.Add(newDuck.GetComponent<Duck>());
         }
+
+        return duckList;
     }
 
     public bool PositionIsOnLake(Vector3 position)
     {
-        RaycastHit hit;
-        Vector3 origin = new Vector3(position.x, 10, position.z);
+        Vector3 origin = new Vector3(position.x, 20, position.z);
         Ray ray = new Ray(origin, Vector3.down);
-        if (Physics.SphereCast(ray, 2f, out hit, 10))
+        if (Physics.SphereCast(ray, 2f, out RaycastHit hit))
         {
             return hit.collider.gameObject.layer == 4;
         }
@@ -106,6 +172,7 @@ public class GameManager : MonoBehaviour
     }
     */
 
+    /*
     public void GameEnd()
     {
         GameObject[] ducks = GameObject.FindGameObjectsWithTag("Duck");
@@ -122,4 +189,5 @@ public class GameManager : MonoBehaviour
 
         UIManager.GameEnd(score);
     }
+    */
 }

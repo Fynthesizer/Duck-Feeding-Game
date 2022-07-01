@@ -20,7 +20,7 @@ MonoBehaviour:
   maxQuackInterval: 30
   eatTime: 1
   wanderRadius: 5
-  satiationPeriod: 1
+  satiationPeriod: 60
   avoidDistance: 1
   wanderAvoidLayers:
     serializedVersion: 2

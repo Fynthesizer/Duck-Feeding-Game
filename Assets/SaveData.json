@@ -1,205 +1,128 @@
 {
     "raft": [
         {
-            "duckName": "Toby",
+            "duckName": "Benjamin",
             "gender": 0,
             "breed": "Mallard",
-            "speed": 5.796569347381592,
-            "weight": 1.4936354160308838,
-            "reactionTime": 0.8759993314743042,
-            "awarenessRadius": 12.353821754455567,
-            "lastFedTime": "27/06/2022 9:08:07 p.m."
+            "speed": 5.340487957000732,
+            "weight": 1.062129020690918,
+            "reactionTime": 0.9149602651596069,
+            "awarenessRadius": 8.935863494873047,
+            "lastFedTime": "1/07/2022 4:02:21 p.m.",
+            "satiety": 0.0,
+            "tickTimer": 0.0
         },
         {
-            "duckName": "Myrtle",
-            "gender": 1,
-            "breed": "Mallard",
-            "speed": 4.431824207305908,
-            "weight": 1.2428759336471558,
-            "reactionTime": 0.33416956663131716,
-            "awarenessRadius": 11.580547332763672,
-            "lastFedTime": "27/06/2022 9:07:52 p.m."
-        },
-        {
-            "duckName": "Alexis",
-            "gender": 1,
-            "breed": "Pekin",
-            "speed": 4.749167442321777,
-            "weight": 1.0334111452102662,
-            "reactionTime": 0.36767178773880007,
-            "awarenessRadius": 12.163738250732422,
-            "lastFedTime": "27/06/2022 9:07:24 p.m."
-        },
-        {
-            "duckName": "Gwendolyn",
-            "gender": 1,
-            "breed": "Mallard",
-            "speed": 5.6468610763549809,
-            "weight": 0.8846994638442993,
-            "reactionTime": 0.07663214206695557,
-            "awarenessRadius": 7.638859748840332,
-            "lastFedTime": "27/06/2022 9:07:34 p.m."
-        },
-        {
-            "duckName": "Eva",
-            "gender": 1,
-            "breed": "Mallard",
-            "speed": 5.460562705993652,
-            "weight": 0.9010394811630249,
-            "reactionTime": 0.952867865562439,
-            "awarenessRadius": 10.134413719177246,
-            "lastFedTime": "27/06/2022 9:01:14 p.m."
-        },
-        {
-            "duckName": "Julius",
+            "duckName": "Colby",
             "gender": 0,
             "breed": "Mallard",
-            "speed": 4.35004997253418,
-            "weight": 1.003501296043396,
-            "reactionTime": 0.44472306966781618,
-            "awarenessRadius": 12.0833740234375,
-            "lastFedTime": "27/06/2022 9:02:56 p.m."
-        },
-        {
-            "duckName": "Julia",
-            "gender": 1,
-            "breed": "Pekin",
-            "speed": 4.018606185913086,
-            "weight": 1.3641470670700074,
-            "reactionTime": 0.8705712556838989,
-            "awarenessRadius": 11.152459144592286,
-            "lastFedTime": "27/06/2022 9:07:32 p.m."
+            "speed": 4.713312149047852,
+            "weight": 1.1892513036727906,
+            "reactionTime": 0.6654497385025024,
+            "awarenessRadius": 13.51648998260498,
+            "lastFedTime": "1/07/2022 3:58:56 p.m.",
+            "satiety": 0.0,
+            "tickTimer": 0.0
         },
         {
             "duckName": "Nicholas",
             "gender": 0,
             "breed": "Pekin",
-            "speed": 4.444496154785156,
-            "weight": 1.068063735961914,
-            "reactionTime": 0.3974730372428894,
-            "awarenessRadius": 10.06570053100586,
-            "lastFedTime": "27/06/2022 9:01:44 p.m."
-        },
-        {
-            "duckName": "Julia",
-            "gender": 1,
-            "breed": "Pekin",
-            "speed": 4.723705291748047,
-            "weight": 1.4220277070999146,
-            "reactionTime": 0.13305163383483888,
-            "awarenessRadius": 8.483668327331543,
-            "lastFedTime": "27/06/2022 9:08:01 p.m."
-        },
-        {
-            "duckName": "Colby",
-            "gender": 1,
-            "breed": "Mallard",
-            "speed": 4.008420944213867,
-            "weight": 1.1392860412597657,
-            "reactionTime": 0.306526243686676,
-            "awarenessRadius": 13.02489948272705,
-            "lastFedTime": "27/06/2022 9:03:13 p.m."
-        },
-        {
-            "duckName": "Colby",
-            "gender": 1,
-            "breed": "Pekin",
-            "speed": 5.451462745666504,
-            "weight": 0.8070336580276489,
-            "reactionTime": 0.5199595093727112,
-            "awarenessRadius": 12.712591171264649,
-            "lastFedTime": "27/06/2022 9:06:23 p.m."
+            "speed": 4.688685417175293,
+            "weight": 0.9516830444335938,
+            "reactionTime": 0.9199306964874268,
+            "awarenessRadius": 10.924381256103516,
+            "lastFedTime": "1/07/2022 3:54:45 p.m.",
+            "satiety": 0.0,
+            "tickTimer": 0.0
         },
         {
             "duckName": "Ronaldo",
             "gender": 0,
-            "breed": "Pekin",
-            "speed": 4.567753314971924,
-            "weight": 1.2542839050292969,
-            "reactionTime": 0.1838909387588501,
-            "awarenessRadius": 13.701598167419434,
-            "lastFedTime": "27/06/2022 9:07:10 p.m."
+            "breed": "Mallard",
+            "speed": 4.230910301208496,
+            "weight": 1.5338383913040162,
+            "reactionTime": 0.4873386025428772,
+            "awarenessRadius": 11.860685348510743,
+            "lastFedTime": "1/07/2022 4:23:07 p.m.",
+            "satiety": 0.5833337306976318,
+            "tickTimer": 0.291702002286911
         },
         {
-            "duckName": "Nicholas",
-            "gender": 0,
+            "duckName": "Louise",
+            "gender": 1,
             "breed": "Mallard",
-            "speed": 5.044095039367676,
-            "weight": 0.8358505964279175,
-            "reactionTime": 0.3369620442390442,
-            "awarenessRadius": 9.687993049621582,
-            "lastFedTime": "27/06/2022 9:07:14 p.m."
+            "speed": 5.860786437988281,
+            "weight": 1.1077690124511719,
+            "reactionTime": 0.9407925605773926,
+            "awarenessRadius": 13.637310981750489,
+            "lastFedTime": "1/07/2022 3:58:03 p.m.",
+            "satiety": 0.0,
+            "tickTimer": 0.0
+        },
+        {
+            "duckName": "Nichola",
+            "gender": 1,
+            "breed": "Pekin",
+            "speed": 5.50009822845459,
+            "weight": 0.8739045262336731,
+            "reactionTime": 0.015272140502929688,
+            "awarenessRadius": 10.523012161254883,
+            "lastFedTime": "1/07/2022 4:02:14 p.m.",
+            "satiety": 0.0,
+            "tickTimer": 0.0
+        },
+        {
+            "duckName": "Carmine",
+            "gender": 1,
+            "breed": "Pekin",
+            "speed": 4.313285827636719,
+            "weight": 1.2081598043441773,
+            "reactionTime": 0.24308276176452638,
+            "awarenessRadius": 12.530712127685547,
+            "lastFedTime": "1/07/2022 4:06:41 p.m.",
+            "satiety": 0.0,
+            "tickTimer": 0.0
+        },
+        {
+            "duckName": "Sebastian",
+            "gender": 0,
+            "breed": "Pekin",
+            "speed": 5.434911251068115,
+            "weight": 0.8134043216705322,
+            "reactionTime": 0.7178072929382324,
+            "awarenessRadius": 11.712319374084473,
+            "lastFedTime": "1/07/2022 4:06:44 p.m.",
+            "satiety": 0.0,
+            "tickTimer": 0.0
         },
         {
             "duckName": "Eren",
             "gender": 0,
             "breed": "Pekin",
-            "speed": 5.45686674118042,
-            "weight": 1.1070218086242676,
-            "reactionTime": 0.025241971015930177,
-            "awarenessRadius": 9.226547241210938,
-            "lastFedTime": "27/06/2022 8:49:23 p.m."
+            "speed": 5.401390075683594,
+            "weight": 0.8240923881530762,
+            "reactionTime": 0.3854314684867859,
+            "awarenessRadius": 10.833484649658204,
+            "lastFedTime": "1/07/2022 4:06:46 p.m.",
+            "satiety": 0.0,
+            "tickTimer": 0.0
         },
         {
-            "duckName": "Carmine",
+            "duckName": "Colby",
             "gender": 1,
             "breed": "Mallard",
-            "speed": 4.44378662109375,
-            "weight": 1.0018229484558106,
-            "reactionTime": 0.7245242595672607,
-            "awarenessRadius": 13.394916534423829,
-            "lastFedTime": "27/06/2022 9:03:20 p.m."
-        },
-        {
-            "duckName": "Borris",
-            "gender": 0,
-            "breed": "Pekin",
-            "speed": 4.817777633666992,
-            "weight": 1.188634991645813,
-            "reactionTime": 0.5960201621055603,
-            "awarenessRadius": 11.860128402709961,
-            "lastFedTime": "27/06/2022 9:07:35 p.m."
-        },
-        {
-            "duckName": "Julius",
-            "gender": 0,
-            "breed": "Mallard",
-            "speed": 4.751198768615723,
-            "weight": 1.3084179162979127,
-            "reactionTime": 0.13120925426483155,
-            "awarenessRadius": 12.453378677368164,
-            "lastFedTime": "27/06/2022 9:07:17 p.m."
-        },
-        {
-            "duckName": "Winston",
-            "gender": 0,
-            "breed": "Pekin",
-            "speed": 4.107901096343994,
-            "weight": 1.3111337423324586,
-            "reactionTime": 0.5970055460929871,
-            "awarenessRadius": 9.101348876953125,
-            "lastFedTime": "27/06/2022 9:03:18 p.m."
-        },
-        {
-            "duckName": "Louise",
-            "gender": 1,
-            "breed": "Pekin",
-            "speed": 5.576910495758057,
-            "weight": 1.1682839393615723,
-            "reactionTime": 0.35639113187789919,
-            "awarenessRadius": 14.998083114624024,
-            "lastFedTime": "27/06/2022 9:08:18 p.m."
-        },
-        {
-            "duckName": "Gwendolyn",
-            "gender": 1,
-            "breed": "Pekin",
-            "speed": 5.045928001403809,
-            "weight": 1.0362019538879395,
-            "reactionTime": 0.9368923902511597,
-            "awarenessRadius": 10.942039489746094,
-            "lastFedTime": "27/06/2022 9:03:23 p.m."
+            "speed": 5.893397808074951,
+            "weight": 0.9195915460586548,
+            "reactionTime": 0.009535074234008789,
+            "awarenessRadius": 14.401449203491211,
+            "lastFedTime": "1/07/2022 3:58:05 p.m.",
+            "satiety": 0.0,
+            "tickTimer": 0.0
         }
     ],
-    "currency": 20
+    "currency": 1463,
+    "foodCount": 2,
+    "foodReplenishTimer": 129.58621215820313,
+    "lastSaveTime": "1/07/2022 4:26:14 p.m."
 }
