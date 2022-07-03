@@ -10,6 +10,11 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI foodCount;
     [SerializeField] private TextMeshProUGUI currencyCount;
     [SerializeField] private GameObject gameEndScreen;
+
+    [SerializeField] private GameObject duckLabelGroup;
+    [SerializeField] private GameObject duckLabelPrefab;
+
+    private GameObject[] duckLabels;
     void Start()
     {
         UpdateFoodCount();
@@ -36,5 +41,16 @@ public class UIManager : MonoBehaviour
         string scoreText = $"Score: {score.ToString("0.0")} / 5";
         gameEndScreen.SetActive(true);
         gameEndScreen.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = scoreText;
+    }
+
+    public void CreateDuckLabels(List<Duck> ducks)
+    {
+        duckLabels = new GameObject[ducks.Count];
+
+        for(int i = 0; i < ducks.Count; i++)
+        {
+            duckLabels[i] = Instantiate(duckLabelPrefab, duckLabelGroup.transform);
+            duckLabels[i].GetComponent<DuckLabel>().SetDuck(ducks[i]);
+        }
     }
 }

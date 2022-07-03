@@ -105,6 +105,7 @@ public class GameManager : MonoBehaviour
         foodReplenishTimer = data.foodReplenishTimer;
         //ReplenishFood(DateTime.Parse(data.lastReplenishedFoodTime));
         UIManager.UpdateFoodCount();
+        UIManager.CreateDuckLabels(ducks);
 
         if (DateTime.TryParse(data.lastSaveTime, out DateTime lastSaveTime))
         {

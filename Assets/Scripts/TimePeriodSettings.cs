@@ -9,4 +9,9 @@ public class TimePeriodSettings : ScriptableObject
     public Color lightColour;
     public float lightIntensity;
     public Color fogColour;
+
+    public bool lampsEnabled;
+
+    public Material cloudsMaterial;
+    public Vector3 sunRotation;
 }

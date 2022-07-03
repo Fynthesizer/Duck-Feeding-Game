@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class DuckState
 {
     protected Duck duck;
+    public virtual bool allowQuack { get { return true; } }
 
     public DuckState(Duck _duck)
     {

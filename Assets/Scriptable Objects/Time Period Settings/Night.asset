@@ -16,3 +16,6 @@ MonoBehaviour:
   lightColour: {r: 0.8392157, g: 0.9547347, b: 1, a: 0}
   lightIntensity: 0.7
   fogColour: {r: 0.22352941, g: 0.5764706, b: 0.7254902, a: 0}
+  lampsEnabled: 1
+  cloudsMaterial: {fileID: 2100000, guid: acc66c2a87c559e419c52ea2508a1def, type: 2}
+  sunRotation: {x: 120, y: 0, z: 0}

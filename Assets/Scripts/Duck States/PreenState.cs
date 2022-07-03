@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PreenState : DuckState
 {
+
+    public override bool allowQuack { get { return false; } }
     public PreenState(Duck duck) : base(duck)
     {
 
@@ -13,7 +15,11 @@ public class PreenState : DuckState
     {
         duck.animator.SetBool("Preening", true);
         yield return new WaitForSeconds(Random.Range(duck.globalVars.minIdleTime, duck.globalVars.maxIdleTime));
-        if(duck.state == this) duck.SetState(new WanderState(duck));
+        if (duck.state == this)
+        {
+            if (Random.value > 0.5f) duck.SetState(new WanderState(duck));
+            else duck.SetState(new IdleState(duck));
+        }
     }
 
 

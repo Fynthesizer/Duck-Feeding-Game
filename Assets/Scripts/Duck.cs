@@ -7,6 +7,7 @@ using Random = UnityEngine.Random;
 public class Duck : MonoBehaviour
 {
     [SerializeField] private Transform model;
+    public Transform labelAnchor;
     public Animator animator;
     private Rigidbody rb;
     private CapsuleCollider collider;
@@ -305,7 +306,7 @@ public class Duck : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(Random.Range(globalVars.minQuackInterval, globalVars.maxQuackInterval));
-            Quack();
+            if (state.allowQuack) Quack();
         }
     }
 

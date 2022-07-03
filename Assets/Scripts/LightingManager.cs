@@ -57,8 +57,23 @@ public class LightingManager : MonoBehaviour
         RenderSettings.skybox = timeSettings.skyboxMaterial;
         RenderSettings.sun.color = timeSettings.lightColour;
         RenderSettings.sun.intensity = timeSettings.lightIntensity;
+        RenderSettings.sun.transform.eulerAngles = timeSettings.sunRotation;
         RenderSettings.fogColor = timeSettings.fogColour;
         //RenderSettings.ambientIntensity = timeSettings.lightIntensity;
         DynamicGI.UpdateEnvironment();
+
+        Lamp[] lamps = FindObjectsOfType<Lamp>();
+        foreach(Lamp lamp in lamps)
+        {
+            lamp.Toggle(timeSettings.lampsEnabled);
+        }
+
+        GameObject[] clouds = GameObject.FindGameObjectsWithTag("Cloud");
+        foreach(GameObject cloud in clouds)
+        {
+            cloud.GetComponent<MeshRenderer>().material = timeSettings.cloudsMaterial;
+        }
+
+
     }
 }

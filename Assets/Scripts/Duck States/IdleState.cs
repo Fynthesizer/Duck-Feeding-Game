@@ -14,7 +14,7 @@ public class IdleState : DuckState
         yield return new WaitForSeconds(Random.Range(duck.globalVars.minIdleTime, duck.globalVars.maxIdleTime));
         if (duck.state == this)
         {
-            if (Random.value < 0.5f) duck.SetState(new WanderState(duck));
+            if (Random.value < 0.9f) duck.SetState(new WanderState(duck));
             else duck.SetState(new PreenState(duck));
         }
     }
