@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Mallard
   m_EditorClassIdentifier: 
   breedName: Mallard
-  material: {fileID: 2100000, guid: 2da4fce3be52c43429d0f57fc5540c4e, type: 2}
+  material: {fileID: 2100000, guid: 32f4529e99f167f4fabdef69aa2dd116, type: 2}

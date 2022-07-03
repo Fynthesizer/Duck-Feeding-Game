@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Pekin
   m_EditorClassIdentifier: 
   breedName: Pekin
-  material: {fileID: 2100000, guid: e7abf6f1af25737449f228bbb1e02f17, type: 2}
+  material: {fileID: 2100000, guid: 8951d708a947061459f6df96628cf436, type: 2}

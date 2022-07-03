@@ -11,7 +11,12 @@ public class DuckLabel : MonoBehaviour
     [SerializeField] private Image hungerBar;
     [SerializeField] private TextMeshProUGUI nameTag;
 
-    [SerializeField] private float yOffset;
+    private Camera cam;
+
+    private void Awake()
+    {
+        cam = Camera.main;
+    }
 
     public void SetDuck(Duck _duck)
     {
@@ -19,11 +24,11 @@ public class DuckLabel : MonoBehaviour
         nameTag.text = duck.duckName;
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (duck != null) 
         { 
-            transform.position = Camera.main.WorldToScreenPoint(duck.labelAnchor.position);
+            transform.position = cam.WorldToScreenPoint(duck.labelAnchor.position);
             hungerBar.rectTransform.sizeDelta = new Vector2(50 * duck.satiety, 3);
         }
     }

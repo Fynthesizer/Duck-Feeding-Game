@@ -7,6 +7,8 @@ using TMPro;
 
 public class UIManager : MonoBehaviour
 {
+    public bool showDuckLabels = false;
+
     [SerializeField] private TextMeshProUGUI foodCount;
     [SerializeField] private TextMeshProUGUI currencyCount;
     [SerializeField] private GameObject gameEndScreen;
@@ -52,5 +54,12 @@ public class UIManager : MonoBehaviour
             duckLabels[i] = Instantiate(duckLabelPrefab, duckLabelGroup.transform);
             duckLabels[i].GetComponent<DuckLabel>().SetDuck(ducks[i]);
         }
+
+        ToggleDuckLabels(showDuckLabels);
+    }
+
+    public void ToggleDuckLabels(bool state)
+    {
+        duckLabelGroup.SetActive(state);
     }
 }
