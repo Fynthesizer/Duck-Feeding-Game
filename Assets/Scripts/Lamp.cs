@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Lamp : MonoBehaviour
 {
+    [SerializeField] private GameObject halo;
+
     public Material[] offMaterials;
     public Material[] onMaterials;
     void Start()
@@ -20,5 +22,6 @@ public class Lamp : MonoBehaviour
     public void Toggle(bool state)
     {
         gameObject.GetComponent<MeshRenderer>().materials = state ? onMaterials : offMaterials;
+        halo.SetActive(state);
     }
 }
