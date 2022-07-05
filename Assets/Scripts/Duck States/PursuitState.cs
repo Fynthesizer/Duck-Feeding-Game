@@ -4,66 +4,88 @@ using UnityEngine;
 
 public class PursuitState : DuckState
 {
-    private readonly GameObject target;
+    private float thrustTimer = 0f;
+
+    public override DuckStateID GetID()
+    {
+        return DuckStateID.Pursuit;
+    }
+
     private Vector3 targetPosition;
+    private GameObject targetObject;
 
     private float headIKWeight;
 
-    public PursuitState(Duck duck, GameObject _target) : base(duck)
+    public PursuitState(Duck duck) : base(duck)
     {
-        target = _target;
+
     }
 
-    public override IEnumerator Enter()
+    public override void Enter()
     {
-        if (target != null && target.activeInHierarchy) targetPosition = target.transform.position;
-        else duck.SetState(new IdleState(duck));
+        thrustTimer = 0.2f;
+        UpdateTarget();
+        //else duck.SetState(new IdleState(duck));
 
         headIKWeight = 0.0f;
-        return base.Enter();
-    }
-
-    public override void Swim()
-    {
-        duck.Swim(targetPosition, duck.speed * duck.globalVars.pursuitSpeedMultiplier, duck.globalVars.pursuitAvoidLayers);
     }
 
     public override void Update()
     {
+        Swim();
+
+        Vector3 targetDirection = (targetPosition - duck.transform.position).normalized;
+        duck.targetLookDirection = -targetDirection;
+
         duck.headIK.weight = Mathf.Lerp(duck.headIK.weight, headIKWeight, Time.deltaTime * 5f);
         duck.lookConstraint.weight = Mathf.Lerp(duck.lookConstraint.weight, 1 - headIKWeight, Time.deltaTime * 5f);
 
-        if (target != null && target.activeInHierarchy) { 
-            float targetDistance = Vector3.Distance(duck.transform.position, targetPosition);
-            float targetDot = Vector3.Dot(duck.transform.forward, (targetPosition - duck.transform.position).normalized);
-            Debug.Log(targetDot);
-            if (targetDistance < 0.3f)
-            {
-                duck.Eat(target);
-            }
+        //if (duck.nearestFood == null) duck.stateMachine.ChangeState(DuckStateID.Idle);
+        //else if (duck.nearestFood != targetObject) UpdateTarget();
 
-            if (targetDistance < 1f && targetDot > 0.6f)
-            {
-                duck.headIK.transform.GetChild(0).position = target.transform.position;
-                headIKWeight = (1f - targetDistance);
-            }
+        float targetDistance = Vector3.Distance(duck.transform.position, targetPosition);
+        float targetDot = Vector3.Dot(duck.transform.forward, (targetPosition - duck.transform.position).normalized);
+
+        if (targetDistance < 0.3f)
+        {
+            duck.Eat(targetObject);
+            duck.stateMachine.ChangeState(DuckStateID.Eat);
+        }
+
+        if (targetDistance < 1f && targetDot > 0.6f)
+        {
+            duck.headIK.transform.GetChild(0).position = targetPosition;
+            headIKWeight = (1f - targetDistance);
         }
     }
 
-    public override IEnumerator Exit()
+    private void Swim()
+    {
+        thrustTimer -= Time.deltaTime;
+
+        if (thrustTimer <= 0f)
+        {
+            thrustTimer = 0.2f;
+            duck.Swim(targetPosition, duck.speed * duck.globalVars.pursuitSpeedMultiplier, duck.globalVars.pursuitAvoidLayers);
+        }
+    }
+
+    private void UpdateTarget()
+    {
+        targetObject = duck.nearestFood;
+        targetPosition = targetObject.transform.position;
+    }
+
+    public override void Exit()
     {
         headIKWeight = 0f;
         duck.lookConstraint.weight = 1f;
-        while(duck.headIK.weight > 0f)
-        {
-            duck.headIK.weight -= 0.04f;
-            yield return null;
-        }
+        duck.headIK.weight = 0f;
     }
 
-    public override void UpdateNearestFood(GameObject nearest)
+    public override void UpdateNearestFood(GameObject food)
     {
-        if (nearest != target) duck.SetState(new PursuitState(duck, nearest));
-        else if (nearest == null) duck.SetState(new IdleState(duck));
+        if (food == null) duck.stateMachine.ChangeState(DuckStateID.Idle);
+        else if (food != targetObject) UpdateTarget();
     }
 }

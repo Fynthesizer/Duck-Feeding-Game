@@ -5,7 +5,6 @@ using UnityEngine;
 public class DuckFood : MonoBehaviour
 {
     private Rigidbody rb;
-    [SerializeField] private float buoyancy = 20;
     [SerializeField] private float despawnTime = 60f;
 
     public bool inWater = false;

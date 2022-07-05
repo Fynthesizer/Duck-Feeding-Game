@@ -4,16 +4,24 @@ using UnityEngine;
 
 public class WanderState : DuckState
 {
+    private float thrustTimer = 0f;
+
+    public override DuckStateID GetID()
+    {
+        return DuckStateID.Wander;
+    }
     private Vector3 targetPosition;
+    private float targetDistance;
 
     public WanderState(Duck duck) : base(duck)
     {
 
     }
 
-    public override IEnumerator Enter()
+    public override void Enter()
     {
-        //duck.PickWanderTarget();
+        thrustTimer = 0.2f;
+
         Vector3 newTarget;
         int attempts = 0;
         while (true)
@@ -31,21 +39,49 @@ public class WanderState : DuckState
             }
         }
         targetPosition = newTarget;
-        yield break;
+        //yield break;
     }
 
-    public override IEnumerator Exit()
+    public override void Update()
     {
-        return base.Exit();
+        Vector3 targetDirection = (targetPosition - duck.transform.position).normalized;
+        duck.targetLookDirection = -targetDirection;
+
+        Swim();
+        CheckTargetDistance();
     }
 
+    private void Swim()
+    {
+        thrustTimer -= Time.deltaTime;
+
+        if (thrustTimer <= 0f)
+        {
+            thrustTimer = 0.2f;
+            duck.Swim(targetPosition, duck.speed, duck.globalVars.wanderAvoidLayers);
+        }
+    }
+
+    private void CheckTargetDistance()
+    {
+        targetDistance = Vector3.Distance(duck.transform.position, targetPosition);
+
+        if (targetDistance < 0.1f)
+        {
+            if (Random.value > 0.5f) duck.stateMachine.ChangeState(DuckStateID.Idle);
+            else duck.stateMachine.ChangeState(DuckStateID.Wander);
+        }
+    }
+
+    /*
     public override void Swim()
     {
         duck.Swim(targetPosition, duck.speed, duck.globalVars.wanderAvoidLayers);
     }
+    */
 
-    public override void UpdateNearestFood(GameObject nearest)
+    public override void UpdateNearestFood(GameObject food)
     {
-        if (nearest != null && nearest.activeInHierarchy) duck.SetState(new PursuitState(duck, nearest));
+        if (food != null) duck.stateMachine.ChangeState(DuckStateID.Pursuit);
     }
 }

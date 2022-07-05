@@ -7,7 +7,6 @@ public class Bobbing : MonoBehaviour
     [SerializeField] private float bobSpeed;
     [SerializeField] private float bobAmount;
     [SerializeField] private float bobOffset;
-    [SerializeField] private float waterHeight = 5f;
 
     private Vector3 basePos;
 

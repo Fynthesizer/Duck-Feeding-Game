@@ -18,7 +18,6 @@ public class PlayerController : MonoBehaviour
 
     [Header("Controls")]
     [SerializeField] public InputActions controls;
-    [SerializeField] private float cameraSmoothing = 0.1f;
     private InputAction touch;
     
 

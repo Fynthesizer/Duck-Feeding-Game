@@ -222,7 +222,6 @@ MonoBehaviour:
   bobSpeed: 1
   bobAmount: 0.02
   bobOffset: 0.03
-  waterHeight: 5
 --- !u!1 &666566115892859007
 GameObject:
   m_ObjectHideFlags: 0
@@ -369,7 +368,6 @@ MonoBehaviour:
   bobSpeed: 1
   bobAmount: 0.02
   bobOffset: 0.03
-  waterHeight: 5
 --- !u!114 &4072860411554308809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1025,6 +1023,7 @@ MonoBehaviour:
   lookConstraint: {fileID: 326783042053767674}
   labelAnchor: {fileID: 100971304498806929}
   animator: {fileID: 6480024478603586259}
+  nearestFood: {fileID: 0}
   globalVars: {fileID: 11400000, guid: 723ea22b34051f54f87c248719ef7293, type: 2}
   duckName: 
   breed: {fileID: 0}
@@ -1034,6 +1033,9 @@ MonoBehaviour:
   reactionTime: 0
   awarenessRadius: 0
   satiety: 0
+  stateMachine:
+    duck: {fileID: 0}
+    currentState: 0
   tickInterval: 5
   tickTimer: 0
   quackClips:
@@ -1045,7 +1047,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: cee78e36610ce154cb8566539cbf5dd6, type: 3}
   - {fileID: 8300000, guid: c9008b0b0902f8c44923bbe12f1e03cb, type: 3}
   - {fileID: 8300000, guid: 324d9b82d26e81046a2882e8569f46a1, type: 3}
-  glowFadeSpeed: 0.05
 --- !u!54 &2952318735816069753
 Rigidbody:
   m_ObjectHideFlags: 0

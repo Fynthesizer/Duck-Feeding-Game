@@ -17,13 +17,15 @@ public class Duck : MonoBehaviour
     public Animator animator;
     private Rigidbody rb;
     private CapsuleCollider collider;
+    private Material material;
 
     private Vector3 targetLocation;
     private Vector3 targetDirection;
     private Vector3 lookDirection;
-    private Vector3 targetLookDirection;
+    public Vector3 targetLookDirection;
     private Vector3 moveDirection;
     private float targetDistance;
+    public GameObject nearestFood;
 
     [Header("Global Variables")]
     public DuckGlobals globalVars;
@@ -40,9 +42,10 @@ public class Duck : MonoBehaviour
     [Header("Duck State")]
     public DateTime lastFedTime;
     public float satiety = 0f;
-    public DuckState state;
+    //public DuckState state;
     public DuckStateMachine stateMachine;
-    public DuckStateID initialState;
+    public DuckState state { get { return stateMachine.GetState(stateMachine.currentState); } }
+    //public DuckStateID initialState;
 
     public bool Hungry { get => satiety <= 0f; }
 
@@ -53,18 +56,11 @@ public class Duck : MonoBehaviour
     [SerializeField] private AudioClip[] quackClips;
     private AudioSource quackSource;
 
+    /*
     [Header("Glow")]
     [SerializeField] private float glowFadeSpeed = 0.05f;
-    private Material material;
     private float glowAmount = 0.0f;
-
-    public enum State
-    {
-        Idle,
-        Wandering,
-        Pursuit,
-        Eating
-    }
+    */
 
     public enum Gender
     {
@@ -82,8 +78,6 @@ public class Duck : MonoBehaviour
 
     void Start()
     {
-        if (alive) SetState(new IdleState(this));
-
         targetLocation = transform.position;
         Vector2 initialLookDirection = Random.insideUnitCircle.normalized;
         moveDirection = new Vector3(initialLookDirection.x, 0f, initialLookDirection.y);
@@ -92,13 +86,11 @@ public class Duck : MonoBehaviour
         rb.rotation = Quaternion.LookRotation(moveDirection, Vector3.up);
 
         stateMachine = new DuckStateMachine(this);
+        DuckStateID initialState = Random.value > 0.5f ? DuckStateID.Idle : DuckStateID.Wander;
         stateMachine.ChangeState(initialState);
 
         StartCoroutine(QuackCoroutine());
-        StartCoroutine(SwimCoroutine());
-        StartCoroutine(LookCoroutine());
-        StartCoroutine(CheckSurroundings());
-        
+        StartCoroutine(CheckForFood());
     }
 
     public void LoadData(DuckData data)
@@ -136,7 +128,8 @@ public class Duck : MonoBehaviour
 
     void Update()
     {
-        state.Update();
+        if (alive) stateMachine.Update();
+
         rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * globalVars.turnSpeed);
 
         UpdateTicks(Time.deltaTime);
@@ -210,7 +203,7 @@ public class Duck : MonoBehaviour
             }
             else //If there are no clear paths, set state to idle
             {
-                SetState(new IdleState(this));
+                stateMachine.ChangeState(DuckStateID.Idle);
                 break;
             }
         }
@@ -219,30 +212,6 @@ public class Duck : MonoBehaviour
 
         Vector3 moveForce = moveDirection * moveSpeed * 2;
         rb.AddForce(moveForce);
-
-        if (targetDistance < collider.radius)
-        {
-            if (Random.value > 0.5f) SetState(new IdleState(this));
-            else SetState(new WanderState(this));
-        }
-    }
-
-    private IEnumerator SwimCoroutine()
-    {
-        while (true)
-        {
-            state.Swim();
-            yield return new WaitForSeconds(0.2f);
-        }
-    }
-
-    private IEnumerator LookCoroutine()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(Random.Range(0.5f, 2.5f));
-            if (state is IdleState) ChooseNewLookTarget();
-        }
     }
 
     public bool PathIsClear(Vector3 direction, float distance, LayerMask avoidLayers)
@@ -250,13 +219,6 @@ public class Duck : MonoBehaviour
         Ray ray = new Ray(transform.position + collider.center, direction);
         if (!Physics.SphereCast(ray, collider.radius, distance, avoidLayers)) return true;
         else return false;
-    }
-
-    public void SetState(DuckState _state)
-    {
-        if(state != null) StartCoroutine(state.Exit());
-        state = _state;
-        StartCoroutine(state.Enter());
     }
 
     public void PickWanderTarget()
@@ -286,22 +248,15 @@ public class Duck : MonoBehaviour
         targetLocation = newTarget;
     }
 
-    private void ChooseNewLookTarget()
-    {
-        float angle = Random.Range(-45f, 45f);
-        targetLookDirection = Quaternion.AngleAxis(angle, Vector3.up) * -moveDirection;
-    }
-
     private void LookAnimation()
     {
-        if (state is WanderState || state is PursuitState) targetLookDirection = -moveDirection;
-
         lookDirection = Vector3.Lerp(lookDirection, targetLookDirection, Time.deltaTime * globalVars.headTurnSpeed);
         //neck.rotation = Quaternion.LookRotation(lookDirection);
         //localPosition = -lookDirection;
         lookConstraint.data.sourceObjects[0].transform.rotation = Quaternion.LookRotation(lookDirection);
     }
 
+    /*
     IEnumerator FlashCoroutine()
     {
         glowAmount = 1f;
@@ -312,6 +267,7 @@ public class Duck : MonoBehaviour
             yield return null;
         }
     }
+    */
 
     IEnumerator QuackCoroutine()
     {
@@ -329,46 +285,50 @@ public class Duck : MonoBehaviour
         animator.SetTrigger("Quack");
     }
 
-    public void SetTargetObject(GameObject target)
-    {
-        SetTargetLocation(target.transform.position);
-    }
-
     public void Eat(GameObject food)
     {
         food.SetActive(false);
-        if (Hungry)
-        {
-            StartCoroutine(FlashCoroutine());
-            GameManager.Instance.AddCurrency(1);
-        }
-        animator.SetTrigger("Eat");
         Destroy(food);
         lastFedTime = DateTime.Now;
-        //hungry = false;
         satiety = 1f;
-        SetState(new EatState(this));
+        //stateMachine.ChangeState(DuckStateID.Eat);
     }
 
-    IEnumerator CheckSurroundings()
+    IEnumerator CheckForFood()
     {
         while (true) { 
             yield return new WaitForSeconds(reactionTime);
-            //Look for nearby food
+
             GameObject[] allFood = GameObject.FindGameObjectsWithTag("DuckFood");
-            GameObject closestFood = null;
-            float closestDistance = Mathf.Infinity;
+            if (allFood.Length == 0)
+            {
+                UpdateNearestFood(null);
+                continue;
+            }
+
+            GameObject nearestFound = null;
+            float nearestDistance = Mathf.Infinity;
+
             foreach (GameObject food in allFood)
             {
                 float distance = Vector3.Distance(transform.position, food.transform.position);
-                if(distance < closestDistance && food.GetComponent<DuckFood>().inWater)
+                if(distance < nearestDistance && food.GetComponent<DuckFood>().inWater)
                 {
-                    closestFood = food;
-                    closestDistance = distance;
+                    nearestFound = food;
+                    nearestDistance = distance;
                 }
             }
-            if (closestFood == null) state.UpdateNearestFood(null);
-            else if (closestDistance < awarenessRadius) state.UpdateNearestFood(closestFood);
+            if (nearestDistance < awarenessRadius) UpdateNearestFood(nearestFound);
+            else UpdateNearestFood(null);
+
+            //if (closestFood == null) state.UpdateNearestFood(null);
+            //else if (closestDistance < awarenessRadius) state.UpdateNearestFood(closestFood);
         }
+    }
+
+    private void UpdateNearestFood(GameObject food)
+    {
+        nearestFood = food;
+        state.UpdateNearestFood(food);
     }
 }

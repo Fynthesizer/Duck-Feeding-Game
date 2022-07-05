@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class EatState : DuckState
 {
+    private float eatTimer = 0f;
+
+    public override DuckStateID GetID()
+    {
+        return DuckStateID.Eat;
+    }
     public override bool allowQuack { get { return false; } }
     public override bool allowLook { get { return false; } }
 
@@ -12,14 +18,22 @@ public class EatState : DuckState
 
     }
 
-    public override IEnumerator Enter()
+    public override void Enter()
     {
-        yield return new WaitForSeconds(duck.globalVars.eatTime);
-        if (duck.state == this) duck.SetState(new WanderState(duck));
+        eatTimer = duck.globalVars.eatTime;
+        duck.animator.SetTrigger("Eat");
+        //yield return new WaitForSeconds(duck.globalVars.eatTime);
+        //if (duck.state == this) duck.SetState(new WanderState(duck));
     }
-    
-    public override IEnumerator Exit()
+
+    public override void Update()
     {
-        return base.Exit();
+        eatTimer -= Time.deltaTime;
+        if (eatTimer < 0f) duck.stateMachine.ChangeState(DuckStateID.Idle);
+    }
+
+    public override void UpdateNearestFood(GameObject food)
+    {
+        return;
     }
 }

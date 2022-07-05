@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class DuckStateMachine
 {
     public DuckState[] states;
-    public Duck duck;
+    [HideInInspector] public Duck duck;
     public DuckStateID currentState;
 
     public DuckStateMachine(Duck duck)
@@ -13,6 +14,12 @@ public class DuckStateMachine
         this.duck = duck;
         int numStates = System.Enum.GetNames(typeof(DuckStateID)).Length;
         states = new DuckState[numStates];
+
+        RegisterState(new IdleState(duck));
+        RegisterState(new WanderState(duck));
+        RegisterState(new EatState(duck));
+        RegisterState(new PursuitState(duck));
+        RegisterState(new PreenState(duck));
     }
 
     public void RegisterState(DuckState state)
@@ -29,13 +36,13 @@ public class DuckStateMachine
 
     public void Update()
     {
-        GetState(currentState)?.Update(duck);
+        GetState(currentState)?.Update();
     }
 
     public void ChangeState(DuckStateID newState)
     {
-        GetState(currentState)?.Exit(duck);
+        GetState(currentState)?.Exit();
         currentState = newState;
-        GetState(currentState)?.Enter(duck);
+        GetState(currentState)?.Enter();
     }
 }

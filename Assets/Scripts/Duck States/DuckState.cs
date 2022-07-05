@@ -7,11 +7,14 @@ public enum DuckStateID
     Idle,
     Wander,
     Pursuit,
+    Eat,
     Preen
 }
 
 public abstract class DuckState
 {
+    public virtual DuckStateID ID { get { return DuckStateID.Idle; } }
+
     public virtual DuckStateID GetID() {
         return DuckStateID.Idle;
     }
@@ -30,15 +33,11 @@ public abstract class DuckState
         
     }
 
-
     public virtual void Exit()
     {
         
     }
 
-    public virtual void Swim()
-    {
-    }
 
     public virtual void Update()
     {
@@ -46,8 +45,9 @@ public abstract class DuckState
     }
 
 
-    public virtual void UpdateNearestFood(GameObject nearest)
+    public virtual void UpdateNearestFood(GameObject food)
     {
+        if (food != null) duck.stateMachine.ChangeState(DuckStateID.Pursuit);
     }
 }
 

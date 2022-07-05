@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class PreenState : DuckState
 {
+    public override DuckStateID GetID()
+    {
+        return DuckStateID.Preen;
+    }
+
+    private float preenTimer = 0f;
+
 
     public override bool allowQuack { get { return false; } }
     public override bool allowLook { get { return false; } }
@@ -12,27 +19,34 @@ public class PreenState : DuckState
 
     }
 
-    public override IEnumerator Enter()
+    public override void Enter()
     {
+        preenTimer = Random.Range(duck.globalVars.minIdleTime, duck.globalVars.maxIdleTime);
         duck.animator.SetBool("Mirror", Random.value > 0.5f);
         duck.animator.SetBool("Preening", true);
-        yield return new WaitForSeconds(Random.Range(duck.globalVars.minIdleTime, duck.globalVars.maxIdleTime));
-        if (duck.state == this)
+    }
+
+    public override void Update()
+    {
+        preenTimer -= Time.deltaTime;
+
+        if (preenTimer <= 0f)
         {
-            if (Random.value > 0.5f) duck.SetState(new WanderState(duck));
-            else duck.SetState(new IdleState(duck));
+            if (Random.value > 0.5f) duck.stateMachine.ChangeState(DuckStateID.Wander);
+            else duck.stateMachine.ChangeState(DuckStateID.Idle);
         }
     }
 
-
-    public override IEnumerator Exit()
+    public override void Exit()
     {
         duck.animator.SetBool("Preening", false);
-        return base.Exit();
+        //return base.Exit();
     }
 
+    /*
     public override void UpdateNearestFood(GameObject nearest)
     {
-        if (nearest != null && nearest.activeInHierarchy) duck.SetState(new PursuitState(duck, nearest));
+        if (nearest != null && nearest.activeInHierarchy) duck
     }
+    */
 }
