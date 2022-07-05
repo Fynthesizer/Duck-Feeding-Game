@@ -6,6 +6,7 @@ public class PreenState : DuckState
 {
 
     public override bool allowQuack { get { return false; } }
+    public override bool allowLook { get { return false; } }
     public PreenState(Duck duck) : base(duck)
     {
 
@@ -13,6 +14,7 @@ public class PreenState : DuckState
 
     public override IEnumerator Enter()
     {
+        duck.animator.SetBool("Mirror", Random.value > 0.5f);
         duck.animator.SetBool("Preening", true);
         yield return new WaitForSeconds(Random.Range(duck.globalVars.minIdleTime, duck.globalVars.maxIdleTime));
         if (duck.state == this)

@@ -1,12 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 using System;
 using Random = UnityEngine.Random;
 
 public class Duck : MonoBehaviour
 {
+    [SerializeField] private bool alive;
+
     [SerializeField] private Transform model;
+    [SerializeField] private Transform neck;
+    public ChainIKConstraint headIK;
+    public MultiRotationConstraint lookConstraint;
     public Transform labelAnchor;
     public Animator animator;
     private Rigidbody rb;
@@ -14,6 +20,8 @@ public class Duck : MonoBehaviour
 
     private Vector3 targetLocation;
     private Vector3 targetDirection;
+    private Vector3 lookDirection;
+    private Vector3 targetLookDirection;
     private Vector3 moveDirection;
     private float targetDistance;
 
@@ -21,7 +29,6 @@ public class Duck : MonoBehaviour
     public DuckGlobals globalVars;
 
     [Header("Duck Data")]
-    //[SerializeField] public DuckData duckData;
     public string duckName;
     public DuckBreed breed;
     public Gender gender;
@@ -33,24 +40,14 @@ public class Duck : MonoBehaviour
     [Header("Duck State")]
     public DateTime lastFedTime;
     public float satiety = 0f;
-    //public State state = State.Idle;
     public DuckState state;
+    public DuckStateMachine stateMachine;
+    public DuckStateID initialState;
 
     public bool Hungry { get => satiety <= 0f; }
 
     public float tickInterval = 60f;
     public float tickTimer = 0f;
-
-    /*
-    [Header("Obstacle Avoidance")]
-    [SerializeField] private bool avoidObstacles = true;
-    [SerializeField] private float avoidDistance = 1f;
-    [SerializeField] private LayerMask wanderAvoidLayers;
-    [SerializeField] private LayerMask pursuitAvoidLayers;
-
-    public LayerMask WanderAvoidLayers => wanderAvoidLayers;
-    public LayerMask PursuitAvoidLayers => pursuitAvoidLayers;
-    */
 
     [Header("Quack")]
     [SerializeField] private AudioClip[] quackClips;
@@ -85,42 +82,23 @@ public class Duck : MonoBehaviour
 
     void Start()
     {
-        SetState(new IdleState(this));
-        //material = model.GetComponent<SkinnedMeshRenderer>().material;
-        //breed = GameManager.Instance.duckInfoDatabase.breeds.Find(x => x.breedName.Equals(duckData.breed));
-        //material = new Material(breed.material);
-        
+        if (alive) SetState(new IdleState(this));
+
         targetLocation = transform.position;
         Vector2 initialLookDirection = Random.insideUnitCircle.normalized;
         moveDirection = new Vector3(initialLookDirection.x, 0f, initialLookDirection.y);
+        targetLookDirection = -moveDirection;
+        lookDirection = -moveDirection;
         rb.rotation = Quaternion.LookRotation(moveDirection, Vector3.up);
-        //waitTimer = StartCoroutine(Wait());
+
+        stateMachine = new DuckStateMachine(this);
+        stateMachine.ChangeState(initialState);
+
         StartCoroutine(QuackCoroutine());
         StartCoroutine(SwimCoroutine());
+        StartCoroutine(LookCoroutine());
         StartCoroutine(CheckSurroundings());
         
-    }
-
-    private void OnEnable()
-    {
-        //GameManager.OnGameTick += OnGameTick;
-    }
-
-    private void OnDisable()
-    {
-        //GameManager.OnGameTick -= OnGameTick;
-    }
-
-    private void OnGameTick()
-    {
-        satiety -= 1f / (globalVars.satiationPeriod * 3600);
-        satiety = Mathf.Clamp(satiety, 0f, 1f);
-    }
-
-    private bool CheckIfHungry()
-    {
-        TimeSpan elapsedTime = DateTime.Now.Subtract(lastFedTime);
-        return elapsedTime.Hours >= globalVars.satiationPeriod;
     }
 
     public void LoadData(DuckData data)
@@ -137,7 +115,6 @@ public class Duck : MonoBehaviour
         awarenessRadius = data.awarenessRadius;
         tickTimer = data.tickTimer;
         DateTime.TryParse(data.lastFedTime, out lastFedTime);
-        //hungry = CheckIfHungry();
         satiety = data.satiety;
     }
 
@@ -162,8 +139,12 @@ public class Duck : MonoBehaviour
         state.Update();
         rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * globalVars.turnSpeed);
 
-        //UpdateSatiety(Time.deltaTime);
         UpdateTicks(Time.deltaTime);
+    }
+
+    private void LateUpdate()
+    {
+        if (state.allowLook) LookAnimation();
     }
 
     public void UpdateTicks(float deltaTime)
@@ -204,10 +185,12 @@ public class Duck : MonoBehaviour
 
     public void Swim(Vector3 targetPosition, float moveSpeed, LayerMask avoidLayers)
     {
+        Vector3 targetMoveDirection;
+
         targetDirection = (targetPosition - transform.position).normalized;
         targetDirection = new Vector3(targetDirection.x, 0, targetDirection.z); //Flatten the direction so that it is only on one plane
         targetDistance = Vector3.Distance(transform.position, targetPosition);
-        moveDirection = targetDirection;
+        targetMoveDirection = targetDirection;
 
         float directionRotation = 0;
         //Rotate move direction until a clear path is found
@@ -222,7 +205,7 @@ public class Duck : MonoBehaviour
                 directionRotation *= direction;
                 attempt++;
                 //direction *= -1;
-                moveDirection = Utilities.RotateVector(targetDirection, directionRotation);
+                targetMoveDirection = Utilities.RotateVector(targetDirection, directionRotation);
                 continue;
             }
             else //If there are no clear paths, set state to idle
@@ -232,10 +215,16 @@ public class Duck : MonoBehaviour
             }
         }
 
-        Vector3 moveForce = moveDirection * moveSpeed;
+        moveDirection = Vector3.Lerp(moveDirection, targetMoveDirection, 0.25f);
+
+        Vector3 moveForce = moveDirection * moveSpeed * 2;
         rb.AddForce(moveForce);
 
-        if (targetDistance < collider.radius) SetState(new IdleState(this));
+        if (targetDistance < collider.radius)
+        {
+            if (Random.value > 0.5f) SetState(new IdleState(this));
+            else SetState(new WanderState(this));
+        }
     }
 
     private IEnumerator SwimCoroutine()
@@ -243,13 +232,21 @@ public class Duck : MonoBehaviour
         while (true)
         {
             state.Swim();
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.2f);
+        }
+    }
+
+    private IEnumerator LookCoroutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(0.5f, 2.5f));
+            if (state is IdleState) ChooseNewLookTarget();
         }
     }
 
     public bool PathIsClear(Vector3 direction, float distance, LayerMask avoidLayers)
     {
-        //LayerMask layerMask = state == State.Pursuit ? pursuitAvoidLayers : wanderAvoidLayers;
         Ray ray = new Ray(transform.position + collider.center, direction);
         if (!Physics.SphereCast(ray, collider.radius, distance, avoidLayers)) return true;
         else return false;
@@ -289,13 +286,28 @@ public class Duck : MonoBehaviour
         targetLocation = newTarget;
     }
 
+    private void ChooseNewLookTarget()
+    {
+        float angle = Random.Range(-45f, 45f);
+        targetLookDirection = Quaternion.AngleAxis(angle, Vector3.up) * -moveDirection;
+    }
+
+    private void LookAnimation()
+    {
+        if (state is WanderState || state is PursuitState) targetLookDirection = -moveDirection;
+
+        lookDirection = Vector3.Lerp(lookDirection, targetLookDirection, Time.deltaTime * globalVars.headTurnSpeed);
+        //neck.rotation = Quaternion.LookRotation(lookDirection);
+        //localPosition = -lookDirection;
+        lookConstraint.data.sourceObjects[0].transform.rotation = Quaternion.LookRotation(lookDirection);
+    }
+
     IEnumerator FlashCoroutine()
     {
         glowAmount = 1f;
         while (glowAmount > 0f)
         {
             glowAmount -= glowFadeSpeed;
-            //material.SetFloat("Glow", glowAmount);
             material.SetColor("_Emissive_Color", new Color(glowAmount,glowAmount,glowAmount,1));
             yield return null;
         }
@@ -320,7 +332,6 @@ public class Duck : MonoBehaviour
     public void SetTargetObject(GameObject target)
     {
         SetTargetLocation(target.transform.position);
-        SetState(new PursuitState(this, target));
     }
 
     public void Eat(GameObject food)
@@ -355,7 +366,6 @@ public class Duck : MonoBehaviour
                     closestFood = food;
                     closestDistance = distance;
                 }
-                //if (distance < foodDetectionRadius && (targetFood == null || distance < targetDistance)) SetTargetObject(food.gameObject);
             }
             if (closestFood == null) state.UpdateNearestFood(null);
             else if (closestDistance < awarenessRadius) state.UpdateNearestFood(closestFood);

@@ -90,8 +90,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Power: 0.21
-    - Steps: 31.5
+    - NoiseAmount: 0.1
+    - NoiseScale: 0.5
+    - Power: 0.39
+    - Steps: 26.65
     - Subtract: 0.16
     - _AlphaClip: 0
     - _Blend: 0
@@ -120,7 +122,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - Colour: {r: 1, g: 0.9017141, b: 0.7294118, a: 0.23921569}
+    - Colour: {r: 1, g: 0.9017141, b: 0.7294118, a: 0.12156863}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

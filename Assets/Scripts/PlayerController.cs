@@ -123,7 +123,7 @@ public class PlayerController : MonoBehaviour
 
     private void ThrowFood(Vector3 direction, float force)
     {
-        if (canThrow && GameManager.Instance.food > 0) {
+        if (canThrow && (GameManager.Instance.food > 0 || infiniteFood)) {
             StartCoroutine(ThrowCooldown());
             if (!infiniteFood) GameManager.Instance.AddFood(-1);
             Vector3 spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);

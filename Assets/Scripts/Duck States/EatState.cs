@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class EatState : DuckState
 {
+    public override bool allowQuack { get { return false; } }
+    public override bool allowLook { get { return false; } }
+
     public EatState(Duck duck) : base(duck)
     {
 

@@ -8,6 +8,8 @@ public class DuckLabel : MonoBehaviour
 {
     private Duck duck;
 
+    [SerializeField] private float hungerBarLerpSpeed = 10f;
+
     [SerializeField] private Image hungerBar;
     [SerializeField] private TextMeshProUGUI nameTag;
 
@@ -22,14 +24,17 @@ public class DuckLabel : MonoBehaviour
     {
         duck = _duck;
         nameTag.text = duck.duckName;
+        hungerBar.rectTransform.sizeDelta = new Vector2(duck.satiety * 50f, 3);
     }
 
     void LateUpdate()
     {
         if (duck != null) 
-        { 
+        {
+            float barTargetWidth = duck.satiety * 50f;
+            float barWidth = Mathf.Lerp(hungerBar.rectTransform.sizeDelta.x, barTargetWidth, Time.deltaTime * hungerBarLerpSpeed);
             transform.position = cam.WorldToScreenPoint(duck.labelAnchor.position);
-            hungerBar.rectTransform.sizeDelta = new Vector2(50 * duck.satiety, 3);
+            hungerBar.rectTransform.sizeDelta = new Vector2(barWidth, 3);
         }
     }
 }

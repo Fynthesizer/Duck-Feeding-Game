@@ -6,7 +6,8 @@ using UnityEngine;
 public class DuckGlobals : ScriptableObject
 {
     public float pursuitSpeedMultiplier = 1.5f;
-    public float turnSpeed = 2;
+    public float turnSpeed = 2f;
+    public float headTurnSpeed = 5f;
     public float minIdleTime = 0;
     public float maxIdleTime = 10;
     public float minQuackInterval = 2;

@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cddd027fb3845294ba544643336d17e6, type: 3}
   m_Name: Duck Global Variables
   m_EditorClassIdentifier: 
-  pursuitSpeedMultiplier: 1.5
-  turnSpeed: 2
+  pursuitSpeedMultiplier: 1.75
+  turnSpeed: 1
+  headTurnSpeed: 4
   minIdleTime: 0
   maxIdleTime: 10
   minQuackInterval: 2

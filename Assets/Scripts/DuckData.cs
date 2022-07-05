@@ -26,7 +26,7 @@ public class DuckData
     public DuckData(DuckDatabase database)
     {
         speed = Random.Range(4f, 6f);
-        reactionTime = Random.Range(0f, 1f);
+        reactionTime = Random.Range(0f, 0.5f);
         awarenessRadius = Random.Range(7.5f, 15f);
         weight = Random.Range(0.8f, 1.6f);
         gender = Random.value > 0.5f ? Duck.Gender.Male : Duck.Gender.Female;

@@ -61,4 +61,3 @@ MonoBehaviour:
     gender: 0
   breeds:
   - {fileID: 11400000, guid: 3a35b5f7738c8394da18349334099ff6, type: 2}
-  - {fileID: 11400000, guid: 45eda8ff2671fb54d82e4870e6ddaecb, type: 2}
