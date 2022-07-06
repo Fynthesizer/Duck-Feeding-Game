@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pursuitSpeedMultiplier: 1.75
   turnSpeed: 1
-  headTurnSpeed: 4
+  headTurnSpeed: 2
   minIdleTime: 0
   maxIdleTime: 10
   minQuackInterval: 2

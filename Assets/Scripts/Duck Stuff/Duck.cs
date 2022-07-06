@@ -19,6 +19,11 @@ public class Duck : MonoBehaviour
     private CapsuleCollider collider;
     private Material material;
 
+    [Header("Animation Weights")]
+    public float headIKWeight = 0f;
+    public float neckRotationWeight = 0f;
+    public float animatorWeight = 0f;
+
     private Vector3 targetLocation;
     private Vector3 targetDirection;
     private Vector3 lookDirection;
@@ -133,6 +138,14 @@ public class Duck : MonoBehaviour
         rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * globalVars.turnSpeed);
 
         UpdateTicks(Time.deltaTime);
+        InterpolateAnimationWeights();
+    }
+
+    private void InterpolateAnimationWeights()
+    {
+        headIK.weight = Mathf.Lerp(headIK.weight, headIKWeight, Time.deltaTime * 5f);
+        lookConstraint.weight = Mathf.Lerp(lookConstraint.weight, neckRotationWeight, Time.deltaTime * 5f);
+        animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), animatorWeight, Time.deltaTime * 5f));
     }
 
     private void LateUpdate()
@@ -250,7 +263,7 @@ public class Duck : MonoBehaviour
 
     private void LookAnimation()
     {
-        lookDirection = Vector3.Lerp(lookDirection, targetLookDirection, Time.deltaTime * globalVars.headTurnSpeed);
+        lookDirection = Vector3.Slerp(lookDirection, targetLookDirection, Time.deltaTime * globalVars.headTurnSpeed);
         //neck.rotation = Quaternion.LookRotation(lookDirection);
         //localPosition = -lookDirection;
         lookConstraint.data.sourceObjects[0].transform.rotation = Quaternion.LookRotation(lookDirection);

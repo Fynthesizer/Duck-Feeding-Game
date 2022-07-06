@@ -56,7 +56,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: skeleton/body/neck/head/bill_lower
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_lower
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -99,7 +99,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: skeleton/body/neck/head/bill_upper
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_upper
   m_PositionCurves: []
   m_ScaleCurves: []
   m_FloatCurves: []
@@ -112,14 +112,14 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 531670897
+      path: 2055546569
       attribute: 4
       script: {fileID: 0}
       typeID: 4
       customType: 4
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 2138375118
+      path: 440435318
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -190,7 +190,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: skeleton/body/neck/head/bill_lower
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_lower
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -236,7 +236,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: skeleton/body/neck/head/bill_lower
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_lower
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -282,7 +282,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: skeleton/body/neck/head/bill_lower
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_lower
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -328,7 +328,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: skeleton/body/neck/head/bill_upper
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_upper
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -374,7 +374,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: skeleton/body/neck/head/bill_upper
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_upper
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -420,7 +420,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: skeleton/body/neck/head/bill_upper
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_upper
     classID: 4
     script: {fileID: 0}
   m_EulerEditorCurves:
@@ -431,7 +431,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: skeleton/body/neck/head/bill_lower
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_lower
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -441,7 +441,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: skeleton/body/neck/head/bill_lower
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_lower
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -451,7 +451,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: skeleton/body/neck/head/bill_lower
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_lower
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -461,7 +461,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: skeleton/body/neck/head/bill_upper
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_upper
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -471,7 +471,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: skeleton/body/neck/head/bill_upper
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_upper
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -481,7 +481,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: skeleton/body/neck/head/bill_upper
+    path: skeleton.001/body/neck/neck.005/neck.004/neck.003/neck.002/neck.001/head/bill_upper
     classID: 4
     script: {fileID: 0}
   m_HasGenericRootTransform: 0

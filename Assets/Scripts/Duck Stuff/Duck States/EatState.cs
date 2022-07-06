@@ -22,8 +22,10 @@ public class EatState : DuckState
     {
         eatTimer = duck.globalVars.eatTime;
         duck.animator.SetTrigger("Eat");
-        //yield return new WaitForSeconds(duck.globalVars.eatTime);
-        //if (duck.state == this) duck.SetState(new WanderState(duck));
+
+        duck.animatorWeight = 1f;
+        duck.headIKWeight = 0f;
+        duck.neckRotationWeight = 0f;
     }
 
     public override void Update()

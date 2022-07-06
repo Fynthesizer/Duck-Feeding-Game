@@ -128,6 +128,17 @@ public class GameManager : MonoBehaviour
         UIManager.UpdateCurrencyCount();
     }
 
+    public bool SubtractCurrency(int amount)
+    {
+        if (currency > amount)
+        {
+            currency -= amount;
+            UIManager.UpdateCurrencyCount();
+            return true;
+        }
+        else return false;
+    }
+
     public void AddFood(int amount)
     {
         food += amount;

@@ -21,6 +21,10 @@ public class IdleState : DuckState
     {
         idleTimer = Random.Range(duck.globalVars.minIdleTime, duck.globalVars.maxIdleTime);
         lookTimer = Random.Range(0.5f, 2.5f);
+
+        duck.neckRotationWeight = 1f;
+        duck.headIKWeight = 0f;
+        duck.animatorWeight = 1f;
     }
 
     public override void Update()

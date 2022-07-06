@@ -1,18 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 [ExecuteInEditMode]
 public class LightingManager : MonoBehaviour
 {
-    public LightingMode lightingMode;
+    [SerializeField] private bool automaticLighting;
+    [SerializeField] LightingMode lightingMode;
     [SerializeField] private TimePeriodSettings daySettings;
     [SerializeField] private TimePeriodSettings sunsetSettings;
     [SerializeField] private TimePeriodSettings nightSettings;
 
+    [SerializeField] private ReflectionProbe reflectionProbe;
+    
     public enum LightingMode
     {
-        TimeBased,
         Day,
         Sunset,
         Night
@@ -28,18 +31,22 @@ public class LightingManager : MonoBehaviour
         SetupLighting();
     }
 
+    private LightingMode GetAutomaticLightingMode()
+    {
+        int time = System.DateTime.Now.Hour;
+        if (time < 5 || time >= 20) return LightingMode.Night;
+        else if (time < 8 || time >= 17) return LightingMode.Sunset;
+        else return LightingMode.Day;
+    }
+
     private void SetupLighting()
     {
         TimePeriodSettings timeSettings;
 
+        if (automaticLighting) lightingMode = GetAutomaticLightingMode();
+
         switch (lightingMode)
         {
-            case LightingMode.TimeBased:
-                int time = System.DateTime.Now.Hour;
-                if (time < 6 || time >= 20) timeSettings = nightSettings;
-                else if (time < 8 || time >= 18) timeSettings = sunsetSettings;
-                else timeSettings = daySettings;
-                break;
             case LightingMode.Day:
                 timeSettings = daySettings;
                 break;
@@ -61,6 +68,13 @@ public class LightingManager : MonoBehaviour
         RenderSettings.fogColor = timeSettings.fogColour;
         //RenderSettings.ambientIntensity = timeSettings.lightIntensity;
         DynamicGI.UpdateEnvironment();
+        reflectionProbe.RenderProbe();
+
+        if (!Application.isPlaying) { 
+            //Force the reflection probe re-render in the editor
+            reflectionProbe.refreshMode = UnityEngine.Rendering.ReflectionProbeRefreshMode.EveryFrame;
+            reflectionProbe.refreshMode = UnityEngine.Rendering.ReflectionProbeRefreshMode.ViaScripting;
+        }
 
         Lamp[] lamps = FindObjectsOfType<Lamp>();
         foreach(Lamp lamp in lamps)
