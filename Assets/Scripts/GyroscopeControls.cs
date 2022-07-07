@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 using UnityEngine.InputSystem;
 using Gyroscope = UnityEngine.InputSystem.Gyroscope;
 
@@ -18,12 +19,33 @@ public class GyroscopeControls : MonoBehaviour
     private float _calibrationYAngle = 0f;
     private Transform _rawGyroRotation;
 
+    private List<Quaternion> _filterSamples = new List<Quaternion>();
+    private int _filterQueueCapacity = 30;
+
     // Update is called once per frame
     void Update()
     {
         ApplyGyroRotation();
         ApplyCalibration();
-        if (active) transform.rotation = Quaternion.Slerp(transform.rotation, _rawGyroRotation.rotation, smoothing);
+
+        Quaternion filteredRotation = LowPassFilter(_rawGyroRotation.rotation);
+        if (active) transform.rotation = Quaternion.Slerp(transform.rotation, filteredRotation, smoothing);
+    }
+
+    private Quaternion LowPassFilter(Quaternion input)
+    {
+        _filterSamples.Add(input);
+        if (_filterSamples.Count > _filterQueueCapacity) _filterSamples.RemoveAt(0);
+
+        Quaternion filteredRotation = new Quaternion();
+
+        for(int i = 0; i < _filterSamples.Count; i++)
+        {
+            if (i == 0) filteredRotation = _filterSamples[i];
+            else filteredRotation = Quaternion.Slerp(_filterSamples[i - 1], _filterSamples[i], 0.5f);
+        }
+
+        return filteredRotation;
     }
 
     private void OnEnable()

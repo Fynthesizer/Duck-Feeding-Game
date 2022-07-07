@@ -12,6 +12,7 @@ public class DuckGlobals : ScriptableObject
     public float maxIdleTime = 10;
     public float minQuackInterval = 2;
     public float maxQuackInterval = 30;
+    public float thrustInterval = 0.1f;
     public float eatTime = 1;
     public float wanderRadius = 5;
     public float satiationPeriod = 1;

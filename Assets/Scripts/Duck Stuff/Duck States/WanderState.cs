@@ -15,12 +15,15 @@ public class WanderState : DuckState
 
     public WanderState(Duck duck) : base(duck)
     {
-
+        NeckRotationWeight = 1f;
+        HeadIkWeight = 0f;
+        AnimatorWeight = 1f;
+        BillOpenness = 0f;
     }
 
     public override void Enter()
     {
-        thrustTimer = 0.2f;
+        thrustTimer = duck.globalVars.thrustInterval;
 
         Vector3 newTarget;
         int attempts = 0;
@@ -57,7 +60,7 @@ public class WanderState : DuckState
 
         if (thrustTimer <= 0f)
         {
-            thrustTimer = 0.2f;
+            thrustTimer = duck.globalVars.thrustInterval;
             duck.Swim(targetPosition, duck.speed, duck.globalVars.wanderAvoidLayers);
         }
     }

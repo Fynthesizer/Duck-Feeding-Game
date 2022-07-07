@@ -11,62 +11,72 @@ public class PursuitState : DuckState
         return DuckStateID.Pursuit;
     }
 
+    public override bool allowQuack { get { return false; } }
+
     private Vector3 targetPosition;
     private GameObject targetObject;
 
     public PursuitState(Duck duck) : base(duck)
     {
-
+        HeadIkWeight = 0f;
+        NeckRotationWeight = 1f;
+        BillOpenness = 0f;
+        AnimatorWeight = 0f;
     }
 
     public override void Enter()
     {
-        thrustTimer = 0.2f;
-        UpdateTarget();
-        //else duck.SetState(new IdleState(duck));
+        base.Enter();
 
-        duck.headIKWeight = 0f;
-        duck.neckRotationWeight = 1f;
-        duck.animatorWeight = 1f;
+        thrustTimer = duck.globalVars.thrustInterval;
+        UpdateTarget();
     }
 
     public override void Update()
     {
-        Swim();
+        if (!active) return;
 
         Vector3 targetDirection = (targetPosition - duck.transform.position).normalized;
         duck.targetLookDirection = -targetDirection;
 
-        float targetDistance = Vector3.Distance(duck.transform.position, targetPosition);
+        float targetDistance = Vector3.Distance(duck.head.position, targetPosition);
         float targetDot = Vector3.Dot(duck.transform.forward, (targetPosition - duck.transform.position).normalized);
+        float speedMultiplier = 1f;
 
-        if (targetDistance < 1f && targetDot > 0.6f)
+        if (targetDistance < 1f && targetDot > 0f)
         {
-            duck.headIK.transform.GetChild(0).position = targetPosition;
-            duck.headIKWeight = (1f - targetDistance);
-            duck.neckRotationWeight = 0f;
+            speedMultiplier = Utilities.Map(targetDistance, 1f, 0f, 1f, 0.5f);
+            float foodCloseness = (1f - targetDistance);
+
+            duck.headIK.data.target.position = targetPosition + new Vector3(0f, 0.03f, 0f);
+            HeadIkWeight = foodCloseness;
+            NeckRotationWeight = 0f;
+            BillOpenness = foodCloseness;
         }
         else
         {
-            duck.headIKWeight = 0f;
-            duck.neckRotationWeight = 1f;
+            HeadIkWeight = 0f;
+            BillOpenness = 0f;
+            NeckRotationWeight = 1f;
         }
 
-        if (targetDistance < 0.3f)
+        Swim(speedMultiplier);
+
+        if (targetDistance < 0.1f && targetObject != null)
         {
             duck.Eat(targetObject);
             duck.stateMachine.ChangeState(DuckStateID.Eat);
         }
     }
 
-    private void Swim()
+    private void Swim(float speedMultiplier)
     {
         thrustTimer -= Time.deltaTime;
 
         if (thrustTimer <= 0f)
         {
-            thrustTimer = 0.2f;
-            duck.Swim(targetPosition, duck.speed * duck.globalVars.pursuitSpeedMultiplier, duck.globalVars.pursuitAvoidLayers);
+            thrustTimer = duck.globalVars.thrustInterval;
+            duck.Swim(targetPosition, duck.speed * duck.globalVars.pursuitSpeedMultiplier * speedMultiplier, duck.globalVars.pursuitAvoidLayers);
         }
     }
 
@@ -78,7 +88,7 @@ public class PursuitState : DuckState
 
     public override void Exit()
     {
-        duck.headIKWeight = 0f;
+
     }
 
     public override void UpdateNearestFood(GameObject food)

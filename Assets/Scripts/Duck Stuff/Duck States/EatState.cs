@@ -15,17 +15,15 @@ public class EatState : DuckState
 
     public EatState(Duck duck) : base(duck)
     {
-
+        HeadIkWeight = 0f;
+        NeckRotationWeight = 0f;
+        BillOpenness = 0f;
+        AnimatorWeight = 0f;
     }
 
     public override void Enter()
     {
         eatTimer = duck.globalVars.eatTime;
-        duck.animator.SetTrigger("Eat");
-
-        duck.animatorWeight = 1f;
-        duck.headIKWeight = 0f;
-        duck.neckRotationWeight = 0f;
     }
 
     public override void Update()

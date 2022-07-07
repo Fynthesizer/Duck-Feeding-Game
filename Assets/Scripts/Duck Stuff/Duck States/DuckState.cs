@@ -22,6 +22,13 @@ public abstract class DuckState
     protected Duck duck;
     public virtual bool allowQuack { get { return true; } }
     public virtual bool allowLook { get { return true; } }
+    public bool active = false;
+
+    public float HeadIkWeight = 0f;
+    public float AnimatorWeight = 0f;
+    public float NeckRotationWeight = 0f;
+    public float BillOpenness = 0f;
+
 
     public DuckState(Duck _duck)
     {
@@ -30,18 +37,18 @@ public abstract class DuckState
 
     public virtual void Enter()
     {
-        
+        active = true;
     }
 
     public virtual void Exit()
     {
-        
+        active = false;
     }
 
 
     public virtual void Update()
     {
-
+        
     }
 
 

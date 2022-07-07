@@ -94,6 +94,7 @@ Material:
     - NormalMapScale2: 0.06
     - NormalSteps: 25
     - Opacity: 1
+    - SkyColourAmount: 0.5
     - _AlphaClip: 0
     - _Blend: 0
     - _BlendModePreserveSpecular: 0
@@ -129,7 +130,7 @@ Material:
     - _RefractionStrength: 0.1
     - _RippleScale: 2
     - _RippleStrength: 0.003
-    - _Smoothness: 0.6
+    - _Smoothness: 0.75
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
@@ -141,7 +142,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 0
     m_Colors:
-    - Colour: {r: 0.20825917, g: 0.33226535, b: 0.3773585, a: 1}
+    - Colour: {r: 0.24750803, g: 0.44242975, b: 0.509434, a: 1}
     - _BaseColor: {r: 0.21176471, g: 0.29803923, b: 0.3584906, a: 0.7529412}
     - _Color: {r: 0.21176471, g: 0.29803923, b: 0.3584906, a: 0.7529412}
     - _DeepWater: {r: 0.122774996, g: 0.23589359, b: 0.2924528, a: 1}

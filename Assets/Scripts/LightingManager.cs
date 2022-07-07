@@ -7,19 +7,22 @@ using UnityEditor;
 public class LightingManager : MonoBehaviour
 {
     [SerializeField] private bool automaticLighting;
-    [SerializeField] LightingMode lightingMode;
+    [SerializeField] TimePeriod timePeriod;
     [SerializeField] private TimePeriodSettings daySettings;
     [SerializeField] private TimePeriodSettings sunsetSettings;
     [SerializeField] private TimePeriodSettings nightSettings;
 
     [SerializeField] private ReflectionProbe reflectionProbe;
     
-    public enum LightingMode
+    public enum TimePeriod
     {
+        Dawn,
         Day,
-        Sunset,
+        Dusk,
         Night
     }
+
+    private Dictionary<TimePeriod, TimePeriodSettings> timePeriodDictionary;
 
     private void Start()
     {
@@ -31,42 +34,35 @@ public class LightingManager : MonoBehaviour
         SetupLighting();
     }
 
-    private LightingMode GetAutomaticLightingMode()
+    private TimePeriod GetAutomaticTimePeriod()
     {
         int time = System.DateTime.Now.Hour;
-        if (time < 5 || time >= 20) return LightingMode.Night;
-        else if (time < 8 || time >= 17) return LightingMode.Sunset;
-        else return LightingMode.Day;
+        if (time < 5 || time >= 20) return TimePeriod.Night;
+        else if (time < 8) return TimePeriod.Dawn;
+        else if (time >= 17) return TimePeriod.Dusk;
+        else return TimePeriod.Day;
     }
 
     private void SetupLighting()
     {
-        TimePeriodSettings timeSettings;
+        if (automaticLighting) timePeriod = GetAutomaticTimePeriod();
 
-        if (automaticLighting) lightingMode = GetAutomaticLightingMode();
-
-        switch (lightingMode)
+        timePeriodDictionary = new Dictionary<TimePeriod, TimePeriodSettings>()
         {
-            case LightingMode.Day:
-                timeSettings = daySettings;
-                break;
-            case LightingMode.Sunset:
-                timeSettings = sunsetSettings;
-                break;
-            case LightingMode.Night:
-                timeSettings = nightSettings;
-                break;
-            default:
-                timeSettings = daySettings;
-                break;
-        }
+            {TimePeriod.Dawn, sunsetSettings },
+            {TimePeriod.Day, daySettings },
+            {TimePeriod.Dusk, sunsetSettings },
+            {TimePeriod.Night, nightSettings },
+        };
+
+        TimePeriodSettings timeSettings = timePeriodDictionary[timePeriod];
 
         RenderSettings.skybox = timeSettings.skyboxMaterial;
         RenderSettings.sun.color = timeSettings.lightColour;
         RenderSettings.sun.intensity = timeSettings.lightIntensity;
         RenderSettings.sun.transform.eulerAngles = timeSettings.sunRotation;
         RenderSettings.fogColor = timeSettings.fogColour;
-        //RenderSettings.ambientIntensity = timeSettings.lightIntensity;
+
         DynamicGI.UpdateEnvironment();
         reflectionProbe.RenderProbe();
 
@@ -87,7 +83,5 @@ public class LightingManager : MonoBehaviour
         {
             cloud.GetComponent<MeshRenderer>().material = timeSettings.cloudsMaterial;
         }
-
-
     }
 }

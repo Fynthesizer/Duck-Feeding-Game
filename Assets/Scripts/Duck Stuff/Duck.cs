@@ -11,18 +11,22 @@ public class Duck : MonoBehaviour
 
     [SerializeField] private Transform model;
     [SerializeField] private Transform neck;
+    public Transform head;
     public ChainIKConstraint headIK;
     public MultiRotationConstraint lookConstraint;
     public Transform labelAnchor;
     public Animator animator;
+    public SkinnedMeshRenderer mesh;
     private Rigidbody rb;
     private CapsuleCollider collider;
     private Material material;
 
-    [Header("Animation Weights")]
+    [Header("Animation")]
     public float headIKWeight = 0f;
     public float neckRotationWeight = 0f;
     public float animatorWeight = 0f;
+    public float billOpenness = 0f;
+    private float _billOpenness = 0f;
 
     private Vector3 targetLocation;
     private Vector3 targetDirection;
@@ -79,6 +83,7 @@ public class Duck : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody>();
         collider = gameObject.GetComponent<CapsuleCollider>();
         quackSource = gameObject.GetComponent<AudioSource>();
+        mesh = model.GetComponent<SkinnedMeshRenderer>();
     }
 
     void Start()
@@ -138,19 +143,22 @@ public class Duck : MonoBehaviour
         rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * globalVars.turnSpeed);
 
         UpdateTicks(Time.deltaTime);
-        InterpolateAnimationWeights();
+        
     }
 
-    private void InterpolateAnimationWeights()
+    private void InterpolateAnimation()
     {
-        headIK.weight = Mathf.Lerp(headIK.weight, headIKWeight, Time.deltaTime * 5f);
-        lookConstraint.weight = Mathf.Lerp(lookConstraint.weight, neckRotationWeight, Time.deltaTime * 5f);
-        animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), animatorWeight, Time.deltaTime * 5f));
+        headIK.weight = Mathf.Lerp(headIK.weight, state.HeadIkWeight, Time.deltaTime * 5f);
+        lookConstraint.weight = Mathf.Lerp(lookConstraint.weight, state.NeckRotationWeight, Time.deltaTime * 5f);
+        animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), state.AnimatorWeight, Time.deltaTime * 5f));
+        _billOpenness = Mathf.Lerp(_billOpenness, state.BillOpenness, Time.deltaTime * 5f);
+        mesh.SetBlendShapeWeight(0, _billOpenness * 100f);
     }
 
     private void LateUpdate()
     {
         if (state.allowLook) LookAnimation();
+        InterpolateAnimation();
     }
 
     public void UpdateTicks(float deltaTime)
@@ -204,14 +212,11 @@ public class Duck : MonoBehaviour
         int attempt = 1;
         while (true)
         {
-            if (PathIsClear(moveDirection, globalVars.avoidDistance, avoidLayers)) break; //If the path ahead is clear, continue
+            if (PathIsClear(targetMoveDirection, Mathf.Min(globalVars.avoidDistance, targetDistance), avoidLayers)) break; //If the path ahead is clear, continue
             else if (directionRotation < Mathf.PI * 2) //Otherwise try a different path
             {
-                directionRotation = Mathf.PI / 16f * attempt;
-                directionRotation *= direction;
-                attempt++;
-                //direction *= -1;
-                targetMoveDirection = Utilities.RotateVector(targetDirection, directionRotation);
+                directionRotation += Mathf.PI / 16f;
+                targetMoveDirection = Quaternion.AngleAxis(directionRotation * Mathf.Rad2Deg, Vector3.up) * targetDirection;//Utilities.RotateVector(targetDirection, directionRotation);
                 continue;
             }
             else //If there are no clear paths, set state to idle
@@ -223,13 +228,14 @@ public class Duck : MonoBehaviour
 
         moveDirection = Vector3.Lerp(moveDirection, targetMoveDirection, 0.25f);
 
-        Vector3 moveForce = moveDirection * moveSpeed * 2;
+        Vector3 moveForce = moveDirection * moveSpeed;
         rb.AddForce(moveForce);
     }
 
     public bool PathIsClear(Vector3 direction, float distance, LayerMask avoidLayers)
     {
         Ray ray = new Ray(transform.position + collider.center, direction);
+        Debug.DrawRay(transform.position, direction, Color.red, 0.5f);
         if (!Physics.SphereCast(ray, collider.radius, distance, avoidLayers)) return true;
         else return false;
     }

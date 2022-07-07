@@ -14,17 +14,19 @@ public class IdleState : DuckState
 
     public IdleState(Duck duck) : base(duck)
     {
-
+        HeadIkWeight = 0f;
+        NeckRotationWeight = 1f;
+        BillOpenness = 0f;
+        AnimatorWeight = 1f;
     }
 
     public override void Enter()
     {
+        base.Enter();
+
+
         idleTimer = Random.Range(duck.globalVars.minIdleTime, duck.globalVars.maxIdleTime);
         lookTimer = Random.Range(0.5f, 2.5f);
-
-        duck.neckRotationWeight = 1f;
-        duck.headIKWeight = 0f;
-        duck.animatorWeight = 1f;
     }
 
     public override void Update()
@@ -44,10 +46,17 @@ public class IdleState : DuckState
         }
     }
 
+    public override void Exit()
+    {
+        base.Exit();
+    }
+
     private void ChooseNewLookTarget()
     {
-        float angle = Random.Range(-45f, 45f);
-        duck.targetLookDirection = Quaternion.AngleAxis(angle, Vector3.up) * -duck.transform.forward;
+        float yAngle = Random.Range(-45f, 45f);
+        float xAngle = Random.Range(-30f, 15f);
+        duck.targetLookDirection = Quaternion.AngleAxis(yAngle, Vector3.up) * -duck.transform.forward;
+        duck.targetLookDirection = Quaternion.AngleAxis(xAngle, Vector3.right) * duck.targetLookDirection;
     }
 
     public override void UpdateNearestFood(GameObject food)
