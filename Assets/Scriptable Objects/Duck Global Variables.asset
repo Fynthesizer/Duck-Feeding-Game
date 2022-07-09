@@ -18,12 +18,13 @@ MonoBehaviour:
   minIdleTime: 0
   maxIdleTime: 10
   minQuackInterval: 2
-  maxQuackInterval: 30
+  maxQuackInterval: 20
   thrustInterval: 0.1
   eatTime: 1
   wanderRadius: 5
   satiationPeriod: 60
   avoidDistance: 2
+  animationBlendSpeed: 10
   wanderAvoidLayers:
     serializedVersion: 2
     m_Bits: 384

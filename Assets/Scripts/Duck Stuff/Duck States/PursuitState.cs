@@ -22,6 +22,8 @@ public class PursuitState : DuckState
         NeckRotationWeight = 1f;
         BillOpenness = 0f;
         AnimatorWeight = 0f;
+
+        QuackFrequency = 3f;
     }
 
     public override void Enter()
@@ -39,7 +41,7 @@ public class PursuitState : DuckState
         Vector3 targetDirection = (targetPosition - duck.transform.position).normalized;
         duck.targetLookDirection = -targetDirection;
 
-        float targetDistance = Vector3.Distance(duck.foodCollector.position, targetPosition);
+        float targetDistance = Vector3.Distance(duck.head.position, targetPosition);
         float targetDot = Vector3.Dot(duck.transform.forward, (targetPosition - duck.transform.position).normalized);
         float speedMultiplier = 1f;
 
@@ -49,11 +51,11 @@ public class PursuitState : DuckState
 
         if (targetDistance < 0.5f)
         {
-            if (targetDistance > 0.2f) speedMultiplier = Utilities.Map(targetDistance, 1f, 0f, 1f, 0.5f);
+            if (targetDistance > 0.25f) speedMultiplier = Utilities.Map(targetDistance, 0.5f, 0.25f, 1f, 0.2f);
             else speedMultiplier = 0f;
 
-            if(targetDot > 0.85f) { 
-                float foodCloseness = (1f - targetDistance);
+            if(targetDot > 0.8f) { 
+                float foodCloseness = Utilities.Map(targetDistance, 0.5f, 0.2f, 0f, 1f);
 
                 duck.headIK.data.target.position = targetPosition + new Vector3(0f, 0.03f, 0f);
                 HeadIkWeight = foodCloseness;

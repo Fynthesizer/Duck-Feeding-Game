@@ -62,3 +62,4 @@ MonoBehaviour:
   breeds:
   - {fileID: 11400000, guid: 3a35b5f7738c8394da18349334099ff6, type: 2}
   - {fileID: 11400000, guid: 67d5b54cd14db334b9be4061d719877d, type: 2}
+  - {fileID: 11400000, guid: 2d8cbfde71420ed4097575e4d3df9331, type: 2}

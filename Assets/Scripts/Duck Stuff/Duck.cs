@@ -14,7 +14,7 @@ public class Duck : MonoBehaviour
     public Transform head;
     public Transform foodCollector;
     public ChainIKConstraint headIK;
-    public MultiRotationConstraint lookConstraint;
+    public TwistChainConstraint lookConstraint;
     public Transform labelAnchor;
     public Animator animator;
     public SkinnedMeshRenderer mesh;
@@ -23,9 +23,7 @@ public class Duck : MonoBehaviour
     private Material material;
 
     [Header("Animation")]
-    public float headIKWeight = 0f;
-    public float neckRotationWeight = 0f;
-    public float animatorWeight = 0f;
+    
     public float billOpenness = 0f;
     private float _billOpenness = 0f;
 
@@ -137,29 +135,29 @@ public class Duck : MonoBehaviour
         return data;
     }
 
-    void Update()
+    private void Update()
     {
         if (alive) stateMachine.Update();
 
         rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * 5f);
 
         UpdateTicks(Time.deltaTime);
-        
-    }
-
-    private void InterpolateAnimation()
-    {
-        headIK.weight = Mathf.Lerp(headIK.weight, state.HeadIkWeight, Time.deltaTime * 5f);
-        lookConstraint.weight = Mathf.Lerp(lookConstraint.weight, state.NeckRotationWeight, Time.deltaTime * 5f);
-        animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), state.AnimatorWeight, Time.deltaTime * 5f));
-        _billOpenness = Mathf.Lerp(_billOpenness, state.BillOpenness, Time.deltaTime * 5f);
-        mesh.SetBlendShapeWeight(0, _billOpenness * 100f);
     }
 
     private void LateUpdate()
     {
-        if (state.allowLook) LookAnimation();
-        InterpolateAnimation();
+        ApplyAnimation();
+    }
+
+    private void ApplyAnimation()
+    {
+        LookAnimation();
+
+        headIK.weight = Mathf.Lerp(headIK.weight, state.HeadIkWeight, Time.deltaTime * globalVars.animationBlendSpeed);
+        lookConstraint.weight = Mathf.Lerp(lookConstraint.weight, state.NeckRotationWeight, Time.deltaTime * globalVars.animationBlendSpeed);
+        animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), state.AnimatorWeight, Time.deltaTime * globalVars.animationBlendSpeed));
+        _billOpenness = Mathf.Lerp(_billOpenness, state.BillOpenness, Time.deltaTime * globalVars.animationBlendSpeed);
+        mesh.SetBlendShapeWeight(0, mesh.GetBlendShapeWeight(0) + _billOpenness * 100f); //Add on to weight already set by animator, to avoid overriding animation
     }
 
     public void UpdateTicks(float deltaTime)
@@ -270,9 +268,9 @@ public class Duck : MonoBehaviour
     private void LookAnimation()
     {
         lookDirection = Vector3.Slerp(lookDirection, targetLookDirection, Time.deltaTime * globalVars.headTurnSpeed);
-        //neck.rotation = Quaternion.LookRotation(lookDirection);
+        //twistC = Quaternion.LookRotation(lookDirection);
         //localPosition = -lookDirection;
-        lookConstraint.data.sourceObjects[0].transform.rotation = Quaternion.LookRotation(lookDirection);
+        lookConstraint.data.tipTarget.transform.rotation = Quaternion.LookRotation(lookDirection);
     }
 
     /*
@@ -292,7 +290,7 @@ public class Duck : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(Random.Range(globalVars.minQuackInterval, globalVars.maxQuackInterval));
+            yield return new WaitForSeconds(Random.Range(globalVars.minQuackInterval / state.QuackFrequency, globalVars.maxQuackInterval / state.QuackFrequency));
             if (state.allowQuack) Quack();
         }
     }

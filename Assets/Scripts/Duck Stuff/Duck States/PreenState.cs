@@ -24,10 +24,6 @@ public class PreenState : DuckState
         preenTimer = Random.Range(duck.globalVars.minIdleTime, duck.globalVars.maxIdleTime);
         duck.animator.SetBool("Mirror", Random.value > 0.5f);
         duck.animator.SetBool("Preening", true);
-
-        duck.animatorWeight = 1f;
-        duck.headIKWeight = 0f;
-        duck.neckRotationWeight = 0f;
     }
 
     public override void Update()

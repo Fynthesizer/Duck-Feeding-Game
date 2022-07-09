@@ -4549,7 +4549,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f05b109666aa83249957a1e119d2e446, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  automaticLighting: 0
+  automaticLighting: 1
   timePeriod: 2
   daySettings: {fileID: 11400000, guid: a48f51d2eea501e46be07e93ef6cd01c, type: 2}
   sunsetSettings: {fileID: 11400000, guid: 6909c6d3ade50234698073e45937dc75, type: 2}
@@ -10926,7 +10926,7 @@ MonoBehaviour:
   duckFood: {fileID: 8608952351193160687, guid: fe5dff007299ba24194581c01c193cce, type: 3}
   cam: {fileID: 1734399143}
   swipeVelocityDamping: 0.1
-  throwVelocityThreshold: 1000
+  throwVelocityThreshold: 500
   throwVelocityDivisor: 25
   throwAngleMultiplier: 15
   throwArchMultiplier: 4
