@@ -12,6 +12,7 @@ public class Duck : MonoBehaviour
     [SerializeField] private Transform model;
     [SerializeField] private Transform neck;
     public Transform head;
+    public Transform foodCollector;
     public ChainIKConstraint headIK;
     public MultiRotationConstraint lookConstraint;
     public Transform labelAnchor;
@@ -140,7 +141,7 @@ public class Duck : MonoBehaviour
     {
         if (alive) stateMachine.Update();
 
-        rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * globalVars.turnSpeed);
+        rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection, Vector3.up), Time.deltaTime * 5f);
 
         UpdateTicks(Time.deltaTime);
         
@@ -207,9 +208,6 @@ public class Duck : MonoBehaviour
         targetMoveDirection = targetDirection;
 
         float directionRotation = 0;
-        //Rotate move direction until a clear path is found
-        int direction = 1;
-        int attempt = 1;
         while (true)
         {
             if (PathIsClear(targetMoveDirection, Mathf.Min(globalVars.avoidDistance, targetDistance), avoidLayers)) break; //If the path ahead is clear, continue
@@ -226,17 +224,19 @@ public class Duck : MonoBehaviour
             }
         }
 
-        moveDirection = Vector3.Lerp(moveDirection, targetMoveDirection, 0.25f);
+        moveDirection = Vector3.Slerp(moveDirection, targetMoveDirection, globalVars.turnSpeed);
+
+        float targetAlignment = Vector3.Dot(moveDirection, targetMoveDirection);
 
         Vector3 moveForce = moveDirection * moveSpeed;
-        rb.AddForce(moveForce);
+        if (targetAlignment > 0.8f) rb.AddForce(moveForce);
     }
 
     public bool PathIsClear(Vector3 direction, float distance, LayerMask avoidLayers)
     {
         Ray ray = new Ray(transform.position + collider.center, direction);
         Debug.DrawRay(transform.position, direction, Color.red, 0.5f);
-        if (!Physics.SphereCast(ray, collider.radius, distance, avoidLayers)) return true;
+        if (!Physics.SphereCast(ray, collider.radius, distance - collider.radius, avoidLayers)) return true;
         else return false;
     }
 

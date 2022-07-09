@@ -6,6 +6,7 @@ using UnityEngine;
 public class TimePeriodSettings : ScriptableObject
 {
     public Material skyboxMaterial;
+    public Cubemap reflectionsCubemap;
     public Color lightColour;
     public float lightIntensity;
     public Color fogColour;

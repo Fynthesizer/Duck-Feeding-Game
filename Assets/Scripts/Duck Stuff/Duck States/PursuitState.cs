@@ -39,25 +39,27 @@ public class PursuitState : DuckState
         Vector3 targetDirection = (targetPosition - duck.transform.position).normalized;
         duck.targetLookDirection = -targetDirection;
 
-        float targetDistance = Vector3.Distance(duck.head.position, targetPosition);
+        float targetDistance = Vector3.Distance(duck.foodCollector.position, targetPosition);
         float targetDot = Vector3.Dot(duck.transform.forward, (targetPosition - duck.transform.position).normalized);
         float speedMultiplier = 1f;
 
-        if (targetDistance < 1f && targetDot > 0f)
-        {
-            speedMultiplier = Utilities.Map(targetDistance, 1f, 0f, 1f, 0.5f);
-            float foodCloseness = (1f - targetDistance);
+        HeadIkWeight = 0f;
+        BillOpenness = 0f;
+        NeckRotationWeight = 1f;
 
-            duck.headIK.data.target.position = targetPosition + new Vector3(0f, 0.03f, 0f);
-            HeadIkWeight = foodCloseness;
-            NeckRotationWeight = 0f;
-            BillOpenness = foodCloseness;
-        }
-        else
+        if (targetDistance < 0.5f)
         {
-            HeadIkWeight = 0f;
-            BillOpenness = 0f;
-            NeckRotationWeight = 1f;
+            if (targetDistance > 0.2f) speedMultiplier = Utilities.Map(targetDistance, 1f, 0f, 1f, 0.5f);
+            else speedMultiplier = 0f;
+
+            if(targetDot > 0.85f) { 
+                float foodCloseness = (1f - targetDistance);
+
+                duck.headIK.data.target.position = targetPosition + new Vector3(0f, 0.03f, 0f);
+                HeadIkWeight = foodCloseness;
+                NeckRotationWeight = 0f;
+                BillOpenness = foodCloseness;
+            }
         }
 
         Swim(speedMultiplier);
@@ -88,7 +90,9 @@ public class PursuitState : DuckState
 
     public override void Exit()
     {
-
+        HeadIkWeight = 0f;
+        NeckRotationWeight = 1f;
+        BillOpenness = 0f;
     }
 
     public override void UpdateNearestFood(GameObject food)

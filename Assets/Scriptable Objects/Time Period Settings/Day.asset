@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Day
   m_EditorClassIdentifier: 
   skyboxMaterial: {fileID: 2100000, guid: 1026327075632ec42abc81a0453ba790, type: 2}
+  reflectionsCubemap: {fileID: 8900000, guid: c77e3876c3e0263489f00373e564f51f, type: 3}
   lightColour: {r: 1, g: 0.95686275, b: 0.8392157, a: 0}
   lightIntensity: 1
   fogColour: {r: 0.92941177, g: 0.93333334, b: 0.6901961, a: 0}

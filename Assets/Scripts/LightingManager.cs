@@ -58,19 +58,23 @@ public class LightingManager : MonoBehaviour
         TimePeriodSettings timeSettings = timePeriodDictionary[timePeriod];
 
         RenderSettings.skybox = timeSettings.skyboxMaterial;
+        RenderSettings.customReflection = timeSettings.reflectionsCubemap;
         RenderSettings.sun.color = timeSettings.lightColour;
         RenderSettings.sun.intensity = timeSettings.lightIntensity;
         RenderSettings.sun.transform.eulerAngles = timeSettings.sunRotation;
         RenderSettings.fogColor = timeSettings.fogColour;
 
         DynamicGI.UpdateEnvironment();
-        reflectionProbe.RenderProbe();
+        //reflectionProbe.RenderProbe();
 
+        /*
         if (!Application.isPlaying) { 
             //Force the reflection probe re-render in the editor
             reflectionProbe.refreshMode = UnityEngine.Rendering.ReflectionProbeRefreshMode.EveryFrame;
             reflectionProbe.refreshMode = UnityEngine.Rendering.ReflectionProbeRefreshMode.ViaScripting;
         }
+        */
+        
 
         Lamp[] lamps = FindObjectsOfType<Lamp>();
         foreach(Lamp lamp in lamps)

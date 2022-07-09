@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: Duck Global Variables
   m_EditorClassIdentifier: 
   pursuitSpeedMultiplier: 1.75
-  turnSpeed: 1
-  headTurnSpeed: 2
+  turnSpeed: 0.2
+  headTurnSpeed: 3
   minIdleTime: 0
   maxIdleTime: 10
   minQuackInterval: 2
   maxQuackInterval: 30
+  thrustInterval: 0.1
   eatTime: 1
   wanderRadius: 5
   satiationPeriod: 60
