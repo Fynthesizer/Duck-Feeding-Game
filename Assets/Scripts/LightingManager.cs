@@ -6,11 +6,15 @@ using UnityEditor;
 [ExecuteInEditMode]
 public class LightingManager : MonoBehaviour
 {
+    public static LightingManager Instance { get; private set; }
+
     [SerializeField] private bool automaticLighting;
     [SerializeField] TimePeriod timePeriod;
     [SerializeField] private TimePeriodSettings daySettings;
     [SerializeField] private TimePeriodSettings sunsetSettings;
     [SerializeField] private TimePeriodSettings nightSettings;
+
+    public TimePeriodSettings CurrentSettings;
 
     [SerializeField] private ReflectionProbe reflectionProbe;
     
@@ -23,6 +27,12 @@ public class LightingManager : MonoBehaviour
     }
 
     private Dictionary<TimePeriod, TimePeriodSettings> timePeriodDictionary;
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else if (Instance != this) Destroy(this);
+    }
 
     private void Start()
     {
@@ -55,14 +65,14 @@ public class LightingManager : MonoBehaviour
             {TimePeriod.Night, nightSettings },
         };
 
-        TimePeriodSettings timeSettings = timePeriodDictionary[timePeriod];
+        CurrentSettings = timePeriodDictionary[timePeriod];
 
-        RenderSettings.skybox = timeSettings.skyboxMaterial;
-        RenderSettings.customReflection = timeSettings.reflectionsCubemap;
-        RenderSettings.sun.color = timeSettings.lightColour;
-        RenderSettings.sun.intensity = timeSettings.lightIntensity;
-        RenderSettings.sun.transform.eulerAngles = timeSettings.sunRotation;
-        RenderSettings.fogColor = timeSettings.fogColour;
+        RenderSettings.skybox = CurrentSettings.skyboxMaterial;
+        RenderSettings.customReflection = CurrentSettings.reflectionsCubemap;
+        RenderSettings.sun.color = CurrentSettings.lightColour;
+        RenderSettings.sun.intensity = CurrentSettings.lightIntensity;
+        RenderSettings.sun.transform.eulerAngles = CurrentSettings.sunRotation;
+        RenderSettings.fogColor = CurrentSettings.fogColour;
 
         DynamicGI.UpdateEnvironment();
         //reflectionProbe.RenderProbe();
@@ -79,13 +89,13 @@ public class LightingManager : MonoBehaviour
         Lamp[] lamps = FindObjectsOfType<Lamp>();
         foreach(Lamp lamp in lamps)
         {
-            lamp.Toggle(timeSettings.lampsEnabled);
+            lamp.Toggle(CurrentSettings.lampsEnabled);
         }
 
         GameObject[] clouds = GameObject.FindGameObjectsWithTag("Cloud");
         foreach(GameObject cloud in clouds)
         {
-            cloud.GetComponent<MeshRenderer>().material = timeSettings.cloudsMaterial;
+            cloud.GetComponent<MeshRenderer>().material = CurrentSettings.cloudsMaterial;
         }
     }
 }

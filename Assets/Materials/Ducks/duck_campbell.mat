@@ -81,6 +81,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - FresnelPower: 2
+    - FresnelStep: 0.5
     - MaxValue: 1
     - MinValue: 0
     - Ramp_Offset: 0.5
@@ -113,6 +115,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - Base_Colour: {r: 1, g: 1, b: 1, a: 0}
+    - FresnelColour: {r: 1, g: 1, b: 1, a: 0}
     - Ramp_Tinting: {r: 1, g: 1, b: 1, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

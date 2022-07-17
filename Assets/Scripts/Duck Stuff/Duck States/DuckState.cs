@@ -25,6 +25,7 @@ public abstract class DuckState
     public bool active = false;
 
     //Animation weights
+    public AnimationDriver animationDriver = AnimationDriver.Animator;
     public float HeadIkWeight = 0f;
     public float AnimatorWeight = 0f;
     public float NeckRotationWeight = 0f;
@@ -60,4 +61,9 @@ public abstract class DuckState
     }
 }
 
-
+public enum AnimationDriver
+{
+    IK,
+    Twist,
+    Animator,
+}

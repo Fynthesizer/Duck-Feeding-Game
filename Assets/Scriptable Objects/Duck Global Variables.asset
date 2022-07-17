@@ -24,7 +24,7 @@ MonoBehaviour:
   wanderRadius: 5
   satiationPeriod: 60
   avoidDistance: 2
-  animationBlendSpeed: 10
+  animationBlendSpeed: 5
   wanderAvoidLayers:
     serializedVersion: 2
     m_Bits: 384

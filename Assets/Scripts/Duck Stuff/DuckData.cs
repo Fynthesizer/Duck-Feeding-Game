@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using Random = UnityEngine.Random;
 
-[System.Serializable]
+[Serializable]
 public class DuckData
 {
     [Header("Attributes")]

@@ -16,8 +16,12 @@ public class PursuitState : DuckState
     private Vector3 targetPosition;
     private GameObject targetObject;
 
+    private bool isReaching = false;
+
     public PursuitState(Duck duck) : base(duck)
     {
+        animationDriver = AnimationDriver.Twist;
+
         HeadIkWeight = 0f;
         NeckRotationWeight = 1f;
         BillOpenness = 0f;
@@ -30,6 +34,9 @@ public class PursuitState : DuckState
     {
         base.Enter();
 
+        animationDriver = AnimationDriver.Twist;
+        isReaching = false;
+
         thrustTimer = duck.globalVars.thrustInterval;
         UpdateTarget();
     }
@@ -41,7 +48,7 @@ public class PursuitState : DuckState
         Vector3 targetDirection = (targetPosition - duck.transform.position).normalized;
         duck.targetLookDirection = -targetDirection;
 
-        float targetDistance = Vector3.Distance(duck.head.position, targetPosition);
+        float targetDistance = Vector3.Distance(duck.mouth.position, targetPosition);
         float targetDot = Vector3.Dot(duck.transform.forward, (targetPosition - duck.transform.position).normalized);
         float speedMultiplier = 1f;
 
@@ -51,17 +58,26 @@ public class PursuitState : DuckState
 
         if (targetDistance < 0.5f)
         {
-            if (targetDistance > 0.25f) speedMultiplier = Utilities.Map(targetDistance, 0.5f, 0.25f, 1f, 0.2f);
+            if (targetDistance > 0.18f) speedMultiplier = Utilities.Map(targetDistance, 0.5f, 0.18f, 1f, 0.2f);
             else speedMultiplier = 0f;
 
-            if(targetDot > 0.8f) { 
-                float foodCloseness = Utilities.Map(targetDistance, 0.5f, 0.2f, 0f, 1f);
-
-                duck.headIK.data.target.position = targetPosition + new Vector3(0f, 0.03f, 0f);
-                HeadIkWeight = foodCloseness;
-                NeckRotationWeight = 0f;
-                BillOpenness = foodCloseness;
+            if (targetDot > 0.8f && !isReaching)
+            {
+                BeginReach();
             }
+            else if (targetDot < 0.8f && isReaching) EndReach();
+        }
+        else if (targetDistance > 0.5f && isReaching) EndReach();
+
+        if (isReaching)
+        {
+            float foodCloseness = Utilities.Map(targetDistance, 0.5f, 0.2f, 0f, 1f);
+
+            duck.headIK.data.target.position = targetPosition + new Vector3(0f, 0.03f, 0f);
+            HeadIkWeight = foodCloseness;
+            duck.dipAmount = foodCloseness;
+            NeckRotationWeight = 0f;
+            BillOpenness = foodCloseness;
         }
 
         Swim(speedMultiplier);
@@ -71,6 +87,18 @@ public class PursuitState : DuckState
             duck.Eat(targetObject);
             duck.stateMachine.ChangeState(DuckStateID.Eat);
         }
+    }
+
+    private void BeginReach()
+    {
+        isReaching = true;
+        animationDriver = AnimationDriver.IK;
+    }
+
+    private void EndReach()
+    {
+        isReaching = false;
+        animationDriver = AnimationDriver.Twist;
     }
 
     private void Swim(float speedMultiplier)

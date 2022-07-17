@@ -16,3 +16,5 @@ MonoBehaviour:
   price: 100
   sprite: {fileID: 21300000, guid: 5cdc1e94371fa1949b34a222f503d1b2, type: 3}
   objectPrefab: {fileID: 640962641065476428, guid: 337c5189d68f62d4ea5f11f8bbdc39df, type: 3}
+  blueprintPrefab: {fileID: 8264464143250549576, guid: 26df255f4d1a66d47ae64edbacddfd2e, type: 3}
+  placementSurfaces: 2

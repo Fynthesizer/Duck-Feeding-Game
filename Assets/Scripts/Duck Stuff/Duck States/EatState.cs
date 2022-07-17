@@ -6,6 +6,7 @@ public class EatState : DuckState
 {
     private float eatTimer = 0f;
 
+
     public override DuckStateID GetID()
     {
         return DuckStateID.Eat;
@@ -15,6 +16,8 @@ public class EatState : DuckState
 
     public EatState(Duck duck) : base(duck)
     {
+        animationDriver = AnimationDriver.Animator;
+
         HeadIkWeight = 0f;
         NeckRotationWeight = 0f;
         BillOpenness = 0f;

@@ -16,7 +16,7 @@ public class PreenState : DuckState
     public override bool allowLook { get { return false; } }
     public PreenState(Duck duck) : base(duck)
     {
-
+        animationDriver = AnimationDriver.Animator;
     }
 
     public override void Enter()

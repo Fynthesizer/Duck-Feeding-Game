@@ -12,7 +12,7 @@ public class Duck : MonoBehaviour
     [SerializeField] private Transform model;
     [SerializeField] private Transform neck;
     public Transform head;
-    public Transform foodCollector;
+    public Transform mouth;
     public ChainIKConstraint headIK;
     public TwistChainConstraint lookConstraint;
     public Transform labelAnchor;
@@ -23,9 +23,9 @@ public class Duck : MonoBehaviour
     private Material material;
 
     [Header("Animation")]
-    
     public float billOpenness = 0f;
     private float _billOpenness = 0f;
+    public float dipAmount = 0f;
 
     private Vector3 targetLocation;
     private Vector3 targetDirection;
@@ -119,6 +119,26 @@ public class Duck : MonoBehaviour
         satiety = data.satiety;
     }
 
+    public DuckData Data
+    {
+        get { 
+            return new DuckData()
+            {
+                duckName = duckName,
+                breed = breed.breedName,
+                gender = gender,
+                speed = speed,
+                weight = weight,
+                reactionTime = reactionTime,
+                awarenessRadius = awarenessRadius,
+                lastFedTime = lastFedTime.ToString(),
+                satiety = satiety,
+                tickTimer = tickTimer
+            };
+        }
+    }
+
+    /*
     public DuckData PackageData()
     {
         DuckData data = new DuckData();
@@ -134,6 +154,7 @@ public class Duck : MonoBehaviour
         data.tickTimer = tickTimer;
         return data;
     }
+    */
 
     private void Update()
     {
@@ -153,9 +174,13 @@ public class Duck : MonoBehaviour
     {
         LookAnimation();
 
-        headIK.weight = Mathf.Lerp(headIK.weight, state.HeadIkWeight, Time.deltaTime * globalVars.animationBlendSpeed);
-        lookConstraint.weight = Mathf.Lerp(lookConstraint.weight, state.NeckRotationWeight, Time.deltaTime * globalVars.animationBlendSpeed);
-        animator.SetLayerWeight(1, Mathf.Lerp(animator.GetLayerWeight(1), state.AnimatorWeight, Time.deltaTime * globalVars.animationBlendSpeed));
+        float IKTargetWeight = state.animationDriver == AnimationDriver.IK ? 1f : 0f;
+        float twistTargetWeight = state.animationDriver == AnimationDriver.Twist ? 1f : 0f;
+        float animatorTargetWeight = state.animationDriver == AnimationDriver.Animator ? 1f : 0f;
+
+        headIK.weight = Mathf.Lerp(headIK.weight, IKTargetWeight * dipAmount, Time.deltaTime * globalVars.animationBlendSpeed);
+        lookConstraint.weight = Mathf.Lerp(lookConstraint.weight, twistTargetWeight, Time.deltaTime * globalVars.animationBlendSpeed * 2f);
+        animator.SetLayerWeight(0, Mathf.Lerp(animator.GetLayerWeight(0), animatorTargetWeight, Time.deltaTime * globalVars.animationBlendSpeed));
         _billOpenness = Mathf.Lerp(_billOpenness, state.BillOpenness, Time.deltaTime * globalVars.animationBlendSpeed);
         mesh.SetBlendShapeWeight(0, mesh.GetBlendShapeWeight(0) + _billOpenness * 100f); //Add on to weight already set by animator, to avoid overriding animation
     }
@@ -186,7 +211,7 @@ public class Duck : MonoBehaviour
     {
         satiety -= 1 / globalVars.satiationPeriod;
         satiety = Mathf.Clamp(satiety, 0f, 1f);
-        GameManager.Instance.AddCurrency(1);
+        GameManager.Instance.Currency++;
     }
 
     private void OnDrawGizmosSelected()

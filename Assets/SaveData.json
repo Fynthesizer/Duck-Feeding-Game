@@ -8,9 +8,9 @@
             "weight": 1.2520252466201783,
             "reactionTime": 0.1390964686870575,
             "awarenessRadius": 14.267558097839356,
-            "lastFedTime": "10/07/2022 10:48:23 a.m.",
-            "satiety": 0.9666666984558106,
-            "tickTimer": 3.9604170322418215
+            "lastFedTime": "17/07/2022 10:02:19 p.m.",
+            "satiety": 0.9833333492279053,
+            "tickTimer": 4.461486339569092
         },
         {
             "duckName": "Alexis",
@@ -20,9 +20,9 @@
             "weight": 1.458909273147583,
             "reactionTime": 0.15317371487617494,
             "awarenessRadius": 9.55002212524414,
-            "lastFedTime": "10/07/2022 10:43:21 a.m.",
-            "satiety": 0.30000030994415285,
-            "tickTimer": 0.488734632730484
+            "lastFedTime": "17/07/2022 9:56:09 p.m.",
+            "satiety": 0.0,
+            "tickTimer": 0.0
         },
         {
             "duckName": "Jeremiah",
@@ -32,9 +32,9 @@
             "weight": 1.0766816139221192,
             "reactionTime": 0.2866152822971344,
             "awarenessRadius": 9.050475120544434,
-            "lastFedTime": "10/07/2022 10:48:23 a.m.",
-            "satiety": 0.9666666984558106,
-            "tickTimer": 4.380636692047119
+            "lastFedTime": "17/07/2022 9:57:59 p.m.",
+            "satiety": 0.11666694283485413,
+            "tickTimer": 4.117093563079834
         },
         {
             "duckName": "Eren",
@@ -44,9 +44,9 @@
             "weight": 1.0551328659057618,
             "reactionTime": 0.28500261902809145,
             "awarenessRadius": 12.301012992858887,
-            "lastFedTime": "10/07/2022 10:47:08 a.m.",
-            "satiety": 0.7000002861022949,
-            "tickTimer": 2.885653257369995
+            "lastFedTime": "17/07/2022 10:02:15 p.m.",
+            "satiety": 0.9666666984558106,
+            "tickTimer": 3.532440662384033
         },
         {
             "duckName": "Eren",
@@ -56,9 +56,9 @@
             "weight": 1.375662922859192,
             "reactionTime": 0.20440426468849183,
             "awarenessRadius": 11.701980590820313,
-            "lastFedTime": "10/07/2022 10:41:52 a.m.",
-            "satiety": 0.033333614468574527,
-            "tickTimer": 0.46921491622924807
+            "lastFedTime": "17/07/2022 9:56:22 p.m.",
+            "satiety": 0.0,
+            "tickTimer": 0.0
         },
         {
             "duckName": "Nicholas",
@@ -68,9 +68,9 @@
             "weight": 1.2291319370269776,
             "reactionTime": 0.16056475043296815,
             "awarenessRadius": 14.462331771850586,
-            "lastFedTime": "10/07/2022 10:48:31 a.m.",
-            "satiety": 0.9833333492279053,
-            "tickTimer": 1.3980889320373536
+            "lastFedTime": "17/07/2022 10:02:00 p.m.",
+            "satiety": 0.9166667461395264,
+            "tickTimer": 3.0404810905456545
         },
         {
             "duckName": "Carmine",
@@ -80,9 +80,9 @@
             "weight": 1.2199149131774903,
             "reactionTime": 0.41504883766174319,
             "awarenessRadius": 12.695779800415039,
-            "lastFedTime": "10/07/2022 10:48:03 a.m.",
-            "satiety": 0.8833334445953369,
-            "tickTimer": 3.2340455055236818
+            "lastFedTime": "17/07/2022 9:57:43 p.m.",
+            "satiety": 0.06666694581508637,
+            "tickTimer": 3.631687641143799
         },
         {
             "duckName": "Gwen",
@@ -92,7 +92,7 @@
             "weight": 0.8664883375167847,
             "reactionTime": 0.287678986787796,
             "awarenessRadius": 13.927315711975098,
-            "lastFedTime": "10/07/2022 10:40:53 a.m.",
+            "lastFedTime": "17/07/2022 9:29:49 p.m.",
             "satiety": 0.0,
             "tickTimer": 0.0
         },
@@ -104,9 +104,9 @@
             "weight": 0.9119328260421753,
             "reactionTime": 0.11424863338470459,
             "awarenessRadius": 10.418065071105957,
-            "lastFedTime": "10/07/2022 10:48:34 a.m.",
-            "satiety": 0.9833333492279053,
-            "tickTimer": 1.3492505550384522
+            "lastFedTime": "17/07/2022 10:02:13 p.m.",
+            "satiety": 0.9666666984558106,
+            "tickTimer": 4.313205242156982
         },
         {
             "duckName": "Eva",
@@ -116,13 +116,13 @@
             "weight": 0.8094838261604309,
             "reactionTime": 0.04870837926864624,
             "awarenessRadius": 14.565457344055176,
-            "lastFedTime": "10/07/2022 10:45:35 a.m.",
-            "satiety": 0.4000003933906555,
-            "tickTimer": 1.3493926525115967
+            "lastFedTime": "17/07/2022 10:02:24 p.m.",
+            "satiety": 0.9833333492279053,
+            "tickTimer": 3.27938175201416
         }
     ],
-    "currency": 1542,
-    "foodCount": 10,
-    "foodReplenishTimer": 0.0,
-    "lastSaveTime": "10/07/2022 10:48:36 a.m."
+    "currency": 1251,
+    "foodCount": 6,
+    "foodReplenishTimer": 2944.1201171875,
+    "lastSaveTime": "17/07/2022 10:02:27 p.m."
 }

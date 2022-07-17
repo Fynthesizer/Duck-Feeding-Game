@@ -15,3 +15,5 @@ MonoBehaviour:
   Decorations:
   - {fileID: 11400000, guid: 988f4fe9cc012f9489e3fe8be595e6fd, type: 2}
   - {fileID: 11400000, guid: 3bc6f603fe71e32448bc96b9b9cdfe2b, type: 2}
+  - {fileID: 11400000, guid: 6aba6eef3ee0b8f4a8533ac273d61d92, type: 2}
+  - {fileID: 11400000, guid: a49d622fd84beee42b7bffb5ab63308f, type: 2}

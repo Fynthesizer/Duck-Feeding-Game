@@ -25,11 +25,13 @@ public class GyroscopeControls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        #if UNITY_ANDROID && !UNITY_EDITOR
         ApplyGyroRotation();
         ApplyCalibration();
 
         Quaternion filteredRotation = LowPassFilter(_rawGyroRotation.rotation);
         if (active) transform.rotation = Quaternion.Slerp(transform.rotation, filteredRotation, smoothing);
+#endif
     }
 
     private Quaternion LowPassFilter(Quaternion input)
@@ -48,11 +50,18 @@ public class GyroscopeControls : MonoBehaviour
         return filteredRotation;
     }
 
+    private void Awake()
+    {
+        controls = GameManager.Instance.Input;
+    }
+
+    private void Start()
+    {
+        StartCoroutine(InitialiseGyroscope());
+    }
+
     private void OnEnable()
     {
-        controls = gameObject.GetComponent<PlayerController>().controls;
-        StartCoroutine(InitialiseGyroscope());
-
         if (Gyroscope.current != null) InputSystem.EnableDevice(Gyroscope.current);
         if (AttitudeSensor.current != null) InputSystem.EnableDevice(AttitudeSensor.current);
         gyro = controls.Player.Rotation;
@@ -72,8 +81,9 @@ public class GyroscopeControls : MonoBehaviour
     private void OnDisable()
     {
         gyro.Disable();
-        InputSystem.DisableDevice(Gyroscope.current);
-        InputSystem.DisableDevice(AttitudeSensor.current);
+        attitude.Disable();
+        if (Gyroscope.current != null) InputSystem.DisableDevice(Gyroscope.current);
+        if (AttitudeSensor.current != null) InputSystem.DisableDevice(AttitudeSensor.current);
     }
 
     private IEnumerator InitialiseGyroscope()

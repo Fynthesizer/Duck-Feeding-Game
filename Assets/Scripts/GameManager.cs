@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 using DateTime = System.DateTime;
 using TimeSpan = System.TimeSpan;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -12,13 +14,26 @@ public class GameManager : MonoBehaviour
     public static PlayerController player;
     public static SaveManager saveManager;
 
+    public InputActions Input;
+
+    private Camera activeCamera;
+    public GameObject editController;
+    public Camera playerCamera;
+
     public delegate void GameTick();
     public static event GameTick OnGameTick;
+
+    public GameState state;
+
+    public static event Action<GameState> OnGameStateChanged;
 
     public DuckDatabase duckInfoDatabase;
     public GameData gameData;
     public int currency;
     public int food;
+
+    public int Currency { get { return currency; } set { currency = Mathf.Max(value, 0); UIManager.UpdateCurrencyCount(); } }
+    public int Food { get { return food; } set { food = Mathf.Clamp(value, 0, ducks.Count); UIManager.UpdateFoodCount(); } }
 
     public float foodReplenishTimer = 0f;
     [Tooltip("How long it takes for food to be fully replenished, measured in seconds")]
@@ -27,9 +42,7 @@ public class GameManager : MonoBehaviour
     private DateTime pauseTime;
 
     public List<Duck> ducks;
-
     [SerializeField] private GameObject duckPrefab;
-
     [SerializeField] private Transform duckGroup;
 
     private Bounds lakeBounds;
@@ -39,6 +52,10 @@ public class GameManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else if (Instance != this) Destroy(this);
 
+        Application.targetFrameRate = 60;
+        Input = new InputActions();
+        Input.Player.Touch.Enable();
+
         UIManager = gameObject.GetComponent<UIManager>();
         saveManager = gameObject.GetComponent<SaveManager>();
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
@@ -47,14 +64,57 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        //StartCoroutine(GameTickCoroutine());
-        //if (saveManager.CheckForSaveData()) gameData = saveManager.LoadData(); //If a save file exists, load it
-        //else gameData = new GameData(duckInfoDatabase, duckCount); //Otherwise, generate a new raft
+        SetGameState(GameState.Feeding);
     }
 
     private void OnApplicationFocus(bool focus)
     {
         
+    }
+
+    public void SetGameState(GameState newState)
+    {
+        if (state == newState) return;
+
+        state = newState;
+
+        editController.SetActive(false);
+        player.gameObject.SetActive(false);
+
+        switch (state)
+        {
+            case GameState.Decorating:
+                editController.SetActive(true);
+                //SetActiveCamera(editController.GetComponent<Camera>());
+                break;
+            case GameState.Feeding:
+                player.gameObject.SetActive(true);
+                //SetActiveCamera(playerCamera);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
+        }
+
+        OnGameStateChanged?.Invoke(newState);
+    }
+
+    public void SetGameStateTest(int newState)
+    {
+        SetGameState((GameState)newState);
+    }
+
+    private void SetActiveCamera(Camera newCamera)
+    {
+        if (activeCamera == newCamera) return;
+
+        if (activeCamera != null)
+        {
+            activeCamera.enabled = false;
+            activeCamera.GetComponent<GyroscopeControls>().enabled = false;
+        }
+        activeCamera = newCamera;
+        activeCamera.enabled = true;
+        activeCamera.GetComponent<GyroscopeControls>().enabled = true;
     }
 
     private void OnApplicationPause(bool pauseStatus)
@@ -82,7 +142,8 @@ public class GameManager : MonoBehaviour
         {
             int replenishCount = Mathf.FloorToInt(foodReplenishTimer / foodReplenishInterval);
             foodReplenishTimer -= replenishCount * foodReplenishInterval;
-            AddFood(replenishCount);
+            Food += replenishCount;
+            //AddFood(replenishCount);
         }
     }
 
@@ -122,6 +183,7 @@ public class GameManager : MonoBehaviour
         UpdateFoodReplenishTimer(time);
     }
 
+    /*
     public void AddCurrency(int amount)
     {
         currency += amount;
@@ -145,6 +207,7 @@ public class GameManager : MonoBehaviour
         food = Mathf.Clamp(food, 0, ducks.Count);
         UIManager.UpdateFoodCount();
     }
+    /*
 
     /*
     private void ReplenishFood(DateTime lastReplenishTime)
@@ -191,32 +254,10 @@ public class GameManager : MonoBehaviour
         }
         else return false;
     }
+}
 
-    /*
-    public void CheckGameEnded()
-    {
-        if (PlayerController.availableFood > 0) return;
-        else if (GameObject.FindGameObjectsWithTag("DuckFood").Length > 0) return;
-        else GameEnd();
-    }
-    */
-
-    /*
-    public void GameEnd()
-    {
-        GameObject[] ducks = GameObject.FindGameObjectsWithTag("Duck");
-        int fedCount = 0;
-        foreach (GameObject duckObject in ducks)
-        {
-            Duck duck = duckObject.GetComponent<Duck>();
-            if (duck.foodConsumed > 0) fedCount += 1;
-        }
-        float fedPercent = (float)fedCount / (float)ducks.Length;
-        print($"Fed {fedCount} of {ducks.Length} ducks");
-        float score = fedPercent * 5f;
-        print($"Score: {score.ToString("0.0")} / 5");
-
-        UIManager.GameEnd(score);
-    }
-    */
+public enum GameState
+{
+    Feeding,
+    Decorating
 }

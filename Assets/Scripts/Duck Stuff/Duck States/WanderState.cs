@@ -15,6 +15,8 @@ public class WanderState : DuckState
 
     public WanderState(Duck duck) : base(duck)
     {
+        animationDriver = AnimationDriver.Twist;
+
         NeckRotationWeight = 1f;
         HeadIkWeight = 0f;
         AnimatorWeight = 1f;

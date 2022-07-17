@@ -13,8 +13,12 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI currencyCount;
     [SerializeField] private GameObject gameEndScreen;
 
-    [SerializeField] private GameObject duckLabelGroup;
+    
     [SerializeField] private GameObject duckLabelPrefab;
+
+    [SerializeField] private GameObject shopInterface;
+    [SerializeField] private GameObject editInterface;
+    [SerializeField] private GameObject feedInterface;
 
     private GameObject[] duckLabels;
     void Start()
@@ -27,6 +31,15 @@ public class UIManager : MonoBehaviour
         
     }
 
+    private void OnEnable()
+    {
+        GameManager.OnGameStateChanged += OnGameStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.OnGameStateChanged -= OnGameStateChanged;
+    }
 
     public void UpdateFoodCount()
     {
@@ -49,17 +62,38 @@ public class UIManager : MonoBehaviour
     {
         duckLabels = new GameObject[ducks.Count];
 
+        Transform labelGroup = feedInterface.transform.GetChild(0);
+
         for(int i = 0; i < ducks.Count; i++)
         {
-            duckLabels[i] = Instantiate(duckLabelPrefab, duckLabelGroup.transform);
+            duckLabels[i] = Instantiate(duckLabelPrefab, labelGroup);
             duckLabels[i].GetComponent<DuckLabel>().SetDuck(ducks[i]);
         }
 
         ToggleDuckLabels(showDuckLabels);
     }
 
+    private void OnGameStateChanged(GameState newState)
+    {
+        feedInterface.SetActive(false);
+        editInterface.SetActive(false);
+
+        switch (newState)
+        {
+            case GameState.Decorating:
+                editInterface.SetActive(true);
+                break;
+            case GameState.Feeding:
+                feedInterface.SetActive(true);
+                break;
+        }
+
+        if (newState == GameState.Feeding) ToggleDuckLabels(true);
+        else ToggleDuckLabels(false);
+    }
+
     public void ToggleDuckLabels(bool state)
     {
-        duckLabelGroup.SetActive(state);
+        feedInterface.SetActive(state);
     }
 }

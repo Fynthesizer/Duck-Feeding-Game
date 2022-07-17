@@ -9,6 +9,6 @@ public abstract class Purchasable : ScriptableObject
     public Sprite sprite;
     public virtual void Buy()
     {
-        GameManager.Instance.SubtractCurrency(price);
+        GameManager.Instance.Currency -= price;
     }
 }

@@ -83,12 +83,12 @@ public class SaveManager : MonoBehaviour
 
     public List<DuckData> GetRaftData()
     {
-        List<DuckData> duckData = new List<DuckData>();
+        List<DuckData> raftData = new List<DuckData>();
         foreach(Duck duck in FindObjectsOfType<Duck>())
         {
-            duckData.Add(duck.PackageData());
+            raftData.Add(duck.Data);
         }
-        return duckData;
+        return raftData;
     }
 
     private void OnApplicationQuit()

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using UnityEngine.InputSystem;
-using Gyroscope = UnityEngine.InputSystem.Gyroscope;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 using TouchState = UnityEngine.InputSystem.LowLevel.TouchState;
 
@@ -13,13 +12,11 @@ public class PlayerController : MonoBehaviour
     //public int availableFood;
     [SerializeField] private GameObject duckFood;
 
-    [SerializeField] private Camera cam;
     private GyroscopeControls gyroControls;
 
     [Header("Controls")]
-    [SerializeField] public InputActions controls;
+    private InputActions controls;
     private InputAction touch;
-    
 
     [SerializeField] private float swipeVelocityDamping = 1f;
     [SerializeField] private float throwVelocityThreshold = 1000f;
@@ -37,24 +34,25 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
-        Application.targetFrameRate = 60;
-        controls = new InputActions();
+        controls = GameManager.Instance.Input;
     }
 
 
     private void OnEnable()
     {
-        touch = controls.Player.Touch;
-        touch.Enable();
-        touch.performed += OnTouch;
+        controls.Player.Touch.performed += OnTouch;
+        
+        GameManager.OnGameStateChanged += OnGameStateChanged;
     }
 
     private void OnDisable()
     {
-        touch.Disable();
+        controls.Player.Touch.performed -= OnTouch;
+
+        GameManager.OnGameStateChanged -= OnGameStateChanged;
     }
 
-    void Start()
+    private void Start()
     {
         //availableFood = GameManager.Instance.duckCount;
         GameManager.UIManager.UpdateFoodCount();
@@ -66,12 +64,18 @@ public class PlayerController : MonoBehaviour
 #endif
     }
 
-    void Update()
+    private void Update()
     {
         if (touching)
         {
-            swipePos = Vector2.SmoothDamp(swipePos, touch.ReadValue<TouchState>().position, ref swipeVelocity, swipeVelocityDamping);
+            swipePos = Vector2.SmoothDamp(swipePos, controls.Player.Touch.ReadValue<TouchState>().position, ref swipeVelocity, swipeVelocityDamping);
         }
+    }
+
+    private void OnGameStateChanged(GameState newState)
+    {
+        if (newState == GameState.Feeding) gyroControls.enabled = true;
+        else gyroControls.enabled = false;
     }
 
     private void OnTouch(InputAction.CallbackContext callback)
@@ -83,9 +87,7 @@ public class PlayerController : MonoBehaviour
             case TouchPhase.Began:
                 swipeStartPos = state.position;
                 swipePos = state.position;
-                //print("began");
                 touching = true;
-                //ThrowFood(transform.forward,throwForce);
                 break;
             case TouchPhase.Moved:
                 break;
@@ -124,7 +126,7 @@ public class PlayerController : MonoBehaviour
     {
         if (canThrow && (GameManager.Instance.food > 0 || infiniteFood)) {
             StartCoroutine(ThrowCooldown());
-            if (!infiniteFood) GameManager.Instance.AddFood(-1);
+            if (!infiniteFood) GameManager.Instance.Food--;
             Vector3 spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
             spawnPos += transform.forward;
             //spawnPos.x += Utilities.Map(swipeStartPos.x, 0, Screen.width, -1f, 1f);

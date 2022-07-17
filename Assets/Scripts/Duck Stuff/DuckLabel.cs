@@ -17,7 +17,7 @@ public class DuckLabel : MonoBehaviour
 
     private void Awake()
     {
-        cam = Camera.main;
+        cam = GameManager.Instance.playerCamera;
     }
 
     public void SetDuck(Duck _duck)

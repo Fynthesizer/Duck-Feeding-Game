@@ -5,5 +5,5 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Store", menuName = "Store")]
 public class StoreCatalog : ScriptableObject
 {
-    public List<Decoration> Decorations;
+    public List<DecorationItem> Decorations;
 }

@@ -10,7 +10,12 @@ public class Lamp : MonoBehaviour
     public Material[] onMaterials;
     void Start()
     {
-        
+        Toggle(LightingManager.Instance.CurrentSettings);
+    }
+
+    public void UpdateTimePeriod(TimePeriodSettings settings)
+    {
+        Toggle(settings.lampsEnabled);
     }
 
     // Update is called once per frame

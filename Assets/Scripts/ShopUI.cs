@@ -18,7 +18,7 @@ public class ShopUI : MonoBehaviour
 
     private void PopulateStore()
     {
-        foreach(Decoration d in catalog.Decorations)
+        foreach(DecorationItem d in catalog.Decorations)
         {
             GameObject newElement = Instantiate(itemUIPrefab, catalogUI);
             newElement.GetComponent<ShopItemUI>().SetItem(d);
