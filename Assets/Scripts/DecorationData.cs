@@ -4,9 +4,10 @@ using UnityEngine;
 using System;
 
 [Serializable]
-public class DecorationData : MonoBehaviour
+public class DecorationData
 {
     public string DecorationID;
     public Vector3 Position;
     public Quaternion Rotation;
+    public Vector3 Scale;
 }

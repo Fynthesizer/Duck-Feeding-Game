@@ -10,7 +10,8 @@ public class Decoration : MonoBehaviour
         get { return new DecorationData() { 
             DecorationID = baseItem.name, 
             Position = transform.position, 
-            Rotation = transform.rotation }; 
+            Rotation = transform.rotation,
+            Scale = transform.localScale}; 
         } 
     }
 }

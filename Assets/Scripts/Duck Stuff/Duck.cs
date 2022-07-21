@@ -26,6 +26,7 @@ public class Duck : MonoBehaviour
     public float billOpenness = 0f;
     private float _billOpenness = 0f;
     public float dipAmount = 0f;
+    private float _dipAmount = 0f;
 
     private Vector3 targetLocation;
     private Vector3 targetDirection;
@@ -178,10 +179,11 @@ public class Duck : MonoBehaviour
         float twistTargetWeight = state.animationDriver == AnimationDriver.Twist ? 1f : 0f;
         float animatorTargetWeight = state.animationDriver == AnimationDriver.Animator ? 1f : 0f;
 
-        headIK.weight = Mathf.Lerp(headIK.weight, IKTargetWeight * dipAmount, Time.deltaTime * globalVars.animationBlendSpeed);
-        lookConstraint.weight = Mathf.Lerp(lookConstraint.weight, twistTargetWeight, Time.deltaTime * globalVars.animationBlendSpeed * 2f);
+        headIK.weight = Mathf.Lerp(headIK.weight, IKTargetWeight * _dipAmount, Time.deltaTime * globalVars.animationBlendSpeed);
+        lookConstraint.weight = Mathf.Lerp(lookConstraint.weight, twistTargetWeight, Time.deltaTime * globalVars.animationBlendSpeed);
         animator.SetLayerWeight(0, Mathf.Lerp(animator.GetLayerWeight(0), animatorTargetWeight, Time.deltaTime * globalVars.animationBlendSpeed));
-        _billOpenness = Mathf.Lerp(_billOpenness, state.BillOpenness, Time.deltaTime * globalVars.animationBlendSpeed);
+        _billOpenness = Mathf.Lerp(_billOpenness, billOpenness, Time.deltaTime * globalVars.animationBlendSpeed);
+        _dipAmount = Mathf.Lerp(_dipAmount, dipAmount, Time.deltaTime * globalVars.animationBlendSpeed);
         mesh.SetBlendShapeWeight(0, mesh.GetBlendShapeWeight(0) + _billOpenness * 100f); //Add on to weight already set by animator, to avoid overriding animation
     }
 

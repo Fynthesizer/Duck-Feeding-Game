@@ -64,6 +64,7 @@ public class SaveManager : MonoBehaviour
         data.foodCount = GameManager.Instance.food;
         data.foodReplenishTimer = GameManager.Instance.foodReplenishTimer;
         data.raft = GetRaftData();
+        data.decorations = GetDecorationData();
         
         //data.lastReplenishedFoodTime = GameManager.Instance.gameData.lastReplenishedFoodTime;
     }
@@ -89,6 +90,16 @@ public class SaveManager : MonoBehaviour
             raftData.Add(duck.Data);
         }
         return raftData;
+    }
+
+    public List<DecorationData> GetDecorationData()
+    {
+        List<DecorationData> decorationData = new List<DecorationData>();
+        foreach(Decoration decoration in FindObjectsOfType<Decoration>())
+        {
+            decorationData.Add(decoration.Data);
+        }
+        return decorationData;
     }
 
     private void OnApplicationQuit()

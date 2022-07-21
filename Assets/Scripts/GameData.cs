@@ -6,6 +6,7 @@ using UnityEngine;
 public class GameData
 {
     public List<DuckData> raft;
+    public List<DecorationData> decorations;
     public int currency;
     public int foodCount;
     public float foodReplenishTimer;
@@ -14,6 +15,7 @@ public class GameData
     public GameData(DuckDatabase database, int duckCount)
     {
         raft = new List<DuckData>();
+        decorations = new List<DecorationData>();
         currency = 0;
         foodCount = duckCount;
         foodReplenishTimer = 0f;

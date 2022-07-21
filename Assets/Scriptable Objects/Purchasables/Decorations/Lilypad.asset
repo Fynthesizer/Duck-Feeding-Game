@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 466e18dea569d5648a9825392f9f7922, type: 3}
   m_Name: Lilypad
   m_EditorClassIdentifier: 
-  name: Lilpad
+  name: Lilypad
   price: 25
   sprite: {fileID: 21300000, guid: 5cdc1e94371fa1949b34a222f503d1b2, type: 3}
   objectPrefab: {fileID: 322502861209520072, guid: 03aa2ecc8cc9fce40831b613eb876236, type: 3}

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 using DateTime = System.DateTime;
 using TimeSpan = System.TimeSpan;
@@ -26,6 +27,9 @@ public class GameManager : MonoBehaviour
     public GameState state;
 
     public static event Action<GameState> OnGameStateChanged;
+
+    public StoreCatalog decorationDatabase;
+    [SerializeField] private Transform decorationGroup;
 
     public DuckDatabase duckInfoDatabase;
     public GameData gameData;
@@ -160,6 +164,7 @@ public class GameManager : MonoBehaviour
     {
         gameData = data;
         ducks = SpawnDucks();
+        SpawnDecorations();
         currency = data.currency;
         UIManager.UpdateCurrencyCount();
         food = data.foodCount;
@@ -242,6 +247,18 @@ public class GameManager : MonoBehaviour
         }
 
         return duckList;
+    }
+
+    private void SpawnDecorations()
+    {
+        for(int i = 0; i < gameData.decorations.Count; i++)
+        {
+            DecorationData decorationData = gameData.decorations[i];
+            DecorationItem decoration = decorationDatabase.Decorations.Find(x => x.name.Equals(decorationData.DecorationID));
+
+            GameObject newDecoration = Instantiate(decoration.objectPrefab, decorationData.Position, decorationData.Rotation, decorationGroup);
+            newDecoration.transform.localScale = decorationData.Scale;
+        }
     }
 
     public bool PositionIsOnLake(Vector3 position)

@@ -24,13 +24,7 @@ public abstract class DuckState
     public virtual bool allowLook { get { return true; } }
     public bool active = false;
 
-    //Animation weights
     public AnimationDriver animationDriver = AnimationDriver.Animator;
-    public float HeadIkWeight = 0f;
-    public float AnimatorWeight = 0f;
-    public float NeckRotationWeight = 0f;
-    public float BillOpenness = 0f;
-
     public float QuackFrequency = 1f;
 
     public DuckState(Duck _duck)

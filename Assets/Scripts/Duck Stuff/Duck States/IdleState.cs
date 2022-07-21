@@ -15,11 +15,6 @@ public class IdleState : DuckState
     public IdleState(Duck duck) : base(duck)
     {
         animationDriver = AnimationDriver.Animator;
-
-        HeadIkWeight = 0f;
-        NeckRotationWeight = 1f;
-        BillOpenness = 0f;
-        AnimatorWeight = 1f;
     }
 
     public override void Enter()
