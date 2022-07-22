@@ -104,7 +104,7 @@ public class PursuitState : DuckState
         if (thrustTimer <= 0f)
         {
             thrustTimer = duck.globalVars.thrustInterval;
-            duck.Swim(targetPosition, duck.speed * duck.globalVars.pursuitSpeedMultiplier * speedMultiplier, duck.globalVars.pursuitAvoidLayers);
+            duck.Swim(duck.speed * duck.globalVars.pursuitSpeedMultiplier * speedMultiplier);
         }
     }
 
@@ -112,6 +112,7 @@ public class PursuitState : DuckState
     {
         targetObject = duck.nearestFood;
         targetPosition = targetObject.transform.position;
+        duck.SetTarget(targetPosition);
     }
 
     public override void Exit()

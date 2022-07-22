@@ -39,7 +39,7 @@ public class WanderState : DuckState
             }
         }
         targetPosition = newTarget;
-        //yield break;
+        duck.SetTarget(newTarget);
     }
 
     public override void Update()
@@ -58,7 +58,7 @@ public class WanderState : DuckState
         if (thrustTimer <= 0f)
         {
             thrustTimer = duck.globalVars.thrustInterval;
-            duck.Swim(targetPosition, duck.speed, duck.globalVars.wanderAvoidLayers);
+            duck.Swim(duck.speed);
         }
     }
 

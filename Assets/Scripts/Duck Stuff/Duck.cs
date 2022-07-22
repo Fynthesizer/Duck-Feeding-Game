@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using System;
+using Pathfinding;
 using Random = UnityEngine.Random;
 
 public class Duck : MonoBehaviour
@@ -22,13 +23,16 @@ public class Duck : MonoBehaviour
     private CapsuleCollider collider;
     private Material material;
 
+    private Seeker seeker;
+    public Path path;
+    private int currentWaypoint = 0;
+
     [Header("Animation")]
     public float billOpenness = 0f;
     private float _billOpenness = 0f;
     public float dipAmount = 0f;
     private float _dipAmount = 0f;
 
-    private Vector3 targetLocation;
     private Vector3 targetDirection;
     private Vector3 lookDirection;
     public Vector3 targetLookDirection;
@@ -84,11 +88,11 @@ public class Duck : MonoBehaviour
         collider = gameObject.GetComponent<CapsuleCollider>();
         quackSource = gameObject.GetComponent<AudioSource>();
         mesh = model.GetComponent<SkinnedMeshRenderer>();
+        seeker = gameObject.GetComponent<Seeker>();
     }
 
     void Start()
     {
-        targetLocation = transform.position;
         Vector2 initialLookDirection = Random.insideUnitCircle.normalized;
         moveDirection = new Vector3(initialLookDirection.x, 0f, initialLookDirection.y);
         targetLookDirection = -moveDirection;
@@ -139,24 +143,6 @@ public class Duck : MonoBehaviour
         }
     }
 
-    /*
-    public DuckData PackageData()
-    {
-        DuckData data = new DuckData();
-        data.duckName = duckName;
-        data.breed = breed.breedName;
-        data.gender = gender;
-        data.speed = speed;
-        data.weight = weight;
-        data.reactionTime = reactionTime;
-        data.awarenessRadius = awarenessRadius;
-        data.lastFedTime = lastFedTime.ToString();
-        data.satiety = satiety;
-        data.tickTimer = tickTimer;
-        return data;
-    }
-    */
-
     private void Update()
     {
         if (alive) stateMachine.Update();
@@ -169,6 +155,23 @@ public class Duck : MonoBehaviour
     private void LateUpdate()
     {
         ApplyAnimation();
+    }
+
+    public void SetTarget(Vector3 newTarget)
+    {
+        seeker.StartPath(transform.position, newTarget, OnPathComplete);
+    }
+
+    public void OnPathComplete(Path p)
+    {
+        Debug.Log("A path was calculated. Did it fail with an error? " + p.error);
+
+        if (!p.error)
+        {
+            path = p;
+            // Reset the waypoint counter so that we start to move towards the first point in the path
+            currentWaypoint = 0;
+        }
     }
 
     private void ApplyAnimation()
@@ -218,11 +221,14 @@ public class Duck : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+        /*
         Gizmos.color = Color.blue;
         Gizmos.DrawSphere(targetLocation, 0.1f);
         Debug.DrawLine(transform.position, targetLocation, Color.blue);
+        */
     }
 
+    /*
     public void Swim(Vector3 targetPosition, float moveSpeed, LayerMask avoidLayers)
     {
         Vector3 targetMoveDirection;
@@ -257,39 +263,40 @@ public class Duck : MonoBehaviour
         if (targetAlignment > 0.8f) rb.AddForce(moveForce);
     }
 
+    */
+    public void Swim(float moveSpeed)
+    {
+        if (path == null) return;
+        
+        Vector3 targetMoveDirection;
+
+        //targetDirection = (path.vectorPath[currentWaypoint] - transform.position).normalized; //Direction to the next waypoint
+        //targetDistance = Vector3.Distance(transform.position, targetPosition);
+
+        float distanceToWaypoint = Vector3.Distance(transform.position, path.vectorPath[currentWaypoint]);
+        if (distanceToWaypoint < 0.2f)
+        {
+            if (currentWaypoint + 1 < path.vectorPath.Count) currentWaypoint++;
+        }
+        targetMoveDirection = (path.vectorPath[currentWaypoint] - transform.position).normalized;
+
+        moveDirection = Vector3.Slerp(moveDirection, targetMoveDirection, globalVars.turnSpeed);
+
+        float targetAlignment = Vector3.Dot(moveDirection, targetMoveDirection);
+
+        Vector3 moveForce = moveDirection * moveSpeed;
+        if (targetAlignment > 0.8f) rb.AddForce(moveForce);
+    }
+
     public bool PathIsClear(Vector3 direction, float distance, LayerMask avoidLayers)
     {
+        
         Ray ray = new Ray(transform.position + collider.center, direction);
-        Debug.DrawRay(transform.position, direction, Color.red, 0.5f);
+
+        //Debug.DrawRay(transform.position, direction, Color.red, 0.5f);
+        
         if (!Physics.SphereCast(ray, collider.radius, distance - collider.radius, avoidLayers)) return true;
         else return false;
-    }
-
-    public void PickWanderTarget()
-    {
-        Vector3 newTarget;
-        int attempts = 0;
-        while (true)
-        {
-            Vector2 targetOffset = Random.insideUnitCircle * globalVars.wanderRadius;
-            newTarget = transform.position + new Vector3(targetOffset.x, 0, targetOffset.y);
-            Vector3 newTargetDirection = newTarget - transform.position;
-            float newTargetDistance = Vector3.Distance(transform.position, newTarget);
-            attempts++;
-            if (GameManager.Instance.PositionIsOnLake(newTarget) && PathIsClear(newTargetDirection, newTargetDistance, globalVars.wanderAvoidLayers)) break;
-            else if (attempts > 50)
-            {
-                newTarget = transform.position;
-                break;
-            }
-        }
-
-        SetTargetLocation(newTarget);
-    }
-
-    void SetTargetLocation(Vector3 newTarget)
-    {
-        targetLocation = newTarget;
     }
 
     private void LookAnimation()

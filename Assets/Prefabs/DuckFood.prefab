@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7296950961135056283}
   - component: {fileID: 3756754791301574634}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Trigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4924,7 +4924,7 @@ GameObject:
   - component: {fileID: 456548966502837947}
   - component: {fileID: 2692199020561515298}
   - component: {fileID: -2503294836437361261}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: DuckFood
   m_TagString: DuckFood
   m_Icon: {fileID: 0}

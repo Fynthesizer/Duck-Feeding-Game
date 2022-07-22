@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
+using Pathfinding;
 
 using DateTime = System.DateTime;
 using TimeSpan = System.TimeSpan;
@@ -35,6 +36,8 @@ public class GameManager : MonoBehaviour
     public GameData gameData;
     public int currency;
     public int food;
+
+    [SerializeField] private AstarPath astar;
 
     public int Currency { get { return currency; } set { currency = Mathf.Max(value, 0); UIManager.UpdateCurrencyCount(); } }
     public int Food { get { return food; } set { food = Mathf.Clamp(value, 0, ducks.Count); UIManager.UpdateFoodCount(); } }
@@ -172,6 +175,7 @@ public class GameManager : MonoBehaviour
         //ReplenishFood(DateTime.Parse(data.lastReplenishedFoodTime));
         UIManager.UpdateFoodCount();
         UIManager.CreateDuckLabels(ducks);
+        astar.Scan();
 
         if (DateTime.TryParse(data.lastSaveTime, out DateTime lastSaveTime))
         {
