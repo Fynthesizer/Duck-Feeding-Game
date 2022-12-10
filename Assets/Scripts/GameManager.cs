@@ -16,8 +16,15 @@ public class GameManager : MonoBehaviour
     public static PlayerController player;
     public static SaveManager saveManager;
 
+    public GameState state;
+    public int currency;
+    public int food;
+    public Inventory Inventory;
+    [Space(10)]
+
     public InputActions Input;
 
+    [SerializeField] private AstarPath astar;
     private Camera activeCamera;
     public GameObject editController;
     public Camera playerCamera;
@@ -25,31 +32,24 @@ public class GameManager : MonoBehaviour
     public delegate void GameTick();
     public static event GameTick OnGameTick;
 
-    public GameState state;
-
     public static event Action<GameState> OnGameStateChanged;
 
     public StoreCatalog decorationDatabase;
-    [SerializeField] private Transform decorationGroup;
-
     public DuckDatabase duckInfoDatabase;
     public GameData gameData;
-    public int currency;
-    public int food;
-
-    [SerializeField] private AstarPath astar;
 
     public int Currency { get { return currency; } set { currency = Mathf.Max(value, 0); UIManager.UpdateCurrencyCount(); } }
     public int Food { get { return food; } set { food = Mathf.Clamp(value, 0, ducks.Count); UIManager.UpdateFoodCount(); } }
 
     public float foodReplenishTimer = 0f;
-    [Tooltip("How long it takes for food to be fully replenished, measured in seconds")]
     public float foodReplenishInterval = 60f;
 
     private DateTime pauseTime;
 
     public List<Duck> ducks;
     [SerializeField] private GameObject duckPrefab;
+
+    [SerializeField] private Transform decorationGroup;
     [SerializeField] private Transform duckGroup;
 
     private Bounds lakeBounds;
@@ -97,6 +97,9 @@ public class GameManager : MonoBehaviour
             case GameState.Feeding:
                 player.gameObject.SetActive(true);
                 //SetActiveCamera(playerCamera);
+                break;
+            case GameState.Shopping:
+                editController.SetActive(true);
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(newState), newState, null);
@@ -166,16 +169,14 @@ public class GameManager : MonoBehaviour
     public void InitialiseGame(GameData data)
     {
         gameData = data;
-        ducks = SpawnDucks();
         SpawnDecorations();
-        currency = data.currency;
-        UIManager.UpdateCurrencyCount();
-        food = data.foodCount;
+        ducks = SpawnDucks();
+        Currency = data.currency;
+        Food = data.foodCount;
         foodReplenishTimer = data.foodReplenishTimer;
-        //ReplenishFood(DateTime.Parse(data.lastReplenishedFoodTime));
-        UIManager.UpdateFoodCount();
         UIManager.CreateDuckLabels(ducks);
-        astar.Scan();
+        GeneratePathfinding();
+        Inventory = new Inventory();
 
         if (DateTime.TryParse(data.lastSaveTime, out DateTime lastSaveTime))
         {
@@ -185,49 +186,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void GeneratePathfinding() => astar.Scan();
+
+
     private void SimulateTime(int time)
     {
         print($"Simulating {time} seconds");
         foreach (Duck d in ducks) d.UpdateTicks(time);
         UpdateFoodReplenishTimer(time);
     }
-
-    /*
-    public void AddCurrency(int amount)
-    {
-        currency += amount;
-        UIManager.UpdateCurrencyCount();
-    }
-
-    public bool SubtractCurrency(int amount)
-    {
-        if (currency > amount)
-        {
-            currency -= amount;
-            UIManager.UpdateCurrencyCount();
-            return true;
-        }
-        else return false;
-    }
-
-    public void AddFood(int amount)
-    {
-        food += amount;
-        food = Mathf.Clamp(food, 0, ducks.Count);
-        UIManager.UpdateFoodCount();
-    }
-    /*
-
-    /*
-    private void ReplenishFood(DateTime lastReplenishTime)
-    {
-        DateTime currentTime = DateTime.Now;
-        TimeSpan timespan = currentTime.Subtract(lastReplenishTime);
-        int amount = Mathf.FloorToInt((timespan.Minutes * gameData.raft.Count) / 60f);
-        player.AddFood(amount);
-        gameData.lastReplenishedFoodTime = DateTime.Now.ToString();
-    }
-    */
 
     private List<Duck> SpawnDucks()
     {
@@ -280,5 +247,6 @@ public class GameManager : MonoBehaviour
 public enum GameState
 {
     Feeding,
-    Decorating
+    Decorating,
+    Shopping
 }

@@ -21,13 +21,7 @@ MonoBehaviour:
   maxQuackInterval: 20
   thrustInterval: 0.1
   eatTime: 1
-  wanderRadius: 5
+  wanderRadius: 20
   satiationPeriod: 60
   avoidDistance: 2
   animationBlendSpeed: 10
-  wanderAvoidLayers:
-    serializedVersion: 2
-    m_Bits: 384
-  pursuitAvoidLayers:
-    serializedVersion: 2
-    m_Bits: 256

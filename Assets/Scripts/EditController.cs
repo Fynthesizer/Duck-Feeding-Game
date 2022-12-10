@@ -15,7 +15,7 @@ public class EditController : MonoBehaviour
 
     private GameObject blueprint;
 
-    public DecorationItem activeDecoration;
+    public InventorySlot activeSlot;
     [SerializeField] private Transform decorationsGroup;
     [SerializeField] private LayerMask layerMask;
 
@@ -45,22 +45,30 @@ public class EditController : MonoBehaviour
                 Instantiate(activeDecoration.objectPrefab, targetPosition, Quaternion.identity, decorationsGroup);
             */
 
-            if (targetValid) Instantiate(activeDecoration.objectPrefab, targetPosition, Quaternion.identity, decorationsGroup);
+            if (targetValid) PlaceDecoration();
         }
     }
 
+    private void PlaceDecoration()
+    {
+        Instantiate(activeSlot.Item.objectPrefab, targetPosition, Quaternion.identity, decorationsGroup);
+        GameManager.Instance.GeneratePathfinding();
+    }
+
+    /*
     private void SetActiveDecoration(DecorationItem newDecoration)
     {
         activeDecoration = newDecoration;
         if (blueprint != null) Destroy(blueprint);
         blueprint = Instantiate(activeDecoration.blueprintPrefab, targetPosition, Quaternion.identity, transform);
     }
-
+    
 
     private void Start()
     {
         SetActiveDecoration(activeDecoration);
     }
+    */
 
     void Update()
     {
@@ -76,8 +84,8 @@ public class EditController : MonoBehaviour
     private bool GetTargetValidity(RaycastHit hitInfo)
     {
         int layer = hitInfo.collider.gameObject.layer;
-        if ((activeDecoration.placementSurfaces.HasFlag(DecorationItem.PlacementSurfaces.Water) && layer == 4) || 
-            (activeDecoration.placementSurfaces.HasFlag(DecorationItem.PlacementSurfaces.Land) && layer == 6)) return true;
+        if ((activeSlot.Item.placementSurfaces.HasFlag(DecorationItem.PlacementSurfaces.Water) && layer == 4) || 
+            (activeSlot.Item.placementSurfaces.HasFlag(DecorationItem.PlacementSurfaces.Land) && layer == 6)) return true;
         else return false;
     }
 }

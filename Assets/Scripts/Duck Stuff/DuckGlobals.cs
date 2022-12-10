@@ -18,6 +18,4 @@ public class DuckGlobals : ScriptableObject
     public float satiationPeriod = 1;
     public float avoidDistance = 1f;
     public float animationBlendSpeed = 3f;
-    public LayerMask wanderAvoidLayers;
-    public LayerMask pursuitAvoidLayers;
 }

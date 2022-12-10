@@ -8,7 +8,8 @@ public enum DuckStateID
     Wander,
     Pursuit,
     Eat,
-    Preen
+    Preen,
+    Sleep
 }
 
 public abstract class DuckState

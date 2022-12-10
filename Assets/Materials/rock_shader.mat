@@ -167,6 +167,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - FresnelPower: 1
+    - FresnelStep: 0.5
     - MaxValue: 1
     - MinValue: 0
     - Ramp_Offset: 0.5
@@ -314,7 +316,8 @@ Material:
     - _utsVersionY: 7
     - _utsVersionZ: 2
     m_Colors:
-    - Base_Colour: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 0}
+    - Base_Colour: {r: 0.8396226, g: 0.8396226, b: 0.8396226, a: 0}
+    - FresnelColour: {r: 1, g: 1, b: 1, a: 0}
     - Ramp_Tinting: {r: 1, g: 1, b: 1, a: 0}
     - _1st_ShadeColor: {r: 0.745283, g: 0.745283, b: 0.745283, a: 1}
     - _2nd_ShadeColor: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 1}

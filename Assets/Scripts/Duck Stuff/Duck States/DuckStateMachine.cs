@@ -20,6 +20,7 @@ public class DuckStateMachine
         RegisterState(new EatState(duck));
         RegisterState(new PursuitState(duck));
         RegisterState(new PreenState(duck));
+        RegisterState(new SleepState(duck));
     }
 
     public void RegisterState(DuckState state)

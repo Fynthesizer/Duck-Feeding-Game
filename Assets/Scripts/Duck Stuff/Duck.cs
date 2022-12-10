@@ -33,11 +33,9 @@ public class Duck : MonoBehaviour
     public float dipAmount = 0f;
     private float _dipAmount = 0f;
 
-    private Vector3 targetDirection;
     private Vector3 lookDirection;
     public Vector3 targetLookDirection;
     private Vector3 moveDirection;
-    private float targetDistance;
     public GameObject nearestFood;
 
     [Header("Global Variables")]
@@ -100,11 +98,18 @@ public class Duck : MonoBehaviour
         rb.rotation = Quaternion.LookRotation(moveDirection, Vector3.up);
 
         stateMachine = new DuckStateMachine(this);
-        DuckStateID initialState = Random.value > 0.5f ? DuckStateID.Idle : DuckStateID.Wander;
-        stateMachine.ChangeState(initialState);
+        stateMachine.ChangeState(PickInitialState());
 
         StartCoroutine(QuackCoroutine());
         StartCoroutine(CheckForFood());
+    }
+
+    DuckStateID PickInitialState()
+    {
+        float randomValue = Random.value;
+        if (randomValue < 0.45f) return DuckStateID.Idle;
+        else if (randomValue < 0.9f) return DuckStateID.Wander;
+        else return DuckStateID.Sleep;
     }
 
     public void LoadData(DuckData data)
@@ -219,66 +224,29 @@ public class Duck : MonoBehaviour
         GameManager.Instance.Currency++;
     }
 
-    private void OnDrawGizmosSelected()
-    {
-        /*
-        Gizmos.color = Color.blue;
-        Gizmos.DrawSphere(targetLocation, 0.1f);
-        Debug.DrawLine(transform.position, targetLocation, Color.blue);
-        */
-    }
 
-    /*
-    public void Swim(Vector3 targetPosition, float moveSpeed, LayerMask avoidLayers)
-    {
-        Vector3 targetMoveDirection;
-
-        targetDirection = (targetPosition - transform.position).normalized;
-        targetDirection = new Vector3(targetDirection.x, 0, targetDirection.z); //Flatten the direction so that it is only on one plane
-        targetDistance = Vector3.Distance(transform.position, targetPosition);
-        targetMoveDirection = targetDirection;
-
-        float directionRotation = 0;
-        while (true)
-        {
-            if (PathIsClear(targetMoveDirection, Mathf.Min(globalVars.avoidDistance, targetDistance), avoidLayers)) break; //If the path ahead is clear, continue
-            else if (directionRotation < Mathf.PI * 2) //Otherwise try a different path
-            {
-                directionRotation += Mathf.PI / 16f;
-                targetMoveDirection = Quaternion.AngleAxis(directionRotation * Mathf.Rad2Deg, Vector3.up) * targetDirection;//Utilities.RotateVector(targetDirection, directionRotation);
-                continue;
-            }
-            else //If there are no clear paths, set state to idle
-            {
-                stateMachine.ChangeState(DuckStateID.Idle);
-                break;
-            }
-        }
-
-        moveDirection = Vector3.Slerp(moveDirection, targetMoveDirection, globalVars.turnSpeed);
-
-        float targetAlignment = Vector3.Dot(moveDirection, targetMoveDirection);
-
-        Vector3 moveForce = moveDirection * moveSpeed;
-        if (targetAlignment > 0.8f) rb.AddForce(moveForce);
-    }
-
-    */
-    public void Swim(float moveSpeed)
+    public void Swim(float moveSpeed, bool avoidDucks = true)
     {
         if (path == null) return;
         
         Vector3 targetMoveDirection;
-
-        //targetDirection = (path.vectorPath[currentWaypoint] - transform.position).normalized; //Direction to the next waypoint
-        //targetDistance = Vector3.Distance(transform.position, targetPosition);
 
         float distanceToWaypoint = Vector3.Distance(transform.position, path.vectorPath[currentWaypoint]);
         if (distanceToWaypoint < 0.2f)
         {
             if (currentWaypoint + 1 < path.vectorPath.Count) currentWaypoint++;
         }
+        if (currentWaypoint + 1 < path.vectorPath.Count)
+        {
+            //If the duck is already closer to the next waypoint, skip the current one
+            float distanceToNextWaypoint = Vector3.Distance(transform.position, path.vectorPath[currentWaypoint + 1]);
+            float distanceBetweenWaypoints = Vector3.Distance(path.vectorPath[currentWaypoint], path.vectorPath[currentWaypoint + 1]);
+            if (distanceToNextWaypoint < distanceBetweenWaypoints) currentWaypoint++;
+        }
         targetMoveDirection = (path.vectorPath[currentWaypoint] - transform.position).normalized;
+
+        //If another duck is in the way, turn to avoid them
+        if (avoidDucks && !PathIsClear(targetMoveDirection, 1f)) targetMoveDirection = Quaternion.AngleAxis(90f, Vector3.up) * targetMoveDirection;
 
         moveDirection = Vector3.Slerp(moveDirection, targetMoveDirection, globalVars.turnSpeed);
 
@@ -288,14 +256,11 @@ public class Duck : MonoBehaviour
         if (targetAlignment > 0.8f) rb.AddForce(moveForce);
     }
 
-    public bool PathIsClear(Vector3 direction, float distance, LayerMask avoidLayers)
+    public bool PathIsClear(Vector3 direction, float distance)
     {
-        
         Ray ray = new Ray(transform.position + collider.center, direction);
 
-        //Debug.DrawRay(transform.position, direction, Color.red, 0.5f);
-        
-        if (!Physics.SphereCast(ray, collider.radius, distance - collider.radius, avoidLayers)) return true;
+        if (!Physics.SphereCast(ray, collider.radius, distance - collider.radius, (1 << 7))) return true;
         else return false;
     }
 

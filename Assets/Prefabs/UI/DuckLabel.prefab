@@ -241,9 +241,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: beccff38bdfd7c44cafa2338275f00fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hungerBarLerpSpeed: 10
+  maximumVisibilityDistance: 50
   hungerBar: {fileID: 2222218199484793475}
+  hungerBarBG: {fileID: 6711033134082739785}
   nameTag: {fileID: 1031943826690143316}
-  yOffset: 20
 --- !u!1 &2637137967475564801
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,8 +9,10 @@ public class DuckLabel : MonoBehaviour
     private Duck duck;
 
     [SerializeField] private float hungerBarLerpSpeed = 10f;
+    [SerializeField] private float maximumVisibilityDistance = 5f;
 
     [SerializeField] private Image hungerBar;
+    [SerializeField] private Image hungerBarBG;
     [SerializeField] private TextMeshProUGUI nameTag;
 
     private Camera cam;
@@ -35,6 +37,17 @@ public class DuckLabel : MonoBehaviour
             float barWidth = Mathf.Lerp(hungerBar.rectTransform.sizeDelta.x, barTargetWidth, Time.deltaTime * hungerBarLerpSpeed);
             transform.position = cam.WorldToScreenPoint(duck.labelAnchor.position);
             hungerBar.rectTransform.sizeDelta = new Vector2(barWidth, 3);
+
+            float playerDistance = Vector3.Distance(GameManager.Instance.playerCamera.transform.position, duck.transform.position);
+            if (playerDistance > maximumVisibilityDistance) SetVisibility(false);
+            else SetVisibility(true);
         }
+    }
+
+    private void SetVisibility(bool state)
+    {
+        hungerBar.enabled = state;
+        hungerBarBG.enabled = state;
+        nameTag.enabled = state;
     }
 }

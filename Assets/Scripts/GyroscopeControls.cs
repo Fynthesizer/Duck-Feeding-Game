@@ -8,6 +8,7 @@ using Gyroscope = UnityEngine.InputSystem.Gyroscope;
 
 public class GyroscopeControls : MonoBehaviour
 {
+
     [SerializeField] private InputActions controls;
     [SerializeField] private float smoothing = 0.5f;
     [SerializeField] private bool active = false;
@@ -22,16 +23,18 @@ public class GyroscopeControls : MonoBehaviour
     private List<Quaternion> _filterSamples = new List<Quaternion>();
     private int _filterQueueCapacity = 30;
 
+
+   
+
+
     // Update is called once per frame
     void Update()
     {
-        #if UNITY_ANDROID && !UNITY_EDITOR
         ApplyGyroRotation();
         ApplyCalibration();
 
         Quaternion filteredRotation = LowPassFilter(_rawGyroRotation.rotation);
         if (active) transform.rotation = Quaternion.Slerp(transform.rotation, filteredRotation, smoothing);
-#endif
     }
 
     private Quaternion LowPassFilter(Quaternion input)
@@ -109,4 +112,5 @@ public class GyroscopeControls : MonoBehaviour
     {
         _rawGyroRotation.Rotate(0f, -_calibrationYAngle, 0f, Space.World); 
     }
+
 }

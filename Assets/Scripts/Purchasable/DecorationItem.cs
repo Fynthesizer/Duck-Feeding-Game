@@ -12,6 +12,7 @@ public class DecorationItem : Purchasable
     public override void Buy()
     {
         Debug.Log($"Bought {name} for ${price}.");
+        GameManager.Instance.Inventory.AddItem(this);
         base.Buy();
     }
 

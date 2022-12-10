@@ -104,7 +104,7 @@ public class PursuitState : DuckState
         if (thrustTimer <= 0f)
         {
             thrustTimer = duck.globalVars.thrustInterval;
-            duck.Swim(duck.speed * duck.globalVars.pursuitSpeedMultiplier * speedMultiplier);
+            duck.Swim(duck.speed * duck.globalVars.pursuitSpeedMultiplier * speedMultiplier, false);
         }
     }
 
@@ -112,7 +112,11 @@ public class PursuitState : DuckState
     {
         targetObject = duck.nearestFood;
         targetPosition = targetObject.transform.position;
-        duck.SetTarget(targetPosition);
+
+        Vector3 directionToTarget = (targetObject.transform.position - duck.transform.position).normalized;
+        Vector3 moveTarget = targetPosition - (directionToTarget * 0.1f);
+
+        duck.SetTarget(moveTarget);
     }
 
     public override void Exit()

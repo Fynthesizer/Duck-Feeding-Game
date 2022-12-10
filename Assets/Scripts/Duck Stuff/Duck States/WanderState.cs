@@ -31,7 +31,7 @@ public class WanderState : DuckState
             Vector3 newTargetDirection = newTarget - duck.transform.position;
             float newTargetDistance = Vector3.Distance(duck.transform.position, newTarget);
             attempts++;
-            if (GameManager.Instance.PositionIsOnLake(newTarget) && duck.PathIsClear(newTargetDirection, newTargetDistance, duck.globalVars.wanderAvoidLayers)) break;
+            if (GameManager.Instance.PositionIsOnLake(newTarget)) break;
             else if (attempts > 50)
             {
                 newTarget = duck.transform.position;
@@ -68,7 +68,7 @@ public class WanderState : DuckState
 
         if (targetDistance < 0.1f)
         {
-            if (Random.value > 0.5f) duck.stateMachine.ChangeState(DuckStateID.Idle);
+            if (Random.value > 0.2f) duck.stateMachine.ChangeState(DuckStateID.Idle);
             else duck.stateMachine.ChangeState(DuckStateID.Wander);
         }
     }

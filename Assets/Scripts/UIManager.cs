@@ -77,6 +77,7 @@ public class UIManager : MonoBehaviour
     {
         feedInterface.SetActive(false);
         editInterface.SetActive(false);
+        shopInterface.SetActive(false);
 
         switch (newState)
         {
@@ -85,6 +86,9 @@ public class UIManager : MonoBehaviour
                 break;
             case GameState.Feeding:
                 feedInterface.SetActive(true);
+                break;
+            case GameState.Shopping:
+                shopInterface.SetActive(true);
                 break;
         }
 
