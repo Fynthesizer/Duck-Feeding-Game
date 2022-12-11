@@ -34,6 +34,8 @@ public class GyroscopeControls : MonoBehaviour
         ApplyCalibration();
 
         Quaternion filteredRotation = LowPassFilter(_rawGyroRotation.rotation);
+
+        Debug.Log(SystemInfo.supportsGyroscope);
         if (active) transform.rotation = Quaternion.Slerp(transform.rotation, filteredRotation, smoothing);
     }
 
@@ -65,12 +67,7 @@ public class GyroscopeControls : MonoBehaviour
 
     private void OnEnable()
     {
-        if (Gyroscope.current != null) InputSystem.EnableDevice(Gyroscope.current);
-        if (AttitudeSensor.current != null) InputSystem.EnableDevice(AttitudeSensor.current);
-        gyro = controls.Player.Rotation;
-        gyro.Enable();
-        attitude = controls.Player.Attitude;
-        attitude.Enable();
+        
     }
 
 #if UNITY_ANDROID && !UNITY_EDITOR
@@ -98,6 +95,12 @@ public class GyroscopeControls : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         _calibrationYAngle = _appliedGyroYAngle - _initialYAngle;
         active = true;
+        if (Gyroscope.current != null) InputSystem.EnableDevice(Gyroscope.current);
+        if (AttitudeSensor.current != null) InputSystem.EnableDevice(AttitudeSensor.current);
+        gyro = controls.Player.Rotation;
+        gyro.Enable();
+        attitude = controls.Player.Attitude;
+        attitude.Enable();
     }
 
     private void ApplyGyroRotation()
