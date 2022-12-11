@@ -20,6 +20,7 @@ public class SaveManager : MonoBehaviour
     [SerializeField] float autoSaveInterval;
     [SerializeField] bool autoSaveEnabled;
 
+
     void Start()
     {
         SetPaths();
@@ -33,6 +34,10 @@ public class SaveManager : MonoBehaviour
 
     private void SetPaths()
     {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        usePersistentPath = true;
+#endif
+
         path = Application.dataPath + Path.AltDirectorySeparatorChar + "SaveData.json";
         persistentPath = Application.persistentDataPath + Path.AltDirectorySeparatorChar + "SaveData.json";
 

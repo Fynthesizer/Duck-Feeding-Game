@@ -33,8 +33,8 @@
             "reactionTime": 0.287678986787796,
             "awarenessRadius": 13.927315711975098,
             "lastFedTime": "9/12/2022 9:54:10 p.m.",
-            "satiety": 0.8500001430511475,
-            "tickTimer": 0.9051088690757752
+            "satiety": 0.0,
+            "tickTimer": 0.0
         },
         {
             "duckName": "Carmine",
@@ -92,7 +92,7 @@
             "weight": 1.0766816139221192,
             "reactionTime": 0.2866152822971344,
             "awarenessRadius": 9.050475120544434,
-            "lastFedTime": "9/12/2022 9:48:18 p.m.",
+            "lastFedTime": "11/12/2022 3:53:52 p.m.",
             "satiety": 0.0,
             "tickTimer": 0.0
         },
@@ -104,7 +104,7 @@
             "weight": 1.458909273147583,
             "reactionTime": 0.15317371487617494,
             "awarenessRadius": 9.55002212524414,
-            "lastFedTime": "24/08/2022 1:03:53 p.m.",
+            "lastFedTime": "11/12/2022 3:43:34 p.m.",
             "satiety": 0.0,
             "tickTimer": 0.0
         },
@@ -351,8 +351,8 @@
             }
         }
     ],
-    "currency": 13057,
-    "foodCount": 0,
-    "foodReplenishTimer": 2074.661865234375,
-    "lastSaveTime": "9/12/2022 9:54:56 p.m."
+    "currency": 13231,
+    "foodCount": 10,
+    "foodReplenishTimer": 2644.625,
+    "lastSaveTime": "11/12/2022 4:09:22 p.m."
 }

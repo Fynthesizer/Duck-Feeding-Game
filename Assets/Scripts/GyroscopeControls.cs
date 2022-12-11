@@ -14,6 +14,7 @@ public class GyroscopeControls : MonoBehaviour
     [SerializeField] private bool active = false;
 
     private InputAction gyro;
+    private InputAction compass;
     private InputAction attitude;
     private float _initialYAngle = 0f;
     private float _appliedGyroYAngle = 0f;
@@ -22,9 +23,6 @@ public class GyroscopeControls : MonoBehaviour
 
     private List<Quaternion> _filterSamples = new List<Quaternion>();
     private int _filterQueueCapacity = 30;
-
-
-   
 
 
     // Update is called once per frame

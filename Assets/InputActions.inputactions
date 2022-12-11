@@ -68,6 +68,14 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Compass",
+                    "type": "Value",
+                    "id": "4d9147a4-acbf-4716-b615-9a0fd6e4a137",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -349,11 +357,22 @@
                 {
                     "name": "",
                     "id": "6d5e859e-1b7c-4b24-8e4c-772a0b2374c8",
-                    "path": "<AttitudeSensor>/attitude",
+                    "path": "<TrackedDevice>/deviceRotation",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Attitude",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0420cbbe-8291-4b48-9cba-9bb309a9d14a",
+                    "path": "<TrackedDevice>/deviceRotation",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Compass",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

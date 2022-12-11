@@ -27,7 +27,19 @@ public class PlayerController : MonoBehaviour
     private Vector2 swipeStartPos;
     private Vector2 swipeVelocity;
     private Vector2 swipePos;
+    private Vector2 smoothedSwipePos;
+    private Vector2 lastSwipePos;
     private bool canThrow = true;
+
+    [SerializeField] private float screenActionThresholdPercentage;
+    private float screenActionThreshold;
+
+    [SerializeField] private Transform camera;
+    [SerializeField] private float cameraRotationSpeed = 0.01f;
+    private float xRotation = 0;
+    private float yRotation = 0;
+    private float minXRotation = -45;
+    private float maxXRotation = 45;
 
     private AudioSource audioSource;
     [SerializeField] private AudioClip throwSound;
@@ -35,6 +47,8 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         controls = GameManager.Instance.Input;
+        yRotation = transform.eulerAngles.y;
+        xRotation = camera.transform.eulerAngles.x;
     }
 
 
@@ -59,6 +73,8 @@ public class PlayerController : MonoBehaviour
         gyroControls = gameObject.GetComponent<GyroscopeControls>();
         audioSource = GetComponent<AudioSource>();
 
+        screenActionThreshold = Screen.height * screenActionThresholdPercentage;
+
 #if UNITY_ANDROID && !UNITY_EDITOR
         //gyroControls.enabled = true;
 #endif
@@ -68,8 +84,20 @@ public class PlayerController : MonoBehaviour
     {
         if (touching)
         {
-            swipePos = Vector2.SmoothDamp(swipePos, controls.Player.Touch.ReadValue<TouchState>().position, ref swipeVelocity, swipeVelocityDamping);
+            swipePos = controls.Player.Touch.ReadValue<TouchState>().position;
+            smoothedSwipePos = Vector2.SmoothDamp(smoothedSwipePos, controls.Player.Touch.ReadValue<TouchState>().position, ref swipeVelocity, swipeVelocityDamping);
         }
+    }
+
+    private void UpdateRotation()
+    {
+        float xDistance = swipePos.x - lastSwipePos.x;
+        float yDistance = swipePos.y - lastSwipePos.y;
+        xRotation += yDistance * cameraRotationSpeed;
+        yRotation += -xDistance * cameraRotationSpeed;
+        xRotation = Mathf.Clamp(xRotation, minXRotation, maxXRotation);
+        transform.eulerAngles = new Vector3(0, yRotation, 0);
+        camera.transform.localEulerAngles = new Vector3(xRotation, 0, 0);
     }
 
     private void OnGameStateChanged(GameState newState)
@@ -87,12 +115,16 @@ public class PlayerController : MonoBehaviour
             case TouchPhase.Began:
                 swipeStartPos = state.position;
                 swipePos = state.position;
+                smoothedSwipePos = swipePos;
+                lastSwipePos = state.position;
                 touching = true;
                 break;
             case TouchPhase.Moved:
+                if (swipeStartPos.y > screenActionThreshold) UpdateRotation();
+                lastSwipePos = swipePos;
                 break;
             case TouchPhase.Ended:
-                ReadSwipe(swipeVelocity);
+                if (swipeStartPos.y < screenActionThreshold) ReadSwipe(swipeVelocity);
                 touching = false;
                 break;
             default:
@@ -115,8 +147,8 @@ public class PlayerController : MonoBehaviour
         {
             Vector2 swipeDirection = velocity.normalized;
             float angle = Utilities.Map(swipeDirection.x, -1, 1, -Mathf.PI, Mathf.PI) * throwAngleMultiplier;
-            Vector3 throwDirection = Quaternion.AngleAxis(angle, transform.up) * transform.forward;
-            throwDirection = Quaternion.AngleAxis(-Mathf.PI * throwArchMultiplier, transform.right) * throwDirection;
+            Vector3 throwDirection = Quaternion.AngleAxis(angle, camera.transform.up) * camera.transform.forward;
+            throwDirection = Quaternion.AngleAxis(-Mathf.PI * throwArchMultiplier, camera.transform.right) * throwDirection;
             //throwDirection.y = 0.1f;
             ThrowFood(throwDirection, velocity.magnitude / throwVelocityDivisor);
         }
@@ -127,8 +159,8 @@ public class PlayerController : MonoBehaviour
         if (canThrow && (GameManager.Instance.food > 0 || infiniteFood)) {
             StartCoroutine(ThrowCooldown());
             if (!infiniteFood) GameManager.Instance.Food--;
-            Vector3 spawnPos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-            spawnPos += transform.forward;
+            Vector3 spawnPos = new Vector3(camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
+            spawnPos += camera.transform.forward;
             //spawnPos.x += Utilities.Map(swipeStartPos.x, 0, Screen.width, -1f, 1f);
             audioSource.PlayOneShot(throwSound);
             GameObject food = Instantiate(duckFood, spawnPos, Quaternion.identity);
