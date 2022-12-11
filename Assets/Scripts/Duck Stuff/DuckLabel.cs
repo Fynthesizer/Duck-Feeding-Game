@@ -40,6 +40,7 @@ public class DuckLabel : MonoBehaviour
 
             float playerDistance = Vector3.Distance(GameManager.Instance.playerCamera.transform.position, duck.transform.position);
             if (playerDistance > maximumVisibilityDistance) SetVisibility(false);
+            else if (transform.position.z < 0f) SetVisibility(false);
             else SetVisibility(true);
         }
     }

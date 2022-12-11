@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
 #if UNITY_ANDROID && !UNITY_EDITOR
-        gyroControls.enabled = true;
+        //gyroControls.enabled = true;
 #endif
     }
 
@@ -74,8 +74,8 @@ public class PlayerController : MonoBehaviour
 
     private void OnGameStateChanged(GameState newState)
     {
-        if (newState == GameState.Feeding) gyroControls.enabled = true;
-        else gyroControls.enabled = false;
+        //if (newState == GameState.Feeding) gyroControls.enabled = true;
+        //else gyroControls.enabled = false;
     }
 
     private void OnTouch(InputAction.CallbackContext callback)

@@ -35,7 +35,7 @@ public class GyroscopeControls : MonoBehaviour
 
         Quaternion filteredRotation = LowPassFilter(_rawGyroRotation.rotation);
 
-        Debug.Log(SystemInfo.supportsGyroscope);
+        Debug.Log(attitude.ReadValue<Quaternion>());
         if (active) transform.rotation = Quaternion.Slerp(transform.rotation, filteredRotation, smoothing);
     }
 
