@@ -63,9 +63,12 @@ public class Duck : MonoBehaviour
     public float tickInterval = 60f;
     public float tickTimer = 0f;
 
-    [Header("Quack")]
+    [Header("Audio")]
     [SerializeField] private AudioClip[] quackClips;
-    private AudioSource quackSource;
+    [SerializeField] private float quackVolume = 1f;
+    [SerializeField] private AudioClip eatClip;
+    [SerializeField] private float eatVolume = 0.7f;
+    private AudioSource audioSource;
 
     /*
     [Header("Glow")]
@@ -84,7 +87,7 @@ public class Duck : MonoBehaviour
     {
         rb = gameObject.GetComponent<Rigidbody>();
         collider = gameObject.GetComponent<CapsuleCollider>();
-        quackSource = gameObject.GetComponent<AudioSource>();
+        audioSource = gameObject.GetComponent<AudioSource>();
         mesh = model.GetComponent<SkinnedMeshRenderer>();
         seeker = gameObject.GetComponent<Seeker>();
     }
@@ -297,7 +300,7 @@ public class Duck : MonoBehaviour
     private void Quack()
     {
         AudioClip quackClip = quackClips[Random.Range(0, quackClips.Length)];
-        quackSource.PlayOneShot(quackClip);
+        audioSource.PlayOneShot(quackClip, quackVolume);
         animator.SetTrigger("Quack");
     }
 
@@ -306,6 +309,7 @@ public class Duck : MonoBehaviour
         food.SetActive(false);
         Destroy(food);
         lastFedTime = DateTime.Now;
+        audioSource.PlayOneShot(eatClip, eatVolume);
         satiety = 1f;
         //stateMachine.ChangeState(DuckStateID.Eat);
     }

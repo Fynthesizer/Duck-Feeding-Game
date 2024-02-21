@@ -846,6 +846,9 @@ MonoBehaviour:
   - {fileID: 8300000, guid: cee78e36610ce154cb8566539cbf5dd6, type: 3}
   - {fileID: 8300000, guid: c9008b0b0902f8c44923bbe12f1e03cb, type: 3}
   - {fileID: 8300000, guid: 324d9b82d26e81046a2882e8569f46a1, type: 3}
+  quackVolume: 1
+  eatClip: {fileID: 8300000, guid: 8c4cad8575fe8dd4390d26c358dc82d9, type: 3}
+  eatVolume: 0.25
 --- !u!54 &2952318735816069753
 Rigidbody:
   m_ObjectHideFlags: 0

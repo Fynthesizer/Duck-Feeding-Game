@@ -15,7 +15,7 @@ MonoBehaviour:
   skyboxMaterial: {fileID: 2100000, guid: c45d630ddb60b0740a386e04a832c595, type: 2}
   reflectionsCubemap: {fileID: 8900000, guid: 26df600b30116de498a7cf8fda94fbcd, type: 3}
   lightColour: {r: 0.8392157, g: 0.9547347, b: 1, a: 0}
-  lightIntensity: 0.8
+  lightIntensity: 0.5
   fogColour: {r: 0.22352941, g: 0.5764706, b: 0.7254902, a: 0}
   lampsEnabled: 1
   cloudsMaterial: {fileID: 2100000, guid: 6cd7bc9e012274244b501f5690ea2066, type: 2}
